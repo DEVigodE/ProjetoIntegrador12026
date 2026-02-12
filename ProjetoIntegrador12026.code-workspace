@@ -1,0 +1,28 @@
+{
+	"folders": [
+		{
+			"name": "Atividade 1 - HTML",
+			"path": "C:\\Users\\igor.bittencourt\\Proton Drive\\igorobm\\My files\\repo\\ADS1241\\Atividade 1 - HTML"
+		},
+	],
+	"settings": {
+		"editor.fontFamily": "JetBrainsMono Nerd Font",
+		"editor.fontWeight": "450",
+		"terminal.integrated.fontFamily": "JetBrainsMono Nerd Font",
+		"terminal.integrated.fontSize": 13,
+		"terminal.integrated.fontWeight": "500",
+		"editor.fontLigatures": true,
+		"editor.codeActionsOnSave": {
+			"source.fixAll": "explicit",
+			"source.organizeImports": "explicit"
+		},
+		"workbench.colorTheme": "Dracula Pro (Van Helsing)",
+		"workbench.iconTheme": "material-icon-theme",
+		"debug.toolBarLocation": "commandCenter",
+		"explorer.fileNesting.enabled": true,
+		"explorer.fileNesting.expand": false,
+		"editor.bracketPairColorization.enabled": true,
+		"editor.guides.bracketPairs": "active",
+		"editor.lineHeight": 0,
+	}
+}
