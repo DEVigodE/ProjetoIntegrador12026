@@ -48,6 +48,16 @@ Este diretório contém toda a documentação técnica e acadêmica do projeto d
    - Conceitos Aplicados
    - Aprendizados Esperados
 
+9. **[Estrutura de Pastas](./ESTRUTURA-PASTAS.md)**
+   - Organização do Projeto
+   - Convenções de Nomenclatura
+
+10. **[Glossário de Termos](./GLOSSARIO.md)**
+    - Termos Técnicos
+    - Códigos HTTP
+    - Status de Pedido
+    - Recursos Úteis
+
 ---
 
 ## 🎯 Disciplinas Contempladas
