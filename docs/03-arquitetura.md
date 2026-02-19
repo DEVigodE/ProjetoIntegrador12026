@@ -28,35 +28,37 @@ Este documento apresenta a arquitetura do sistema de Backoffice para Delivery, b
 ┌─────────────────────────────────────────────────────────────┐
 │                     API GATEWAY                              │
 │              (Spring Cloud Gateway)                          │
+│                    + Keycloak Auth                           │
 └─────────────────────────────────────────────────────────────┘
                             │
         ┌───────────────────┼───────────────────┐
         │                   │                   │
    ┌────▼────┐       ┌─────▼──────┐     ┌─────▼──────┐
-   │ Auth    │       │  Product   │     │   Order    │
+   │ Product │       │   Order    │     │ Delivery   │
    │ Service │       │  Service   │     │  Service   │
    └─────────┘       └────────────┘     └────────────┘
-        │                   │                   │
-        └───────────────────┼───────────────────┘
                             │
         ┌───────────────────┼───────────────────┐
         │                   │                   │
    ┌────▼────┐       ┌─────▼──────┐     ┌─────▼──────┐
-   │Delivery │       │   Chat     │     │  Report    │
-   │ Service │       │  Service   │     │  Service   │
+   │  Chat   │       │   Report   │     │  Keycloak  │
+   │ Service │       │  Service   │     │   Server   │
    └─────────┘       └────────────┘     └────────────┘
 ```
 
-#### **auth-service** (Serviço de Autenticação)
-- **Responsabilidade**: Autenticação, autorização, gestão de usuários
-- **Tecnologias**: Spring Boot, Spring Security, JWT, PostgreSQL
-- **APIs**:
-  - `POST /auth/login` - Autenticar usuário
-  - `POST /auth/refresh` - Renovar token
-  - `POST /auth/logout` - Logout
-  - `GET /users` - Listar usuários
-  - `POST /users` - Criar usuário
-  - `PUT /users/{id}` - Atualizar usuário
+#### **Keycloak** (Identity and Access Management)
+- **Responsabilidade**: Autenticação, autorização, gestão de usuários, SSO
+- **Tecnologias**: Keycloak (Red Hat), PostgreSQL
+- **Recursos**:
+  - Autenticação OAuth 2.0 / OpenID Connect
+  - Single Sign-On (SSO)
+  - Gestão de usuários e roles
+  - Identity Brokering (Google, Facebook, etc.)
+  - Multi-tenancy
+- **Endpoints principais**:
+  - `/realms/{realm}/protocol/openid-connect/token` - Obter token
+  - `/realms/{realm}/protocol/openid-connect/userinfo` - Info do usuário
+  - `/admin/realms/{realm}/users` - API de administração
 
 #### **product-service** (Serviço de Produtos)
 - **Responsabilidade**: CRUD de produtos, categorias, estoque
@@ -176,25 +178,22 @@ Este documento apresenta a arquitetura do sistema de Backoffice para Delivery, b
 │                   MICROSERVICES LAYER         │                    │
 │                                              │                    │
 │  ┌─────────┐  ┌─────────┐  ┌─────────┐  ┌──▼─────┐  ┌─────────┐│
-│  │  Auth   │  │ Product │  │  Order  │  │  Chat  │  │ Delivery││
+│  │ Product │  │  Order  │  │ Delivery│  │  Chat  │  │ Report  ││
 │  │ Service │  │ Service │  │ Service │  │ Service│  │ Service ││
 │  └────┬────┘  └────┬────┘  └────┬────┘  └───┬────┘  └────┬────┘│
 │       │            │            │            │            │     │
 │  ┌────▼────┐  ┌────▼────┐  ┌────▼────┐  ┌───▼────┐  ┌────▼────┐│
 │  │   PG    │  │   PG    │  │   PG    │  │ MongoDB│  │   PG    ││
-│  │   DB    │  │   DB    │  │   DB    │  │   +    │  │   DB    ││
+│  │   DB    │  │   DB    │  │   DB    │  │   +    │  │ Read DB ││
 │  └─────────┘  └─────────┘  └─────────┘  │ Redis  │  └─────────┘│
 │                                          └────────┘              │
 │                                                                  │
-│  ┌─────────┐                                                    │
-│  │ Report  │                                                    │
-│  │ Service │                                                    │
-│  └────┬────┘                                                    │
-│       │                                                         │
-│  ┌────▼────┐                                                    │
-│  │   PG    │                                                    │
-│  │ Read DB │                                                    │
-│  └─────────┘                                                    │
+│  ┌─────────────────────────────────────────────────────┐        │
+│  │              Keycloak Server                         │        │
+│  │  ┌──────────────────────────────────────┐          │        │
+│  │  │        PostgreSQL (Keycloak DB)      │          │        │
+│  │  └──────────────────────────────────────┘          │        │
+│  └─────────────────────────────────────────────────────┘        │
 └──────────────────────────────────────────────────────────────────┘
                         │
 ┌───────────────────────▼───────────────────────────────────────────┐
@@ -223,18 +222,26 @@ Este documento apresenta a arquitetura do sistema de Backoffice para Delivery, b
 
 **Uso**: Operações que requerem resposta imediata
 
-**Exemplo**: Gateway → Auth Service (validação de token)
+**Exemplo**: Gateway → Keycloak (validação de token)
 
 **Implementação**:
 - **Client**: Spring Cloud OpenFeign
 - **Circuit Breaker**: Resilience4j
 - **Load Balancer**: Spring Cloud LoadBalancer
+- **OAuth 2.0**: Spring Security OAuth2 Resource Server
 
 ```java
-@FeignClient(name = "auth-service")
-public interface AuthServiceClient {
-    @GetMapping("/auth/validate")
-    UserDetails validateToken(@RequestHeader("Authorization") String token);
+// Configuração Spring Security com Keycloak
+@Configuration
+public class SecurityConfig {
+    
+    @Bean
+    public SecurityFilterChain filterChain(HttpSecurity http) throws Exception {
+        http
+            .oauth2ResourceServer()
+            .jwt();
+        return http.build();
+    }
 }
 ```
 
@@ -396,7 +403,7 @@ Cada microsserviço possui seu próprio banco de dados, garantindo:
 
 | **Serviço** | **Banco de Dados** | **Justificativa** |
 |-------------|-------------------|-------------------|
-| Auth Service | PostgreSQL | Dados relacionais, transações ACID |
+| Keycloak | PostgreSQL | Dados de usuários gerenciados pelo próprio Keycloak |
 | Product Service | PostgreSQL + Redis | Dados relacionais + cache para performance |
 | Order Service | PostgreSQL | Transações complexas, integridade referencial |
 | Delivery Service | PostgreSQL | Dados relacionais |
@@ -420,24 +427,43 @@ Para operações que envolvem múltiplos serviços, usamos **Saga Pattern**:
 
 ### 8.1 Autenticação e Autorização
 
-**Estratégia**: JWT (JSON Web Token)
+**Estratégia**: OAuth 2.0 / OpenID Connect com Keycloak
 
-**Fluxo**:
-1. Cliente faz login no Auth Service
-2. Auth Service retorna Access Token (15 min) + Refresh Token (7 dias)
+**Fluxo de Autenticação**:
+1. Cliente faz login via Keycloak (Authorization Code Flow)
+2. Keycloak retorna Access Token (JWT, 5 min) + Refresh Token (30 min) + ID Token
 3. Cliente envia Access Token em todas as requisições (`Authorization: Bearer <token>`)
-4. API Gateway valida token com Auth Service
-5. Se válido, roteia para serviço destino
+4. API Gateway valida token JWT localmente (verifica assinatura com chave pública do Keycloak)
+5. Se válido, extrai roles e roteia para serviço destino
 6. Se expirado, cliente usa Refresh Token para obter novo Access Token
 
+**Vantagens do Keycloak**:
+- **Padrão de Mercado**: OAuth 2.0 / OpenID Connect
+- **Reduz Complexidade**: Elimina necessidade de desenvolver auth-service
+- **Recursos Prontos**: SSO, Identity Brokering, User Federation, Admin Console
+- **Segurança**: Sistema maduro e amplamente testado
+- **Extensível**: Suporta SPIs customizadas
+
 ```java
-// JWT Token Structure
+// JWT Token Structure (Keycloak)
 {
-  "sub": "user@example.com",
-  "userId": "123",
-  "roles": ["ADMIN", "OPERATOR"],
+  "exp": 1234568790,
   "iat": 1234567890,
-  "exp": 1234568790
+  "jti": "abc-123",
+  "iss": "http://keycloak:8080/realms/delivery",
+  "sub": "uuid-user-123",
+  "typ": "Bearer",
+  "azp": "backoffice-client",
+  "preferred_username": "user@example.com",
+  "email": "user@example.com",
+  "realm_access": {
+    "roles": ["ADMIN", "OPERATOR"]
+  },
+  "resource_access": {
+    "backoffice-client": {
+      "roles": ["manage-orders", "view-reports"]
+    }
+  }
 }
 ```
 
@@ -599,6 +625,7 @@ spec:
 | **Decisão** | **Justificativa** | **Alternativas Consideradas** |
 |-------------|-------------------|-------------------------------|
 | **Microsserviços** | Escalabilidade, manutenibilidade, alinhamento com requisitos acadêmicos | Monolito (mais simples, mas menos escalável) |
+| **Keycloak** | Padrão OAuth 2.0, SSO, recursos prontos, reduz desenvolvimento | Auth-service próprio (mais complexo e inseguro) |
 | **Spring Boot** | Ecossistema maduro, produtividade, integração com Spring Cloud | Quarkus, Micronaut (menos material acadêmico) |
 | **Kafka** | Alto throughput, persistência, replay de eventos | RabbitMQ (mais simples, mas menos escalável) |
 | **WebSocket + STOMP** | Bidirecional, baixa latência, padrão da indústria | Server-Sent Events (unidirecional) |

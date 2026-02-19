@@ -30,24 +30,6 @@ ProjetoIntegrador12026/
 │   │   ├── src/
 │   │   └── pom.xml
 │   │
-│   ├── auth-service/                        # Serviço de Autenticação
-│   │   ├── src/
-│   │   │   ├── main/
-│   │   │   │   ├── java/
-│   │   │   │   │   └── com/delivery/auth/
-│   │   │   │   │       ├── controller/
-│   │   │   │   │       ├── service/
-│   │   │   │   │       ├── repository/
-│   │   │   │   │       ├── model/
-│   │   │   │   │       ├── dto/
-│   │   │   │   │       ├── config/
-│   │   │   │   │       └── AuthServiceApplication.java
-│   │   │   │   └── resources/
-│   │   │   │       ├── application.yml
-│   │   │   │       └── schema.sql
-│   │   │   └── test/
-│   │   └── pom.xml
-│   │
 │   ├── product-service/                     # Serviço de Produtos
 │   │   ├── src/
 │   │   └── pom.xml
@@ -106,7 +88,7 @@ ProjetoIntegrador12026/
 │   │   │
 │   │   ├── services/                        # Serviços de API
 │   │   │   ├── api.js
-│   │   │   ├── authService.js
+│   │   │   ├── keycloak.js                  # Configuração Keycloak
 │   │   │   ├── orderService.js
 │   │   │   ├── productService.js
 │   │   │   ├── chatService.js
@@ -144,8 +126,8 @@ ProjetoIntegrador12026/
 ├── infra/                                   # 🐳 Infraestrutura
 │   │
 │   ├── docker/                              # Dockerfiles
-│   │   ├── Dockerfile.auth
-│   │   ├── Dockerfile.product
+│   │   ├─── Dockerfile.product
+│   │   ├─── Dockerfile.order
 │   │   ├── Dockerfile.order
 │   │   ├── Dockerfile.delivery
 │   │   ├── Dockerfile.chat
@@ -169,7 +151,7 @@ ProjetoIntegrador12026/
 │   │   │   └── kafka-statefulset.yaml
 │   │   │
 │   │   ├── services/
-│   │   │   ├── auth-deployment.yaml
+│   │   │   ├─── keycloak-deployment.yaml
 │   │   │   ├── product-deployment.yaml
 │   │   │   ├── order-deployment.yaml
 │   │   │   ├── delivery-deployment.yaml

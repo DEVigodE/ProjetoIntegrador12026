@@ -888,7 +888,7 @@ public class KafkaMetrics {
 
 | **Requisito** | **Componente** | **Disciplina** | **Conceito Aplicado** |
 |---------------|----------------|----------------|----------------------|
-| RF001-RF005 (Auth) | Auth Service, JWT Filter | Desenvolvimento Web | REST API, Spring Security |
+| RF001-RF008 (Auth) | Keycloak, OAuth2 Resource Server | Desenvolvimento Web | OAuth 2.0, OpenID Connect, Spring Security |
 | RF010-RF019 (Produtos) | Product Service, ProductCRUD | Desenvolvimento Web | CRUD REST, JPA |
 | RF020-RF029 (Pedidos) | Order Service, State Machine | Design de Software | State Pattern, SOLID |
 | RF030-RF036 (Entregas) | Delivery Service | Desenvolvimento Web | REST API, Relacionamentos |
@@ -896,7 +896,7 @@ public class KafkaMetrics {
 | RF050-RF059 (Relatórios) | Report Service | Desenvolvimento Web | Queries complexas, Aggregation |
 | RNF001-RNF005 (Performance) | Cache, Índices | Design de Software | Otimização, Redis Cache |
 | RNF010-RNF012 (Escalabilidade) | Kubernetes, Load Balancer | Design de Software | Arquitetura Microsserviços |
-| RNF030-RNF036 (Segurança) | JWT, HTTPS, Validation | Desenvolvimento Web | Segurança de Aplicações |
+| RNF030-RNF036 (Segurança) | Keycloak, JWT, HTTPS | Desenvolvimento Web | Segurança de Aplicações, IAM |
 | Interface Completa | React Frontend | Modelagem de UI | Componentes, Design System |
 | Eventos Assíncronos | Kafka | Mensageria e Streams | Event-Driven Architecture |
 

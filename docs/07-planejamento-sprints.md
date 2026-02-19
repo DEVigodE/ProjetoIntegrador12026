@@ -73,41 +73,41 @@ Este documento apresenta o planejamento detalhado do projeto dividido em sprints
 ## 4. Sprint 1 - Infraestrutura e Autenticação (Semanas 3-4)
 
 ### 4.1 Objetivos
-- Implementar serviço de autenticação
+- Configurar Keycloak para autenticação
 - Configurar bancos de dados
 - Setup de Kafka
 - Iniciar frontend React
 
 ### 4.2 User Stories
 
-**US-004: Como administrador, quero fazer login no sistema**
+**US-004: Como administrador, quero fazer login no sistema via Keycloak**
 - **Tarefas**:
-  - [ ] Criar Auth Service (Spring Boot)
-  - [ ] Implementar JWT generation/validation
-  - [ ] Criar endpoints de login/logout
-  - [ ] Configurar PostgreSQL para Auth
-  - [ ] Criar tabelas de users, roles, refresh_tokens
-- **Estimativa**: 20h
-- **DoD**: Login funcional retornando JWT válido
+  - [ ] Setup Keycloak via Docker Compose
+  - [ ] Criar realm `delivery-backoffice`
+  - [ ] Criar client `backoffice-webapp`
+  - [ ] Criar roles (ADMIN, OPERATOR, DISPATCHER)
+  - [ ] Criar usuários de teste
+- **Estimativa**: 8h
+- **DoD**: Keycloak configurado e retornando tokens válidos
 
-**US-005: Como desenvolvedor, quero proteger rotas com autenticação**
+**US-005: Como desenvolvedor, quero proteger rotas com autenticação OAuth 2.0**
 - **Tarefas**:
-  - [ ] Implementar filtro JWT no Gateway
-  - [ ] Configurar Spring Security
-  - [ ] Implementar refresh token
+  - [ ] Configurar Spring Security OAuth2 Resource Server no Gateway
+  - [ ] Implementar validação JWT com chave pública Keycloak
+  - [ ] Configurar extração de roles do token
   - [ ] Adicionar tratamento de erros de autenticação
-- **Estimativa**: 12h
+- **Estimativa**: 10h
 - **DoD**: Rotas protegidas retornam 401 sem token válido
 
-**US-006: Como usuário, quero acessar interface de login**
+**US-006: Como usuário, quero acessar interface de login via Keycloak**
 - **Tarefas**:
   - [ ] Criar projeto React com Vite
   - [ ] Configurar estrutura de pastas
-  - [ ] Implementar tela de login
-  - [ ] Integrar com Auth API
-  - [ ] Implementar fluxo de autenticação (JWT storage)
-- **Estimativa**: 16h
-- **DoD**: Login funcional no frontend com redirecionamento
+  - [ ] Integrar keycloak-js no frontend
+  - [ ] Implementar fluxo de autenticação (Authorization Code Flow)
+  - [ ] Implementar refresh token automático
+- **Estimativa**: 12h
+- **DoD**: Login funcional via Keycloak com redirecionamento
 
 **US-007: Como desenvolvedor, quero configurar Kafka para eventos**
 - **Tarefas**:
@@ -119,8 +119,8 @@ Este documento apresenta o planejamento detalhado do projeto dividido em sprints
 - **DoD**: Evento de teste publicado e consumido com sucesso
 
 ### 4.3 Entregáveis
-- Auth Service completo
-- Frontend React com login funcional
+- Keycloak configurado e integrado
+- Frontend React com login funcional via OAuth 2.0
 - Kafka configurado e operacional
 - Filtro de autenticação no Gateway
 

@@ -10,117 +10,52 @@ Este documento apresenta a modelagem de dados para o sistema de Backoffice de De
 
 | **Serviço** | **Banco** | **Propósito** |
 |-------------|-----------|---------------|
-| auth-service | PostgreSQL | Usuários e autenticação |
+| keycloak | PostgreSQL | Usuários, roles e configurações (gerenciado pelo Keycloak) |
 | product-service | PostgreSQL | Produtos, categorias e estoque |
 | order-service | PostgreSQL | Pedidos e itens |
 | delivery-service | PostgreSQL | Entregadores e entregas |
 | chat-service | MongoDB | Mensagens em tempo real |
 | report-service | PostgreSQL | Read replica para analytics |
 
+**Nota**: O Keycloak gerencia seu próprio banco de dados. Não é necessário desenvolver schema personalizado para autenticação.
+
 ---
 
-## 3. Auth Service Database
+## 3. Keycloak Database
 
-### 3.1 Modelo Conceitual
+### 3.1 Considerações
 
-```
-┌─────────────┐       ┌─────────────┐
-│    User     │───────│    Role     │
-│             │  N:M  │             │
-└─────────────┘       └─────────────┘
-       │
-       │ 1:N
-       │
-┌─────────────┐
-│ RefreshToken│
-└─────────────┘
-```
+O Keycloak gerencia seu próprio schema de banco de dados automaticamente. O schema inclui:
 
-### 3.2 Modelo Lógico
+- **Realms**: Tenants isolados
+- **Clients**: Aplicações que usam Keycloak
+- **Users**: Usuários do sistema
+- **Roles**: Papéis e permissões
+- **Groups**: Grupos de usuários
+- **Sessions**: Sessões ativas
+- **Events**: Logs de auditoria
 
-#### **Tabela: users**
+### 3.2 Configuração do Realm
 
-| **Campo** | **Tipo** | **Restrições** | **Descrição** |
-|-----------|----------|----------------|---------------|
-| id | BIGSERIAL | PK | Identificador único |
-| email | VARCHAR(255) | NOT NULL, UNIQUE | Email do usuário |
-| password_hash | VARCHAR(255) | NOT NULL | Hash BCrypt da senha |
-| full_name | VARCHAR(255) | NOT NULL | Nome completo |
-| active | BOOLEAN | NOT NULL, DEFAULT TRUE | Status ativo/inativo |
-| created_at | TIMESTAMP | NOT NULL, DEFAULT NOW() | Data de criação |
-| updated_at | TIMESTAMP | NOT NULL, DEFAULT NOW() | Data de atualização |
+Será criado um realm chamado `delivery-backoffice` com:
 
-#### **Tabela: roles**
+**Roles**:
+- `ADMIN` - Acesso total ao sistema
+- `OPERATOR` - Gerencia pedidos e produtos
+- `DISPATCHER` - Gerencia entregas e entregadores
 
-| **Campo** | **Tipo** | **Restrições** | **Descrição** |
-|-----------|----------|----------------|---------------|
-| id | BIGSERIAL | PK | Identificador único |
-| name | VARCHAR(50) | NOT NULL, UNIQUE | Nome da role (ADMIN, OPERATOR, DISPATCHER) |
-| description | VARCHAR(255) | | Descrição da role |
+**Client**:
+- **Client ID**: `backoffice-webapp`
+- **Protocol**: openid-connect
+- **Access Type**: public
+- **Valid Redirect URIs**: `http://localhost:3000/*`, `https://backoffice.delivery.com/*`
 
-#### **Tabela: user_roles**
+### 3.3 Integração com Microsserviços
 
-| **Campo** | **Tipo** | **Restrições** | **Descrição** |
-|-----------|----------|----------------|---------------|
-| user_id | BIGINT | FK(users.id), PK | Referência ao usuário |
-| role_id | BIGINT | FK(roles.id), PK | Referência à role |
+Os microsserviços não acessam diretamente o banco do Keycloak. A validação de tokens é feita através de:
 
-#### **Tabela: refresh_tokens**
-
-| **Campo** | **Tipo** | **Restrições** | **Descrição** |
-|-----------|----------|----------------|---------------|
-| id | BIGSERIAL | PK | Identificador único |
-| user_id | BIGINT | FK(users.id), NOT NULL | Referência ao usuário |
-| token | VARCHAR(500) | NOT NULL, UNIQUE | Token de refresh |
-| expires_at | TIMESTAMP | NOT NULL | Data de expiração |
-| created_at | TIMESTAMP | NOT NULL, DEFAULT NOW() | Data de criação |
-
-### 3.3 Scripts DDL
-
-```sql
--- Database: auth_db
-
-CREATE TABLE users (
-    id BIGSERIAL PRIMARY KEY,
-    email VARCHAR(255) NOT NULL UNIQUE,
-    password_hash VARCHAR(255) NOT NULL,
-    full_name VARCHAR(255) NOT NULL,
-    active BOOLEAN NOT NULL DEFAULT TRUE,
-    created_at TIMESTAMP NOT NULL DEFAULT NOW(),
-    updated_at TIMESTAMP NOT NULL DEFAULT NOW()
-);
-
-CREATE TABLE roles (
-    id BIGSERIAL PRIMARY KEY,
-    name VARCHAR(50) NOT NULL UNIQUE,
-    description VARCHAR(255)
-);
-
-CREATE TABLE user_roles (
-    user_id BIGINT NOT NULL REFERENCES users(id) ON DELETE CASCADE,
-    role_id BIGINT NOT NULL REFERENCES roles(id) ON DELETE CASCADE,
-    PRIMARY KEY (user_id, role_id)
-);
-
-CREATE TABLE refresh_tokens (
-    id BIGSERIAL PRIMARY KEY,
-    user_id BIGINT NOT NULL REFERENCES users(id) ON DELETE CASCADE,
-    token VARCHAR(500) NOT NULL UNIQUE,
-    expires_at TIMESTAMP NOT NULL,
-    created_at TIMESTAMP NOT NULL DEFAULT NOW()
-);
-
--- Indexes
-CREATE INDEX idx_users_email ON users(email);
-CREATE INDEX idx_refresh_tokens_user_id ON refresh_tokens(user_id);
-CREATE INDEX idx_refresh_tokens_expires_at ON refresh_tokens(expires_at);
-
--- Initial Data
-INSERT INTO roles (name, description) VALUES
-('ADMIN', 'Administrador com acesso total'),
-('OPERATOR', 'Operador que gerencia pedidos e produtos'),
-('DISPATCHER', 'Despachante que gerencia entregas');
-```
+1. **Validação local**: Verificação da assinatura JWT usando chave pública do Keycloak
+2. **UserInfo endpoint**: (opcional) Para obter informações adicionais do usuário
 
 ---
 
@@ -570,11 +505,13 @@ db.messages.createIndex({ "senderId": 1 });
 
 ```
 ┌──────────────────────────────────────────────────────────────────┐
-│                         AUTH SERVICE                              │
+│                         KEYCLOAK                                  │
 ├──────────────────────────────────────────────────────────────────┤
-│  ┌───────┐  N:M  ┌───────┐  1:N  ┌──────────────┐              │
-│  │ User  │───────│  Role │       │RefreshToken  │              │
-│  └───────┘       └───────┘       └──────────────┘              │
+│  Gerenciado automaticamente pelo Keycloak:                       │
+│  - Realms (tenants)                                              │
+│  - Users, Roles, Groups                                          │
+│  - Clients (aplicações)                                          │
+│  - Sessions, Tokens                                              │
 └──────────────────────────────────────────────────────────────────┘
 
 ┌──────────────────────────────────────────────────────────────────┐

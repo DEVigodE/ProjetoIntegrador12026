@@ -8,15 +8,18 @@ Este documento detalha os requisitos funcionais (RF), não funcionais (RNF) e re
 
 ## 2. Requisitos Funcionais (RF)
 
-### 2.1 Módulo de Autenticação e Autorização
+### 2.1 Módulo de Autenticação e Autorização (Keycloak)
 
 | **ID** | **Descrição** | **Prioridade** |
 |--------|---------------|----------------|
-| RF001  | O sistema deve permitir login com email e senha | Alta |
-| RF002  | O sistema deve implementar autenticação JWT | Alta |
-| RF003  | O sistema deve suportar diferentes perfis de acesso (Admin, Operador, Despachante) | Alta |
-| RF004  | O sistema deve permitir recuperação de senha via email | Média |
-| RF005  | O sistema deve registrar logs de acesso | Média |
+| RF001  | O sistema deve integrar com Keycloak para autenticação OAuth 2.0 / OpenID Connect | Alta |
+| RF002  | O sistema deve suportar login com email e senha via Keycloak | Alta |
+| RF003  | O sistema deve implementar autorização baseada em roles (Admin, Operador, Despachante) | Alta |
+| RF004  | O sistema deve validar tokens JWT emitidos pelo Keycloak no API Gateway | Alta |
+| RF005  | O sistema deve permitir recuperação de senha via Keycloak | Média |
+| RF006  | O sistema deve suportar refresh token para renovação automática de sessão | Alta |
+| RF007  | O sistema deve registrar logs de acesso através do Keycloak | Média |
+| RF008  | O sistema deve permitir gerenciamento de usuários via Keycloak Admin Console | Alta |
 
 ---
 

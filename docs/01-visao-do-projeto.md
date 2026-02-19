@@ -23,6 +23,7 @@ O projeto abrange o desenvolvimento de uma aplicação web administrativa (backo
 - **Microsserviços**: Arquitetura de software baseada em serviços independentes
 - **WebSocket**: Protocolo de comunicação bidirecional em tempo real
 - **Kafka**: Plataforma de streaming de eventos distribuída
+- **Keycloak**: Sistema de Identity and Access Management (IAM)
 - **STOMP**: Simple Text Oriented Messaging Protocol
 - **REST**: Representational State Transfer
 - **API**: Application Programming Interface
@@ -129,7 +130,7 @@ O sistema será desenvolvido como uma aplicação web moderna, baseada em arquit
 - Os estabelecimentos possuem infraestrutura básica de internet
 - Usuários têm conhecimento básico de uso de sistemas web
 - O sistema dependerá de serviços externos para:
-  - Autenticação (OAuth2/JWT)
+  - Autenticação e autorização (Keycloak - OAuth 2.0 / OpenID Connect)
   - Armazenamento de arquivos (S3 ou similar)
   - Mapas e geolocalização (Google Maps API)
 - Integração futura com aplicativos de cliente (mobile/web) via APIs
@@ -177,7 +178,8 @@ Gera relatórios de vendas, estoque e operacionais, além de indicadores como ti
 
 ### 6.3 Restrições de Segurança
 
-- Autenticação JWT obrigatória
+- Autenticação via Keycloak (OAuth 2.0 / OpenID Connect) obrigatória
+- Tokens JWT para autorização
 - Comunicação HTTPS obrigatória em produção
 - Proteção contra CSRF, XSS e SQL Injection
 - Logs de auditoria para operações críticas

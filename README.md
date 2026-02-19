@@ -45,13 +45,13 @@ Sistema de backoffice (área administrativa) para gestão de operações de deli
 │         Microsserviços                   │
 │                                          │
 │  ┌─────────┐  ┌─────────┐  ┌─────────┐ │
-│  │  Auth   │  │ Product │  │  Order  │ │
+│  │ Product │  │  Order  │  │Delivery│ │
 │  │ Service │  │ Service │  │ Service │ │
 │  └─────────┘  └─────────┘  └─────────┘ │
 │                                          │
 │  ┌─────────┐  ┌─────────┐  ┌─────────┐ │
-│  │ Chat    │  │Delivery │  │ Report  │ │
-│  │ Service │  │ Service │  │ Service │ │
+│  │ Chat    │  │ Report  │  │Keycloak│ │
+│  │ Service │  │ Service │  │  (IAM)  │ │
 │  └─────────┘  └─────────┘  └─────────┘ │
 └──────────────────────────────────────────┘
        │                    │
@@ -67,7 +67,8 @@ Sistema de backoffice (área administrativa) para gestão de operações de deli
 #### Backend
 - **Framework**: Spring Boot 3.x
 - **Cloud**: Spring Cloud (Eureka, Gateway, Config Server)
-- **Segurança**: Spring Security, JWT
+- **Autenticação**: Keycloak (OAuth 2.0 / OpenID Connect)
+- **Segurança**: Spring Security
 - **Banco de Dados**: PostgreSQL, MongoDB
 - **Cache**: Redis
 - **Mensageria**: Apache Kafka, Redis Pub/Sub
@@ -105,6 +106,7 @@ Toda a documentação está organizada na pasta [`docs/`](./docs/):
 | [06 - Chat Tempo Real](./docs/06-chat-tempo-real.md) | Implementação do chat em tempo real |
 | [07 - Planejamento Sprints](./docs/07-planejamento-sprints.md) | Cronograma e user stories |
 | [08 - Justificativa Acadêmica](./docs/08-justificativa-academica.md) | Alinhamento com disciplinas |
+| [09 - Integração Keycloak](./docs/09-integracao-keycloak.md) | OAuth 2.0, OpenID Connect, configuração |
 
 ---
 
@@ -129,11 +131,17 @@ cd ProjetoIntegrador12026
 ### 2. Subir Infraestrutura (Docker Compose)
 
 ```bash
-# Subir PostgreSQL, MongoDB, Redis, Kafka, Zookeeper
+# Subir PostgreSQL, MongoDB, Redis, Kafka, Zookeeper, Keycloak
 docker-compose up -d
 ```
 
-### 3. Executar Serviços de Infraestrutura
+### 3. Configurar Keycloak
+
+Acessar Admin Console: http://localhost:8080
+- Usuário: `admin`
+- Senha: `admin`
+
+Seguir instruções de configuração em: [Integração com Keycloak](./docs/09-integracao-keycloak.md)
 
 ```bash
 # Eureka Server
@@ -149,15 +157,27 @@ cd api-gateway
 mvn spring-boot:run
 ```
 
-### 4. Executar Microsserviços
+### 4. Executar Serviços de Infraestrutura
+
+```bash
+# Eureka Server
+cd eureka-server
+mvn spring-boot:run
+
+# Config Server
+cd config-server
+mvn spring-boot:run
+
+# API Gateway
+cd api-gateway
+mvn spring-boot:run
+```
+
+### 5. Executar Microsserviços
 
 Em terminais separados:
 
 ```bash
-# Auth Service
-cd auth-service
-mvn spring-boot:run
-
 # Product Service
 cd product-service
 mvn spring-boot:run
@@ -179,7 +199,7 @@ cd report-service
 mvn spring-boot:run
 ```
 
-### 5. Executar Frontend
+### 6. Executar Frontend
 
 ```bash
 cd frontend
@@ -187,12 +207,13 @@ npm install
 npm run dev
 ```
 
-### 6. Acessar Aplicação
+### 7. Acessar Aplicação
 
 - **Frontend**: http://localhost:5173
-- **API Gateway**: http://localhost:8080
+- **Keycloak**: http://localhost:8080
+- **API Gateway**: http://localhost:8081
 - **Eureka Dashboard**: http://localhost:8761
-- **Swagger UI**: http://localhost:8080/swagger-ui.html
+- **Swagger UI**: http://localhost:8081/swagger-ui.html
 
 ---
 

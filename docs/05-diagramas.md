@@ -62,32 +62,35 @@ Este documento apresenta os principais diagramas UML e arquiteturais do sistema,
 ┌────────────────────────────────────────────────────────▼───────────────┐
 │                         MICROSERVICES                                   │
 │                                                                         │
-│  ┌─────────────────┐  ┌─────────────────┐  ┌─────────────────┐       │
-│  │  Auth Service   │  │ Product Service │  │  Order Service  │       │
-│  ├─────────────────┤  ├─────────────────┤  ├─────────────────┤       │
+│┌─────────────────┐  ┌─────────────────┐  ┌─────────────────┐       │
+││ Product Service │  │  Order Service  │  │ Delivery Service│       │
+│├─────────────────┤  ├─────────────────┤  ├─────────────────┤       │
 │  │ Controllers:    │  │ Controllers:    │  │ Controllers:    │       │
-│  │ - AuthCtrler    │  │ - ProductCtrler │  │ - OrderCtrler   │       │
-│  │ - UserCtrler    │  │ - CategoryCtrler│  │                 │       │
+│  │ - ProductCtrler │  │ - OrderCtrler   │  │ - DeliveryCtrler│       │
+│  │ - CategoryCtrler│  │                 │  │                 │       │
 │  │                 │  │                 │  │                 │       │
 │  │ Services:       │  │ Services:       │  │ Services:       │       │
-│  │ - AuthService   │  │ - ProductSvc    │  │ - OrderService  │       │
-│  │ - JwtService    │  │ - StockSvc      │  │ - OrderEvent    │       │
-│  │ - UserService   │  │ - CacheSvc      │  │   Producer      │       │
+│  │ - ProductSvc    │  │ - OrderService  │  │ - DeliverySvc   │       │
+│  │ - StockSvc      │  │ - OrderEvent    │  │                 │       │
+│  │ - CacheSvc      │  │   Producer      │  │                 │       │
 │  │                 │  │                 │  │                 │       │
 │  │ Repositories:   │  │ Repositories:   │  │ Repositories:   │       │
-│  │ - UserRepo      │  │ - ProductRepo   │  │ - OrderRepo     │       │
-│  │ - RoleRepo      │  │ - CategoryRepo  │  │ - CustomerRepo  │       │
-│  │ - TokenRepo     │  │                 │  │                 │       │
-│  │                 │  │ Event Consumer: │  │ Event Producer: │       │
-│  │ Security:       │  │ - OrderAccepted │  │ - OrderCreated  │       │
-│  │ - JWT Filter    │  │   Handler       │  │ - OrderAccepted │       │
-│  │ - BCrypt        │  │                 │  │ - StatusChanged │       │
+│  │ - ProductRepo   │  │ - OrderRepo     │  │ - DeliveryRepo  │       │
+│  │ - CategoryRepo  │  │ - CustomerRepo  │  │                 │       │
+│  │                 │  │                 │  │                 │       │
+│  │ Event Consumer: │  │ Event Producer: │  │                 │       │
+│  │ - OrderAccepted │  │ - OrderCreated  │  │                 │       │
+│  │   Handler       │  │ - OrderAccepted │  │                 │       │
+│  │                 │  │ - StatusChanged │  │                 │       │
 │  └────────┬────────┘  └────────┬────────┘  └────────┬────────┘       │
 │           │                    │                     │                │
 │      ┌────▼─────┐        ┌────▼─────┐         ┌────▼─────┐          │
 │      │PostgreSQL│        │PostgreSQL│         │PostgreSQL│          │
-│      │  auth_db │        │product_db│         │ order_db │          │
-│      └──────────┘        │   +      │         └──────────┘          │
+│      │product_db│        │ order_db │         │delivery_db│          │
+│      │   +      │        └──────────┘         └──────────┘          │
+│      │  Redis   │                                                    │
+│      │ (Cache)  │                                                    │
+│      └──────────┘                                                    │
 │                          │  Redis   │                                │
 │                          │ (Cache)  │                                │
 │                          └──────────┘                                │
@@ -203,7 +206,7 @@ Este documento apresenta os principais diagramas UML e arquiteturais do sistema,
 ### 3.2 Descrição do Fluxo
 
 1. **Cliente cria pedido** via POST /orders através do Gateway
-2. **Gateway valida JWT** com Auth Service
+2. **Gateway valida JWT** com Keycloak (verificação de assinatura local)
 3. **Order Service** cria o pedido e salva no banco
 4. **Order Service** publica evento `order.created` no Kafka
 5. **Chat Service** consome o evento e cria automaticamente o chat
@@ -343,7 +346,7 @@ Este documento apresenta os principais diagramas UML e arquiteturais do sistema,
 ### 5.1 Recursos Kubernetes
 
 **Deployments:**
-- auth-service: 2 replicas
+- keycloak: 1 replica (2 em produção)
 - product-service: 3 replicas
 - order-service: 3 replicas
 - delivery-service: 2 replicas
@@ -543,10 +546,10 @@ Este documento apresenta os principais diagramas UML e arquiteturais do sistema,
         ┌──────────────────────────┼──────────────────────────┐
         │                          │                          │
 ┌───────▼──────┐         ┌─────────▼────────┐      ┌────────▼─────────┐
-│Auth Service  │         │ Order Service    │      │Product Service   │
-│[Spring Boot] │◄────────│  [Spring Boot]   │─────►│  [Spring Boot]   │
-└───────┬──────┘  Auth   └─────────┬────────┘Event └────────┬─────────┘
-        │                           │                        │
+│  Keycloak    │         │ Order Service    │      │Product Service   │
+│   Server     │◄────────│  [Spring Boot]   │─────►│  [Spring Boot]   │
+│  [OAuth2.0]  │  Auth   └─────────┬────────┘Event └────────┬─────────┘
+└───────┬──────┘                    │                        │
    ┌────▼────┐               ┌──────▼──────┐          ┌────▼────┐
    │PostgreSQL│               │  PostgreSQL │          │PostgreSQL│
    │   DB    │               │     DB      │          │ + Redis │

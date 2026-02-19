@@ -48,11 +48,17 @@ Este diretório contém toda a documentação técnica e acadêmica do projeto d
    - Conceitos Aplicados
    - Aprendizados Esperados
 
-9. **[Estrutura de Pastas](./ESTRUTURA-PASTAS.md)**
-   - Organização do Projeto
-   - Convenções de Nomenclatura
+9. **[Integração com Keycloak](./09-integracao-keycloak.md)**
+   - Configuração do Keycloak
+   - Integração Frontend (React)
+   - Integração Backend (Spring Boot)
+   - OAuth 2.0 / OpenID Connect
 
-10. **[Glossário de Termos](./GLOSSARIO.md)**
+10. **[Estrutura de Pastas](./ESTRUTURA-PASTAS.md)**
+    - Organização do Projeto
+    - Convenções de Nomenclatura
+
+11. **[Glossário de Termos](./GLOSSARIO.md)**
     - Termos Técnicos
     - Códigos HTTP
     - Status de Pedido
@@ -75,6 +81,7 @@ Este diretório contém toda a documentação técnica e acadêmica do projeto d
 - Spring Cloud (Eureka, Gateway, Config Server)
 - Apache Kafka / RabbitMQ
 - WebSocket + STOMP
+- Keycloak (Identity and Access Management)
 - Docker + Kubernetes
 
 **Frontend:**
