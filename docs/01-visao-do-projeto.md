@@ -20,9 +20,11 @@ O projeto abrange o desenvolvimento de uma aplicação web administrativa (backo
 
 - **Backoffice**: Sistema administrativo de retaguarda
 - **Delivery**: Serviço de entrega de alimentos
-- **Microsserviços**: Arquitetura de software baseada em serviços independentes
+- **DDD**: Domain-Driven Design - Abordagem de design de software orientado ao domínio
+- **Bounded Context**: Limite explícito dentro do qual um modelo de domínio é definido
+- **Aggregate**: Padrão DDD que agrupa entidades relacionadas
 - **WebSocket**: Protocolo de comunicação bidirecional em tempo real
-- **Kafka**: Plataforma de streaming de eventos distribuída
+- **Event-Driven**: Arquitetura baseada em eventos
 - **Keycloak**: Sistema de Identity and Access Management (IAM)
 - **STOMP**: Simple Text Oriented Messaging Protocol
 - **REST**: Representational State Transfer
@@ -32,8 +34,8 @@ O projeto abrange o desenvolvimento de uma aplicação web administrativa (backo
 
 - Spring Boot Documentation
 - React Documentation
-- Apache Kafka Documentation
-- Kubernetes Documentation
+- Domain-Driven Design (Eric Evans)
+- Implementing Domain-Driven Design (Vaughn Vernon)
 - Design Patterns (Gang of Four)
 - Clean Architecture (Robert C. Martin)
 
@@ -107,12 +109,13 @@ O mercado de delivery de alimentos cresceu exponencialmente nos últimos anos. E
 
 ### 4.1 Perspectiva do Produto
 
-O sistema será desenvolvido como uma aplicação web moderna, baseada em arquitetura de microsserviços, com frontend em React e backend em Spring Boot. A solução será:
+O sistema será desenvolvido como uma aplicação web moderna, baseada em **arquitetura monolítica modular com Domain-Driven Design (DDD)**, com frontend em React e backend em Spring Boot. A solução será:
 
-- **Cloud-native**: Preparada para deploy em containers (Docker/Kubernetes)
-- **Escalável**: Capacidade de crescer conforme demanda
+- **Modular**: Organizada em Bounded Contexts bem definidos (Catalog, Orders, Delivery, Chat, Reporting)
+- **Manutenível**: Separação clara entre camadas (Application, Domain, Infrastructure)
+- **Escalável**: Capacidade de crescer verticalmente e, futuramente, evoluir para microsserviços se necessário
 - **Responsiva**: Interface adaptável a diferentes tamanhos de tela
-- **Tempo real**: Comunicação instantânea via WebSocket e mensageria
+- **Tempo real**: Comunicação instantânea via WebSocket e eventos de domínio
 
 ### 4.2 Resumo das Capacidades
 
@@ -173,8 +176,9 @@ Gera relatórios de vendas, estoque e operacionais, além de indicadores como ti
 
 - Backend obrigatoriamente em Java + Spring Boot
 - Frontend obrigatoriamente em React
-- Uso de containers Docker
-- Orquestração com Kubernetes
+- Arquitetura baseada em Domain-Driven Design (DDD)
+- Organização em Bounded Contexts
+- Uso de containers Docker para deploy
 
 ### 6.3 Restrições de Segurança
 
@@ -202,6 +206,7 @@ O projeto deve demonstrar aplicação prática de conceitos de:
 - Tempo de resposta das APIs: < 500ms (95th percentile)
 - Latência do chat: < 100ms
 - Suporte a 100 pedidos simultâneos por instância
+- Tempo de startup da aplicação: < 30 segundos
 
 ### 7.2 Disponibilidade
 

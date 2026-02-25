@@ -5,16 +5,16 @@
 ![Java](https://img.shields.io/badge/Java-17-orange)
 ![Spring Boot](https://img.shields.io/badge/Spring%20Boot-3.x-brightgreen)
 ![React](https://img.shields.io/badge/React-18-blue)
-![Kubernetes](https://img.shields.io/badge/Kubernetes-Ready-blue)
+![DDD](https://img.shields.io/badge/Architecture-DDD-purple)
 
 ## 📖 Sobre o Projeto
 
-Sistema de backoffice (área administrativa) para gestão de operações de delivery de alimentos. Desenvolvido como projeto integrador acadêmico, aplicando conceitos de:
+Sistema de backoffice (área administrativa) para gestão de operações de delivery de alimentos. Desenvolvido como projeto integrador acadêmico utilizando **Domain-Driven Design (DDD)** com arquitetura monolítica modular, aplicando conceitos de:
 
 - **Desenvolvimento Web** (Full-stack)
 - **Modelagem de Interfaces de Usuário** (UI/UX)
-- **Design de Software** (Arquitetura, Padrões)
-- **Mensageria e Streams** (Tempo Real, Eventos)
+- **Design de Software** (DDD, Clean Architecture, Padrões)
+- **Mensageria e Streams** (Tempo Real, Eventos de Domínio)
 
 ### 🎯 Funcionalidades Principais
 
@@ -28,7 +28,7 @@ Sistema de backoffice (área administrativa) para gestão de operações de deli
 
 ## 🏗️ Arquitetura
 
-### Visão Geral
+### Visão Geral - Domain-Driven Design (DDD)
 
 ```
 ┌─────────────┐
@@ -36,42 +36,78 @@ Sistema de backoffice (área administrativa) para gestão de operações de deli
 │  Frontend   │
 └──────┬──────┘
        │ HTTPS / WSS
-┌──────▼─────────────────────────────────┐
-│        API Gateway                     │  Roteamento, Auth
-│     (Spring Cloud Gateway)             │
-└──────┬─────────────────────────────────┘
        │
-┌──────┴──────────────────────────────────┐
-│         Microsserviços                   │
-│                                          │
-│  ┌─────────┐  ┌─────────┐  ┌─────────┐ │
-│  │ Product │  │  Order  │  │Delivery│ │
-│  │ Service │  │ Service │  │ Service │ │
-│  └─────────┘  └─────────┘  └─────────┘ │
-│                                          │
-│  ┌─────────┐  ┌─────────┐  ┌─────────┐ │
-│  │ Chat    │  │ Report  │  │Keycloak│ │
-│  │ Service │  │ Service │  │  (IAM)  │ │
-│  └─────────┘  └─────────┘  └─────────┘ │
-└──────────────────────────────────────────┘
-       │                    │
-┌──────▼──────┐      ┌──────▼──────┐
-│   Kafka     │      │  Databases  │
-│  (Events)   │      │ (PostgreSQL,│
-└─────────────┘      │  MongoDB)   │
-                     └─────────────┘
+┌──────▼──────────────────────────────────────────────────────┐
+│              MONOLITO MODULAR (DDD)                          │
+│                                                              │
+│  ┌────────────────────────────────────────────────────┐    │
+│  │           Application Layer (Controllers)          │    │
+│  │  • REST Controllers  • WebSocket Handlers          │    │
+│  │  • Security Filters  • Exception Handlers          │    │
+│  └─────────────┬──────────────────────────────────────┘    │
+│                │                                             │
+│  ┌─────────────▼──────────────────────────────────────┐    │
+│  │         Application Services (Use Cases)           │    │
+│  │  • OrderApplicationService                         │    │
+│  │  • ProductApplicationService                       │    │
+│  │  • DeliveryApplicationService                      │    │
+│  └─────────────┬──────────────────────────────────────┘    │
+│                │                                             │
+│  ┌─────────────▼──────────────────────────────────────┐    │
+│  │              BOUNDED CONTEXTS (Domain)             │    │
+│  │                                                     │    │
+│  │  ┌──────────┐  ┌──────────┐  ┌───────────┐       │    │
+│  │  │ Catalog  │  │  Orders  │  │ Delivery  │       │    │
+│  │  │ Context  │  │ Context  │  │  Context  │       │    │
+│  │  ├──────────┤  ├──────────┤  ├───────────┤       │    │
+│  │  │Aggregates│  │Aggregates│  │ Aggregates│       │    │
+│  │  │ Product  │  │  Order   │  │ Delivery  │       │    │
+│  │  │ Category │  │  Item    │  │ Courier   │       │    │
+│  │  ├──────────┤  ├──────────┤  ├───────────┤       │    │
+│  │  │ Entities │  │ Entities │  │  Entities │       │    │
+│  │  │  & VOs   │  │  & VOs   │  │   & VOs   │       │    │
+│  │  ├──────────┤  ├──────────┤  ├───────────┤       │    │
+│  │  │  Domain  │  │  Domain  │  │  Domain   │       │    │
+│  │  │ Services │  │ Services │  │  Services │       │    │
+│  │  ├──────────┤  ├──────────┤  ├───────────┤       │    │
+│  │  │  Events  │  │  Events  │  │  Events   │       │    │
+│  │  └──────────┘  └──────────┘  └───────────┘       │    │
+│  │                                                     │    │
+│  │  ┌──────────┐  ┌──────────┐                       │    │
+│  │  │   Chat   │  │  Report  │                       │    │
+│  │  │ Context  │  │ Context  │                       │    │
+│  │  └──────────┘  └──────────┘                       │    │
+│  └─────────────┬──────────────────────────────────────┘    │
+│                │                                             │
+│  ┌─────────────▼──────────────────────────────────────┐    │
+│  │         Infrastructure Layer                       │    │
+│  │  • Repositories (JPA)  • Messaging (Events)        │    │
+│  │  • External APIs       • File Storage              │    │
+│  │  • Security (Keycloak) • WebSocket (STOMP)         │    │
+│  └────────────────────────────────────────────────────┘    │
+└──────────────────┬───────────────────────────────────────────┘
+                   │
+    ┌──────────────┼──────────────┐
+    │              │              │
+┌───▼────┐  ┌──────▼───────┐  ┌──▼──────┐
+│  DB    │  │   Events     │  │Keycloak │
+│Postgres│  │ (Internal    │  │  (IAM)  │
+│  +     │  │  EventBus)   │  └─────────┘
+│MongoDB │  └──────────────┘
+└────────┘
 ```
 
 ### Stack Tecnológica
 
 #### Backend
+- **Arquitetura**: Domain-Driven Design (DDD) - Monolito Modular
 - **Framework**: Spring Boot 3.x
-- **Cloud**: Spring Cloud (Eureka, Gateway, Config Server)
+- **Design Pattern**: Clean Architecture com Bounded Contexts
 - **Autenticação**: Keycloak (OAuth 2.0 / OpenID Connect)
 - **Segurança**: Spring Security
-- **Banco de Dados**: PostgreSQL, MongoDB
+- **Banco de Dados**: PostgreSQL (principal), MongoDB (chat)
 - **Cache**: Redis
-- **Mensageria**: Apache Kafka, Redis Pub/Sub
+- **Mensageria**: Event Bus interno (Spring Events) + Redis Pub/Sub
 - **Tempo Real**: WebSocket + STOMP
 - **Documentação**: OpenAPI (Swagger)
 
@@ -85,10 +121,10 @@ Sistema de backoffice (área administrativa) para gestão de operações de deli
 
 #### DevOps
 - **Containers**: Docker
-- **Orquestração**: Kubernetes
+- **Deployment**: Docker Compose (dev), Docker Swarm ou Kubernetes (prod)
 - **CI/CD**: GitHub Actions
-- **Monitoramento**: Prometheus + Grafana
-- **Logs**: ELK Stack (Elasticsearch, Logstash, Kibana)
+- **Monitoramento**: Spring Boot Actuator + Prometheus + Grafana
+- **Logs**: Logback + ELK Stack (opcional)
 
 ---
 
@@ -100,7 +136,7 @@ Toda a documentação está organizada na pasta [`docs/`](./docs/):
 |-----------|-----------|
 | [01 - Visão do Projeto](./docs/01-visao-do-projeto.md) | Objetivos, stakeholders, escopo |
 | [02 - Requisitos](./docs/02-requisitos.md) | Requisitos funcionais e não funcionais |
-| [03 - Arquitetura](./docs/03-arquitetura.md) | Arquitetura de microsserviços, tecnologias |
+| [03 - Arquitetura](./docs/03-arquitetura.md) | Arquitetura DDD monolítica modular, bounded contexts |
 | [04 - Modelagem de BD](./docs/04-modelagem-banco-dados.md) | Modelos de dados, scripts SQL |
 | [05 - Diagramas](./docs/05-diagramas.md) | Diagramas UML (componentes, sequência, classes) |
 | [06 - Chat Tempo Real](./docs/06-chat-tempo-real.md) | Implementação do chat em tempo real |
@@ -131,7 +167,7 @@ cd ProjetoIntegrador12026
 ### 2. Subir Infraestrutura (Docker Compose)
 
 ```bash
-# Subir PostgreSQL, MongoDB, Redis, Kafka, Zookeeper, Keycloak
+# Subir PostgreSQL, MongoDB, Redis, Keycloak
 docker-compose up -d
 ```
 
@@ -143,63 +179,24 @@ Acessar Admin Console: http://localhost:8080
 
 Seguir instruções de configuração em: [Integração com Keycloak](./docs/09-integracao-keycloak.md)
 
+### 4. Executar Aplicação Backend (Monolito)
+
 ```bash
-# Eureka Server
-cd eureka-server
-mvn spring-boot:run
-
-# Config Server
-cd config-server
-mvn spring-boot:run
-
-# API Gateway
-cd api-gateway
+cd backend/delivery-backoffice
 mvn spring-boot:run
 ```
 
-### 4. Executar Serviços de Infraestrutura
+Ou com perfil específico:
 
 ```bash
-# Eureka Server
-cd eureka-server
-mvn spring-boot:run
+# Desenvolvimento
+mvn spring-boot:run -Dspring-boot.run.profiles=dev
 
-# Config Server
-cd config-server
-mvn spring-boot:run
-
-# API Gateway
-cd api-gateway
-mvn spring-boot:run
+# Produção
+mvn spring-boot:run -Dspring-boot.run.profiles=prod
 ```
 
-### 5. Executar Microsserviços
-
-Em terminais separados:
-
-```bash
-# Product Service
-cd product-service
-mvn spring-boot:run
-
-# Order Service
-cd order-service
-mvn spring-boot:run
-
-# Delivery Service
-cd delivery-service
-mvn spring-boot:run
-
-# Chat Service
-cd chat-service
-mvn spring-boot:run
-
-# Report Service
-cd report-service
-mvn spring-boot:run
-```
-
-### 6. Executar Frontend
+### 5. Executar Frontend
 
 ```bash
 cd frontend
@@ -207,13 +204,13 @@ npm install
 npm run dev
 ```
 
-### 7. Acessar Aplicação
+### 6. Acessar Aplicação
 
 - **Frontend**: http://localhost:5173
-- **Keycloak**: http://localhost:8080
-- **API Gateway**: http://localhost:8081
-- **Eureka Dashboard**: http://localhost:8761
-- **Swagger UI**: http://localhost:8081/swagger-ui.html
+- **Backend API**: http://localhost:8080
+- **Swagger UI**: http://localhost:8080/swagger-ui.html
+- **Actuator**: http://localhost:8080/actuator
+- **Keycloak**: http://localhost:8180
 
 ---
 
@@ -222,12 +219,12 @@ npm run dev
 ### Testes Unitários
 
 ```bash
-# Todos os serviços
+# Todos os testes
+cd backend/delivery-backoffice
 mvn test
 
-# Serviço específico
-cd order-service
-mvn test
+# Testes de um contexto específico
+mvn test -Dtest=com.delivery.catalog.*
 ```
 
 ### Testes de Integração
@@ -254,62 +251,66 @@ npm run test:e2e
 
 ## 📦 Deploy
 
-### Deploy Local (Kubernetes com Minikube)
+### Build da Aplicação
 
 ```bash
-# Iniciar Minikube
-minikube start
+# Build JAR
+cd backend/delivery-backoffice
+mvn clean package -DskipTests
 
-# Build de imagens
-./build-images.sh
+# Build Docker Image
+docker build -t delivery-backoffice:latest .
+```
+
+### Deploy com Docker Compose
+
+```bash
+# Deploy completo (backend + frontend + infraestrutura)
+docker-compose -f docker-compose.prod.yml up -d
+```
+
+### Deploy Kubernetes (Opcional)
+
+```bash
+# Build e push da imagem
+docker build -t seu-registry/delivery-backoffice:latest .
+docker push seu-registry/delivery-backoffice:latest
 
 # Deploy
 kubectl apply -f k8s/
 
-# Verificar pods
-kubectl get pods
-
-# Acessar aplicação
-minikube service api-gateway-service
-```
-
-### Deploy em Cluster (GKE, EKS, AKS)
-
-```bash
-# Build e push de imagens
-./build-and-push.sh
-
-# Deploy
-kubectl apply -f k8s/production/
+# Verificar status
+kubectl get pods -n delivery
 ```
 
 ---
 
 ## 📊 Monitoramento
 
-### Prometheus
+### Spring Boot Actuator
 
 ```bash
-# Acessar Prometheus
-kubectl port-forward svc/prometheus 9090:9090
-# Abrir http://localhost:9090
+# Endpoints de monitoramento
+curl http://localhost:8080/actuator/health
+curl http://localhost:8080/actuator/metrics
+curl http://localhost:8080/actuator/info
 ```
 
-### Grafana
+### Prometheus (Opcional)
 
 ```bash
-# Acessar Grafana
-kubectl port-forward svc/grafana 3000:3000
-# Abrir http://localhost:3000
-# Credenciais: admin / admin
+# Métricas disponíveis em
+http://localhost:8080/actuator/prometheus
 ```
 
-### Logs (Kibana)
+### Logs
 
 ```bash
-# Acessar Kibana
-kubectl port-forward svc/kibana 5601:5601
-# Abrir http://localhost:5601
+# Ver logs da aplicação
+docker logs -f delivery-backoffice
+
+# Logs em arquivo
+tail -f logs/application.log
 ```
 
 ---
