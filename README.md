@@ -38,54 +38,54 @@ Sistema de backoffice (área administrativa) para gestão de operações de deli
        │ HTTPS / WSS
        │
 ┌──────▼──────────────────────────────────────────────────────┐
-│              MONOLITO MODULAR (DDD)                          │
-│                                                              │
-│  ┌────────────────────────────────────────────────────┐    │
-│  │           Application Layer (Controllers)          │    │
-│  │  • REST Controllers  • WebSocket Handlers          │    │
-│  │  • Security Filters  • Exception Handlers          │    │
-│  └─────────────┬──────────────────────────────────────┘    │
-│                │                                             │
-│  ┌─────────────▼──────────────────────────────────────┐    │
-│  │         Application Services (Use Cases)           │    │
-│  │  • OrderApplicationService                         │    │
-│  │  • ProductApplicationService                       │    │
-│  │  • DeliveryApplicationService                      │    │
-│  └─────────────┬──────────────────────────────────────┘    │
-│                │                                             │
-│  ┌─────────────▼──────────────────────────────────────┐    │
-│  │              BOUNDED CONTEXTS (Domain)             │    │
-│  │                                                     │    │
-│  │  ┌──────────┐  ┌──────────┐  ┌───────────┐       │    │
-│  │  │ Catalog  │  │  Orders  │  │ Delivery  │       │    │
-│  │  │ Context  │  │ Context  │  │  Context  │       │    │
-│  │  ├──────────┤  ├──────────┤  ├───────────┤       │    │
-│  │  │Aggregates│  │Aggregates│  │ Aggregates│       │    │
-│  │  │ Product  │  │  Order   │  │ Delivery  │       │    │
-│  │  │ Category │  │  Item    │  │ Courier   │       │    │
-│  │  ├──────────┤  ├──────────┤  ├───────────┤       │    │
-│  │  │ Entities │  │ Entities │  │  Entities │       │    │
-│  │  │  & VOs   │  │  & VOs   │  │   & VOs   │       │    │
-│  │  ├──────────┤  ├──────────┤  ├───────────┤       │    │
-│  │  │  Domain  │  │  Domain  │  │  Domain   │       │    │
-│  │  │ Services │  │ Services │  │  Services │       │    │
-│  │  ├──────────┤  ├──────────┤  ├───────────┤       │    │
-│  │  │  Events  │  │  Events  │  │  Events   │       │    │
-│  │  └──────────┘  └──────────┘  └───────────┘       │    │
-│  │                                                     │    │
-│  │  ┌──────────┐  ┌──────────┐                       │    │
-│  │  │   Chat   │  │  Report  │                       │    │
-│  │  │ Context  │  │ Context  │                       │    │
-│  │  └──────────┘  └──────────┘                       │    │
-│  └─────────────┬──────────────────────────────────────┘    │
-│                │                                             │
-│  ┌─────────────▼──────────────────────────────────────┐    │
-│  │         Infrastructure Layer                       │    │
-│  │  • Repositories (JPA)  • Messaging (Events)        │    │
-│  │  • External APIs       • File Storage              │    │
-│  │  • Security (Keycloak) • WebSocket (STOMP)         │    │
-│  └────────────────────────────────────────────────────┘    │
-└──────────────────┬───────────────────────────────────────────┘
+│              MONOLITO MODULAR (DDD)                         │
+│                                                             │
+│  ┌────────────────────────────────────────────────────┐     │
+│  │           Application Layer (Controllers)          │     │
+│  │  • REST Controllers  • WebSocket Handlers          │     │
+│  │  • Security Filters  • Exception Handlers          │     │
+│  └─────────────┬──────────────────────────────────────┘     │
+│                │                                            │
+│  ┌─────────────▼──────────────────────────────────────┐     │
+│  │         Application Services (Use Cases)           │     │
+│  │  • OrderApplicationService                         │     │
+│  │  • ProductApplicationService                       │     │
+│  │  • DeliveryApplicationService                      │     │
+│  └─────────────┬──────────────────────────────────────┘     │
+│                │                                            │
+│  ┌─────────────▼──────────────────────────────────────┐     │
+│  │              BOUNDED CONTEXTS (Domain)             │     │
+│  │                                                    │     │
+│  │  ┌──────────┐  ┌──────────┐  ┌───────────┐         │     │
+│  │  │ Catalog  │  │  Orders  │  │ Delivery  │         │     │
+│  │  │ Context  │  │ Context  │  │  Context  │         │     │
+│  │  ├──────────┤  ├──────────┤  ├───────────┤         │     │
+│  │  │Aggregates│  │Aggregates│  │ Aggregates│         │     │
+│  │  │ Product  │  │  Order   │  │ Delivery  │         │     │
+│  │  │ Category │  │  Item    │  │ Courier   │         │     │
+│  │  ├──────────┤  ├──────────┤  ├───────────┤         │     │
+│  │  │ Entities │  │ Entities │  │  Entities │         │     │
+│  │  │  & VOs   │  │  & VOs   │  │   & VOs   │         │     │
+│  │  ├──────────┤  ├──────────┤  ├───────────┤         │     │
+│  │  │  Domain  │  │  Domain  │  │  Domain   │         │     │
+│  │  │ Services │  │ Services │  │  Services │         │     │
+│  │  ├──────────┤  ├──────────┤  ├───────────┤         │     │
+│  │  │  Events  │  │  Events  │  │  Events   │         │     │
+│  │  └──────────┘  └──────────┘  └───────────┘         │     │
+│  │                                                    │     │
+│  │  ┌──────────┐  ┌──────────┐                        │     │
+│  │  │   Chat   │  │  Report  │                        │     │
+│  │  │ Context  │  │ Context  │                        │     │
+│  │  └──────────┘  └──────────┘                        │     │
+│  └─────────────┬──────────────────────────────────────┘     │
+│                │                                            │
+│  ┌─────────────▼──────────────────────────────────────┐     │
+│  │         Infrastructure Layer                       │     │
+│  │  • Repositories (JPA)  • Messaging (Events)        │     │
+│  │  • External APIs       • File Storage              │     │
+│  │  • Security (Keycloak) • WebSocket (STOMP)         │     │
+│  └────────────────────────────────────────────────────┘     │
+└──────────────────┬──────────────────────────────────────────┘
                    │
     ┌──────────────┼──────────────┐
     │              │              │
