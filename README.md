@@ -1,4 +1,6 @@
-# 🍔 Backoffice de Sistema de Delivery
+# 🚚 Logdash Backoffice - Sistema de Delivery
+
+![Logo](./logo.png)
 
 ![Status](https://img.shields.io/badge/Status-Em%20Desenvolvimento-yellow)
 ![License](https://img.shields.io/badge/License-MIT-blue)
@@ -99,6 +101,7 @@ Sistema de backoffice (área administrativa) para gestão de operações de deli
 ### Stack Tecnológica
 
 #### Backend
+
 - **Arquitetura**: Domain-Driven Design (DDD) - Monolito Modular
 - **Framework**: Spring Boot 3.x
 - **Design Pattern**: Clean Architecture com Bounded Contexts
@@ -110,6 +113,7 @@ Sistema de backoffice (área administrativa) para gestão de operações de deli
 - **Documentação**: OpenAPI (Swagger)
 
 #### Frontend
+
 - **Framework**: React 18+
 - **Linguagem**: JavaScript/TypeScript
 - **UI Library**: Material-UI ou Ant Design
@@ -118,6 +122,7 @@ Sistema de backoffice (área administrativa) para gestão de operações de deli
 - **WebSocket**: SockJS + STOMP.js
 
 #### DevOps
+
 - **Containers**: Docker
 - **Deployment**: Docker Compose (dev), Docker Swarm ou Kubernetes (prod)
 - **CI/CD**: GitHub Actions
@@ -171,7 +176,8 @@ docker-compose up -d
 
 ### 3. Configurar Keycloak
 
-Acessar Admin Console: http://localhost:8080
+Acessar Admin Console: <http://localhost:8080>
+
 - Usuário: `admin`
 - Senha: `admin`
 
@@ -204,11 +210,11 @@ npm run dev
 
 ### 6. Acessar Aplicação
 
-- **Frontend**: http://localhost:5173
-- **Backend API**: http://localhost:8080
-- **Swagger UI**: http://localhost:8080/swagger-ui.html
-- **Actuator**: http://localhost:8080/actuator
-- **Keycloak**: http://localhost:8180
+- **Frontend**: <http://localhost:5173>
+- **Backend API**: <http://localhost:8080>
+- **Swagger UI**: <http://localhost:8080/swagger-ui.html>
+- **Actuator**: <http://localhost:8080/actuator>
+- **Keycloak**: <http://localhost:8180>
 
 ---
 
@@ -375,12 +381,15 @@ Este projeto está sob a licença MIT. Veja o arquivo [LICENSE](./LICENSE) para 
 ## 📸 Screenshots (TODO)
 
 ### Dashboard de Pedidos
+
 ![Dashboard](./docs/images/dashboard.png)
 
 ### Chat em Tempo Real
+
 ![Chat](./docs/images/chat.png)
 
 ### Gestão de Produtos
+
 ![Produtos](./docs/images/products.png)
 
 ---
