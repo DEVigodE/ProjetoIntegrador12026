@@ -1,0 +1,42 @@
+version: '3.8'
+
+services:
+  postgres:
+    image: postgres:15
+    container_name: delivery-postgres
+    environment:
+      POSTGRES_DB: delivery_db
+      POSTGRES_USER: delivery_user
+      POSTGRES_PASSWORD: delivery_pass
+    ports:
+      - "5432:5432"
+    volumes:
+      - postgres-data:/var/lib/postgresql/data
+      - ./init-db:/docker-entrypoint-initdb.d
+    networks:
+      - delivery-network
+
+  keycloak:
+    image: quay.io/keycloak/keycloak:24.0
+    container_name: keycloak
+    command: start-dev
+    environment:
+      KC_DB: postgres
+      KC_DB_URL: jdbc:postgresql://postgres:5432/keycloak
+      KC_DB_USERNAME: keycloak
+      KC_DB_PASSWORD: keycloak_pass
+      KEYCLOAK_ADMIN: admin
+      KEYCLOAK_ADMIN_PASSWORD: admin
+    ports:
+      - "8080:8080"
+    depends_on:
+      - postgres
+    networks:
+      - delivery-network
+
+volumes:
+  postgres-data:
+
+networks:
+  delivery-network:
+    driver: bridge
