@@ -32,7 +32,7 @@ Este documento apresenta o planejamento detalhado do projeto dividido em sprints
 
 **US-001: Como desenvolvedor, quero configurar o ambiente de desenvolvimento**
 - **Tarefas**:
-  - [ ] Instalar JDK 17, Node.js, Docker Desktop
+  - [ ] Instalar JDK 21, Node.js, Docker Desktop
   - [ ] Instalar IDEs (IntelliJ IDEA, VS Code)
   - [ ] Configurar Git e criar repositórios
   - [ ] Configurar Docker Compose para ambiente local
@@ -74,8 +74,7 @@ Este documento apresenta o planejamento detalhado do projeto dividido em sprints
 
 ### 4.1 Objetivos
 - Configurar Keycloak para autenticação
-- Configurar bancos de dados
-- Setup de Kafka
+- Configurar bancos de dados (PostgreSQL)
 - Iniciar frontend React
 
 ### 4.2 User Stories
@@ -109,20 +108,20 @@ Este documento apresenta o planejamento detalhado do projeto dividido em sprints
 - **Estimativa**: 12h
 - **DoD**: Login funcional via Keycloak com redirecionamento
 
-**US-007: Como desenvolvedor, quero configurar Kafka para eventos**
+**US-007: Como desenvolvedor, quero configurar Spring Events para comunicação entre contextos**
 - **Tarefas**:
-  - [ ] Setup Kafka cluster com Docker
-  - [ ] Criar tópicos básicos
-  - [ ] Implementar producer/consumer exemplo
-  - [ ] Configurar serialização JSON
-- **Estimativa**: 12h
-- **DoD**: Evento de teste publicado e consumido com sucesso
+  - [ ] Criar interface base `DomainEvent`
+  - [ ] Configurar `ApplicationEventPublisher` no shared module
+  - [ ] Implementar `@TransactionalEventListener` de exemplo
+  - [ ] Validar fluxo de evento entre dois bounded contexts
+- **Estimativa**: 6h
+- **DoD**: Evento publicado e consumido com sucesso entre contextos
 
 ### 4.3 Entregáveis
 - Keycloak configurado e integrado
 - Frontend React com login funcional via OAuth 2.0
-- Kafka configurado e operacional
-- Filtro de autenticação no Gateway
+- Spring Events configurado para comunicação entre contextos
+- Filtro de autenticação no backend
 
 ### 4.4 Definição de Pronto (DoD)
 - Código revisado (Code Review)
@@ -270,48 +269,39 @@ Este documento apresenta o planejamento detalhado do projeto dividido em sprints
 
 ### 7.1 Objetivos
 - Implementar chat em tempo real
-- WebSocket + STOMP + Redis Pub/Sub
-- Integração com eventos de pedido
+- WebSocket + STOMP + Spring Simple Broker
+- Integração com eventos de pedido via Spring Events
 
 ### 7.2 User Stories
 
 **US-019: Como sistema, quero criar chat automaticamente ao criar pedido**
 - **Tarefas**:
-  - [ ] Criar Chat Service
-  - [ ] Configurar MongoDB para chat
-  - [ ] Consumir evento order.created
-  - [ ] Criar documento Chat com participantes
+  - [ ] Criar Communication Context (bounded context)
+  - [ ] Criar migration V4 (communication_schema no PostgreSQL)
+  - [ ] Consumir evento `OrderCreatedEvent` via Spring Events
+  - [ ] Criar `ChatChannel` com participantes (Loja + Cliente)
 - **Estimativa**: 12h
 - **DoD**: Chat criado automaticamente ao criar pedido
 
 **US-020: Como usuário, quero enviar e receber mensagens em tempo real**
 - **Tarefas**:
   - [ ] Configurar WebSocket + STOMP
-  - [ ] Implementar endpoint /ws/chat
-  - [ ] Criar model Message
-  - [ ] Persistir mensagens no MongoDB
-  - [ ] Implementar tópico /topic/chat/{orderId}
+  - [ ] Implementar endpoint `/ws`
+  - [ ] Criar entidade `Message` com JPA (PostgreSQL)
+  - [ ] Persistir mensagens via `MessageRepository` (JPA)
+  - [ ] Implementar tópico `/topic/chat/{orderId}`
 - **Estimativa**: 20h
 - **DoD**: Mensagens enviadas e recebidas instantaneamente
 
-**US-021: Como desenvolvedor, quero sincronizar chat entre múltiplas instâncias**
+**US-021: Como sistema, quero enviar mensagens automáticas ao mudar status**
 - **Tarefas**:
-  - [ ] Configurar Redis Pub/Sub
-  - [ ] Implementar publisher ao enviar mensagem
-  - [ ] Implementar subscriber para broadcast via WebSocket
-  - [ ] Testar com múltiplas instâncias
-- **Estimativa**: 16h
-- **DoD**: Mensagens sincronizadas entre todas as instâncias
-
-**US-022: Como sistema, quero enviar mensagens automáticas ao mudar status**
-- **Tarefas**:
-  - [ ] Consumir evento order.status.changed
-  - [ ] Gerar mensagem do sistema baseada no status
-  - [ ] Salvar e enviar via WebSocket
+  - [ ] Consumir `OrderStatusChangedEvent` via Spring Events
+  - [ ] Gerar mensagem do sistema baseada no novo status
+  - [ ] Salvar no PostgreSQL e enviar via WebSocket
 - **Estimativa**: 8h
 - **DoD**: Mensagens automáticas enviadas ao mudar status
 
-**US-023: Como operador, quero visualizar e usar o chat na interface**
+**US-022: Como operador, quero visualizar e usar o chat na interface**
 - **Tarefas**:
   - [ ] Implementar componente de Chat (React)
   - [ ] Integrar SockJS e STOMP client
@@ -321,7 +311,7 @@ Este documento apresenta o planejamento detalhado do projeto dividido em sprints
 - **Estimativa**: 20h
 - **DoD**: Chat funcional e integrado à interface de pedidos
 
-**US-024: Como sistema, quero adicionar entregador ao chat**
+**US-023: Como sistema, quero adicionar entregador ao chat**
 - **Tarefas**:
   - [ ] Consumir evento delivery.assigned
   - [ ] Adicionar entregador aos participantes do chat
@@ -330,10 +320,10 @@ Este documento apresenta o planejamento detalhado do projeto dividido em sprints
 - **DoD**: Entregador adicionado ao chat ao ser atribuído
 
 ### 7.3 Entregáveis
-- Chat Service completo com WebSocket
-- Redis Pub/Sub configurado
+- Communication Context completo com WebSocket
+- Chat persistido no PostgreSQL (JPA)
 - Interface de chat integrada
-- Mensagens automáticas funcionando
+- Mensagens automáticas via Spring Events funcionando
 
 ---
 

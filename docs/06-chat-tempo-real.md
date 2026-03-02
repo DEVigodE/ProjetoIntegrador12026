@@ -15,17 +15,17 @@ Este documento detalha a estratégia técnica para implementação do sistema de
   - Loja e Cliente: Desde a criação do pedido
   - Entregador: Adicionado quando pedido sai para entrega
 - **Mensagens em Tempo Real**: Latência < 100ms
-- **Histórico Persistente**: Todas as mensagens armazenadas no MongoDB
+- **Histórico Persistente**: Todas as mensagens armazenadas no PostgreSQL via JPA
 - **Mensagens do Sistema**: Automáticas ao mudar status do pedido
 - **Notificações Visuais**: Indicador de novas mensagens
 - **Escalabilidade**: Suporte a múltiplas instâncias do serviço
 
 ### 2.2 Desafios Técnicos
 
-1. **Multi-instância**: Como sincronizar mensagens entre múltiplas instâncias do Chat Service?
-2. **Persistência + Tempo Real**: Como garantir que mensagens sejam salvas E entregues instantaneamente?
-3. **Conexões WebSocket**: Como gerenciar milhares de conexões ativas?
-4. **Garantia de Entrega**: Como garantir que mensagens não se percam?
+1. **Persistência + Tempo Real**: Como garantir que mensagens sejam salvas E entregues instantaneamente?
+2. **Conexões WebSocket**: Como gerenciar conexões ativas simultâneas?
+3. **Garantia de Entrega**: Como garantir que mensagens não se percam?
+4. **Eventos de Pedido**: Como enviar mensagens automáticas ao mudar o status do pedido?
 
 ---
 
@@ -37,8 +37,8 @@ Este documento detalha a estratégia técnica para implementação do sistema de
 |----------------|----------------|-------------------|
 | Protocolo | WebSocket + STOMP | Bidirecional, baixa latência, padrão da indústria |
 | Backend | Spring Boot + WebSocket | Integração nativa, fácil configuração |
-| Message Broker | Redis Pub/Sub | Latência ultrabaixa, sincronização entre instâncias |
-| Persistência | MongoDB | Schema flexível, alta volumetria de escrita |
+| Message Broker | Spring Simple Broker (in-memory) | Integração nativa Spring, ideal para monolito modular |
+| Persistência | PostgreSQL (JPA) + Spring Data | Banco único, ACID, consistência total |
 | Cliente | SockJS + StompJS | Fallback automático, compatibilidade |
 
 ### 3.2 Arquitetura Detalhada
@@ -50,47 +50,43 @@ Este documento detalha a estratégia técnica para implementação do sistema de
 │  ┌──────────────────┐              ┌──────────────────┐            │
 │  │  Store Client    │              │ Customer Client  │            │
 │  │   (React App)    │              │   (Mobile App)   │            │
-│  │                  │              │                  │            │
 │  │ - SockJS Client  │              │ - SockJS Client  │            │
 │  │ - STOMP Client   │              │ - STOMP Client   │            │
 │  │ - Chat Component │              │ - Chat Component │            │
 │  └────────┬─────────┘              └────────┬─────────┘            │
 └───────────┼──────────────────────────────────┼─────────────────────┘
-            │ WS/WSS                           │
-            │ /ws/chat                         │
+            │ WS/WSS /ws/chat                  │
             │                                  │
 ┌───────────▼──────────────────────────────────▼─────────────────────┐
-│                      LOAD BALANCER                                  │
-│                 (Sticky Session Enabled)                            │
-└───────────┬──────────────────────────────────┬─────────────────────┘
-            │                                  │
-    ┌───────▼────────┐                ┌───────▼────────┐
-    │ Chat Service   │                │ Chat Service   │
-    │  Instance 1    │                │  Instance 2    │
-    │                │                │                │
-    │ WebSocket      │                │ WebSocket      │
-    │ Handler        │                │ Handler        │
-    │                │                │                │
-    │ ┌──────────────┴────────────────┴──────────────┐ │
-    │ │           Redis Pub/Sub Channel               │ │
-    │ │         (chat.messages.{orderId})             │ │
-    │ └──────────────┬────────────────┬──────────────┘ │
-    │                │                │                │
-    │          ┌─────▼──────┐   ┌─────▼──────┐        │
-    │          │  MongoDB   │   │  MongoDB   │        │
-    │          │ (Primary)  │   │ (Replica)  │        │
-    │          └────────────┘   └────────────┘        │
-    └────────────────────────────────────────────────────┘
-
-                      ┌────────────┐
-                      │   Kafka    │
-                      │  (Events)  │
-                      └─────┬──────┘
-                            │
-                    ┌───────▼────────┐
-                    │ Event Consumer │
-                    │ (Order events) │
-                    └────────────────┘
+│                  SPRING BOOT MONOLITO MODULAR                        │
+│                                                                      │
+│  ┌────────────────────────────────────────────────────────────┐    │
+│  │               WebSocket Handler (STOMP)                     │    │
+│  │  - ChatController  (@MessageMapping "/chat.send")           │    │
+│  │  - SimpMessagingTemplate  (broadcast → /topic/chat/{id})    │    │
+│  └─────────────────────────┬──────────────────────────────────┘    │
+│                             │                                        │
+│  ┌──────────────────────────▼──────────────────────────────────┐   │
+│  │              Communication Service (JPA)                      │   │
+│  │  - ChatChannelService  (abrir / fechar canais)               │   │
+│  │  - MessageService      (salvar / recuperar mensagens)        │   │
+│  └─────────────────────────┬──────────────────────────────────┘    │
+│                             │                                        │
+│  ┌──────────────────────────▼──────────────────────────────────┐   │
+│  │          Spring Events  (ApplicationEventPublisher)           │   │
+│  │  - OrderStatusChangedEvent → mensagens automáticas do sistema│   │
+│  │  - DeliveryAssignedEvent   → adiciona entregador ao canal    │   │
+│  └─────────────────────────────────────────────────────────────┘   │
+└─────────────────────────────┬───────────────────────────────────────┘
+                              │
+              ┌───────────────▼────────────────┐
+              │   PostgreSQL — communication    │
+              │   ┌─────────────────────────┐  │
+              │   │  chat_channels          │  │
+              │   │  chat_participants      │  │
+              │   │  messages               │  │
+              │   └─────────────────────────┘  │
+              └────────────────────────────────┘
 ```
 
 ---
@@ -197,200 +193,144 @@ public class WebSocketConfig implements WebSocketMessageBrokerConfigurer {
 public class ChatController {
 
     @Autowired
-    private ChatService chatService;
-
-    @Autowired
-    private RedisMessagePublisher redisPublisher;
-
-    @MessageMapping("/chat.send")
-    public void sendMessage(@Payload ChatMessageDTO messageDTO, 
-                           SimpMessageHeaderAccessor headerAccessor) {
-        
-        // 1. Get sender info from session
-        String userId = (String) headerAccessor.getSessionAttributes().get("userId");
-        
-        // 2. Build message entity
-        ChatMessage message = ChatMessage.builder()
-                .orderId(messageDTO.getOrderId())
-                .senderId(userId)
-                .senderName(messageDTO.getSenderName())
-                .senderType(messageDTO.getSenderType())
-                .content(messageDTO.getContent())
-                .messageType(MessageType.TEXT)
-                .createdAt(LocalDateTime.now())
-                .build();
-        
-        // 3. Save to MongoDB (asynchronously)
-        chatService.saveMessage(message);
-        
-        // 4. Publish to Redis Pub/Sub for multi-instance sync
-        String channel = "chat.messages." + messageDTO.getOrderId();
-        redisPublisher.publish(channel, message);
-        
-        // Note: Redis subscriber will handle WebSocket broadcast
-    }
-}
-```
-
-### 4.3 Multi-instância com Redis Pub/Sub
-
-#### **Publisher**
-
-```java
-// RedisMessagePublisher.java
-@Service
-public class RedisMessagePublisher {
-
-    @Autowired
-    private RedisTemplate<String, Object> redisTemplate;
-
-    public void publish(String channel, Object message) {
-        redisTemplate.convertAndSend(channel, message);
-    }
-}
-```
-
-#### **Subscriber**
-
-```java
-// RedisMessageSubscriber.java
-@Service
-public class RedisMessageSubscriber implements MessageListener {
+    private MessageService messageService;
 
     @Autowired
     private SimpMessagingTemplate messagingTemplate;
 
-    @Override
-    public void onMessage(Message message, byte[] pattern) {
-        // 1. Deserialize message
-        ChatMessage chatMessage = deserialize(message.getBody());
-        
-        // 2. Extract orderId from channel
-        String channel = new String(message.getChannel());
-        String orderId = channel.replace("chat.messages.", "");
-        
-        // 3. Broadcast to WebSocket subscribers
+    @MessageMapping("/chat.send")
+    public void sendMessage(@Payload ChatMessageDTO messageDTO,
+                            SimpMessageHeaderAccessor headerAccessor) {
+
+        // 1. Get sender info from session
+        String userId = (String) headerAccessor.getSessionAttributes().get("userId");
+
+        // 2. Persist message via JPA (PostgreSQL)
+        Message saved = messageService.save(Message.builder()
+                .channelId(messageDTO.getChannelId())
+                .orderId(messageDTO.getOrderId())
+                .senderId(userId)
+                .senderType(messageDTO.getSenderType())
+                .content(messageDTO.getContent())
+                .sentAt(LocalDateTime.now())
+                .build());
+
+        // 3. Broadcast directly via Spring Simple Broker
         messagingTemplate.convertAndSend(
-            "/topic/chat/" + orderId, 
-            chatMessage
-        );
-    }
-    
-    private ChatMessage deserialize(byte[] body) {
-        ObjectMapper mapper = new ObjectMapper();
-        try {
-            return mapper.readValue(body, ChatMessage.class);
-        } catch (IOException e) {
-            throw new RuntimeException("Error deserializing message", e);
-        }
+                "/topic/chat/" + messageDTO.getOrderId(),
+                saved);
     }
 }
 ```
 
-#### **Redis Configuration**
+### 4.3 Persistência JPA e Broadcast via Spring Simple Broker
 
 ```java
-// RedisConfig.java
-@Configuration
-public class RedisConfig {
+// MessageService.java
+@Service
+@Transactional
+public class MessageService {
 
-    @Bean
-    RedisMessageListenerContainer container(RedisConnectionFactory connectionFactory,
-                                           MessageListenerAdapter listenerAdapter) {
-        RedisMessageListenerContainer container = new RedisMessageListenerContainer();
-        container.setConnectionFactory(connectionFactory);
-        
-        // Subscribe to pattern (all chat channels)
-        container.addMessageListener(
-            listenerAdapter, 
-            new PatternTopic("chat.messages.*")
-        );
-        
-        return container;
+    @Autowired
+    private MessageRepository messageRepository;
+
+    @Autowired
+    private ChatChannelRepository channelRepository;
+
+    public Message save(Message message) {
+        // Validate channel exists and is active
+        ChatChannel channel = channelRepository.findById(message.getChannelId())
+                .orElseThrow(() -> new NotFoundException("Channel not found"));
+
+        if (!channel.isActive()) {
+            throw new BusinessException("Chat channel is closed");
+        }
+
+        return messageRepository.save(message);
     }
 
-    @Bean
-    MessageListenerAdapter listenerAdapter(RedisMessageSubscriber subscriber) {
-        return new MessageListenerAdapter(subscriber, "onMessage");
+    @Transactional(readOnly = true)
+    public Page<Message> getHistory(Long channelId, Pageable pageable) {
+        return messageRepository.findByChannelIdOrderBySentAtDesc(channelId, pageable);
     }
+}
+```
 
-    @Bean
-    RedisTemplate<String, Object> redisTemplate(RedisConnectionFactory connectionFactory) {
-        RedisTemplate<String, Object> template = new RedisTemplate<>();
-        template.setConnectionFactory(connectionFactory);
-        template.setKeySerializer(new StringRedisSerializer());
-        template.setValueSerializer(new GenericJackson2JsonRedisSerializer());
-        return template;
-    }
+```java
+// MessageRepository.java
+@Repository
+public interface MessageRepository extends JpaRepository<Message, Long> {
+    Page<Message> findByChannelIdOrderBySentAtDesc(Long channelId, Pageable pageable);
+    List<Message> findByChannelIdAndReadAtIsNull(Long channelId);
 }
 ```
 
 ---
 
-## 5. Integração com Kafka (Mensagens Automáticas)
+## 5. Integração com Spring Events (Mensagens Automáticas)
 
-### 5.1 Consumindo Eventos de Pedido
+### 5.1 Consumindo Eventos de Domínio
 
 ```java
-// OrderEventConsumer.java
-@Service
-public class OrderEventConsumer {
+// ChatEventListener.java
+@Component
+public class ChatEventListener {
 
     @Autowired
     private ChatService chatService;
 
-    @KafkaListener(topics = "order.status.changed", groupId = "chat-service")
+    @Autowired
+    private SimpMessagingTemplate messagingTemplate;
+
+    @TransactionalEventListener(phase = TransactionPhase.AFTER_COMMIT)
     public void handleOrderStatusChanged(OrderStatusChangedEvent event) {
-        
-        // Create system message
-        ChatMessage systemMessage = ChatMessage.builder()
+
+        // Create and persist system message
+        Message systemMessage = Message.builder()
                 .orderId(event.getOrderId())
                 .senderId("SYSTEM")
-                .senderName("Sistema")
                 .senderType(SenderType.SYSTEM)
                 .content(buildStatusMessage(event.getNewStatus()))
-                .messageType(MessageType.SYSTEM)
-                .metadata(Map.of("statusChange", event.getNewStatus()))
-                .createdAt(LocalDateTime.now())
+                .sentAt(LocalDateTime.now())
                 .build();
-        
-        // Save and broadcast
-        chatService.sendSystemMessage(systemMessage);
+
+        Message saved = chatService.sendSystemMessage(systemMessage);
+
+        // Broadcast to WebSocket subscribers
+        messagingTemplate.convertAndSend(
+                "/topic/chat/" + event.getOrderId(), saved);
     }
 
-    @KafkaListener(topics = "delivery.assigned", groupId = "chat-service")
+    @TransactionalEventListener(phase = TransactionPhase.AFTER_COMMIT)
     public void handleDeliveryAssigned(DeliveryAssignedEvent event) {
-        
-        // Add delivery person to chat
+
+        // Add delivery person to channel participants
         chatService.addParticipant(
-            event.getOrderId(),
-            event.getDeliveryPersonId(),
-            event.getDeliveryPersonName(),
-            SenderType.DELIVERY_PERSON
-        );
-        
-        // Send welcome message
-        ChatMessage welcomeMessage = ChatMessage.builder()
+                event.getOrderId(),
+                event.getDeliveryPersonId(),
+                SenderType.DELIVERY_PERSON);
+
+        // Send welcome system message
+        Message welcomeMessage = Message.builder()
                 .orderId(event.getOrderId())
                 .senderId("SYSTEM")
-                .senderName("Sistema")
                 .senderType(SenderType.SYSTEM)
                 .content(event.getDeliveryPersonName() + " entrou na conversa")
-                .messageType(MessageType.SYSTEM)
-                .createdAt(LocalDateTime.now())
+                .sentAt(LocalDateTime.now())
                 .build();
-        
-        chatService.sendSystemMessage(welcomeMessage);
+
+        Message saved = chatService.sendSystemMessage(welcomeMessage);
+        messagingTemplate.convertAndSend("/topic/chat/" + event.getOrderId(), saved);
     }
 
     private String buildStatusMessage(String status) {
         return switch (status) {
-            case "ACCEPTED" -> "✅ Pedido aceito! Estamos preparando...";
-            case "IN_PREPARATION" -> "👨‍🍳 Seu pedido está sendo preparado";
-            case "READY" -> "✅ Pedido pronto!";
+            case "ACCEPTED"         -> "✅ Pedido aceito! Estamos preparando...";
+            case "IN_PREPARATION"   -> "👨‍🍳 Seu pedido está sendo preparado";
+            case "READY"            -> "✅ Pedido pronto!";
             case "OUT_FOR_DELIVERY" -> "🚗 Pedido saiu para entrega";
-            case "DELIVERED" -> "✅ Pedido entregue! Obrigado!";
-            default -> "Status atualizado: " + status;
+            case "DELIVERED"        -> "✅ Pedido entregue! Obrigado!";
+            default                 -> "Status atualizado: " + status;
         };
     }
 }
@@ -398,83 +338,106 @@ public class OrderEventConsumer {
 
 ---
 
-## 6. Modelo de Dados (MongoDB)
+## 6. Modelo de Dados (PostgreSQL / JPA)
 
-### 6.1 Chat Document
+### 6.1 Entidade ChatChannel
 
 ```java
-// Chat.java
-@Document(collection = "chats")
+// ChatChannel.java
+@Entity
+@Table(name = "chat_channels", schema = "communication")
 @Data
 @Builder
-public class Chat {
-    
+@NoArgsConstructor
+@AllArgsConstructor
+public class ChatChannel {
+
     @Id
-    private String id;
-    
-    @Indexed(unique = true)
-    private String orderId;
-    
-    private List<Participant> participants;
-    
-    @Indexed
-    private ChatStatus status; // ACTIVE, ARCHIVED
-    
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    private Long id;
+
+    @Column(name = "order_id", nullable = false, unique = true)
+    private Long orderId;
+
+    @Column(nullable = false)
+    private boolean active;
+
+    @Column(name = "created_at", nullable = false, updatable = false)
     private LocalDateTime createdAt;
-    private LocalDateTime lastMessageAt;
-    private LocalDateTime archivedAt;
+
+    @OneToMany(mappedBy = "channel", cascade = CascadeType.ALL)
+    private List<ChatParticipant> participants;
+
+    @OneToMany(mappedBy = "channel", cascade = CascadeType.ALL)
+    private List<Message> messages;
 }
 
-// Participant.java
+// ChatParticipant.java
+@Entity
+@Table(name = "chat_participants", schema = "communication")
 @Data
 @Builder
-public class Participant {
-    private String userId;
-    private String name;
-    private SenderType type; // STORE, CUSTOMER, DELIVERY_PERSON
+@NoArgsConstructor
+@AllArgsConstructor
+public class ChatParticipant {
+
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    private Long id;
+
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "channel_id", nullable = false)
+    private ChatChannel channel;
+
+    @Column(name = "participant_id", nullable = false)
+    private Long participantId;
+
+    @Enumerated(EnumType.STRING)
+    @Column(name = "participant_type", nullable = false)
+    private SenderType participantType; // STORE, CUSTOMER, DELIVERY_PERSON
+
+    @Column(name = "joined_at", nullable = false)
     private LocalDateTime joinedAt;
 }
 ```
 
-### 6.2 Message Document
+### 6.2 Entidade Message
 
 ```java
-// ChatMessage.java
-@Document(collection = "messages")
+// Message.java
+@Entity
+@Table(name = "messages", schema = "communication")
 @Data
 @Builder
-public class ChatMessage {
-    
-    @Id
-    private String id;
-    
-    @Indexed
-    private String chatId; // Reference to Chat
-    
-    @Indexed
-    private String orderId; // For faster queries
-    
-    @Indexed
-    private String senderId;
-    private String senderName;
-    private SenderType senderType;
-    
-    private String content;
-    private MessageType messageType; // TEXT, IMAGE, SYSTEM
-    
-    private Map<String, Object> metadata; // Additional info
-    
-    private List<ReadReceipt> readBy;
-    
-    @Indexed
-    private LocalDateTime createdAt;
-}
+@NoArgsConstructor
+@AllArgsConstructor
+public class Message {
 
-// ReadReceipt.java
-@Data
-@Builder
-public class ReadReceipt {
-    private String userId;
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    private Long id;
+
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "channel_id", nullable = false)
+    private ChatChannel channel;
+
+    @Column(name = "order_id", nullable = false)
+    private Long orderId;
+
+    @Column(name = "sender_id", nullable = false)
+    private Long senderId;
+
+    @Enumerated(EnumType.STRING)
+    @Column(name = "sender_type", nullable = false)
+    private SenderType senderType; // STORE, CUSTOMER, DELIVERY_PERSON, SYSTEM
+
+    @Column(nullable = false, length = 2000)
+    private String content;
+
+    @Column(name = "sent_at", nullable = false)
+    private LocalDateTime sentAt;
+
+    @Column(name = "read_at")
     private LocalDateTime readAt;
 }
 ```
@@ -487,9 +450,9 @@ public class ReadReceipt {
 
 ```java
 // ChatService.java
-public Page<ChatMessage> getMessageHistory(String orderId, int page, int size) {
-    Pageable pageable = PageRequest.of(page, size, Sort.by("createdAt").descending());
-    return messageRepository.findByOrderId(orderId, pageable);
+public Page<Message> getMessageHistory(Long channelId, int page, int size) {
+    Pageable pageable = PageRequest.of(page, size, Sort.by("sentAt").descending());
+    return messageRepository.findByChannelIdOrderBySentAtDesc(channelId, pageable);
 }
 ```
 
@@ -501,23 +464,19 @@ public Page<ChatMessage> getMessageHistory(String orderId, int page, int size) {
 public class ChatCleanupScheduler {
 
     @Autowired
-    private ChatRepository chatRepository;
+    private ChatChannelRepository channelRepository;
 
     @Scheduled(cron = "0 0 2 * * ?") // Diariamente às 2h
-    public void archiveOldChats() {
+    @Transactional
+    public void archiveOldChannels() {
         LocalDateTime cutoffDate = LocalDateTime.now().minusDays(30);
-        
-        List<Chat> oldChats = chatRepository.findByStatusAndLastMessageAtBefore(
-            ChatStatus.ACTIVE, 
-            cutoffDate
-        );
-        
-        oldChats.forEach(chat -> {
-            chat.setStatus(ChatStatus.ARCHIVED);
-            chat.setArchivedAt(LocalDateTime.now());
-        });
-        
-        chatRepository.saveAll(oldChats);
+
+        List<ChatChannel> oldChannels = channelRepository
+                .findByActiveTrueAndCreatedAtBefore(cutoffDate);
+
+        oldChannels.forEach(channel -> channel.setActive(false));
+
+        channelRepository.saveAll(oldChannels);
     }
 }
 ```
@@ -572,30 +531,34 @@ public class RateLimitingInterceptor implements ChannelInterceptor {
 ### 8.1 Teste de Chat Service
 
 ```java
-@SpringBootTest
-@AutoConfigureMockMvc
-public class ChatServiceTest {
+@ExtendWith(MockitoExtension.class)
+public class MessageServiceTest {
 
-    @Autowired
-    private ChatService chatService;
-
-    @MockBean
+    @Mock
     private MessageRepository messageRepository;
 
+    @Mock
+    private ChatChannelRepository channelRepository;
+
+    @InjectMocks
+    private MessageService messageService;
+
     @Test
-    public void testSendMessage() {
+    public void shouldSaveMessageSuccessfully() {
         // Given
-        ChatMessage message = ChatMessage.builder()
-                .orderId("123")
-                .content("Test message")
-                .senderId("user1")
-                .build();
+        ChatChannel channel = ChatChannel.builder()
+                .id(1L).orderId(10L).active(true).build();
+        Message message = Message.builder()
+                .channelId(1L).content("Test message").senderId(99L).build();
+
+        when(channelRepository.findById(1L)).thenReturn(Optional.of(channel));
+        when(messageRepository.save(any())).thenReturn(message);
 
         // When
-        chatService.saveMessage(message);
+        messageService.save(message);
 
         // Then
-        verify(messageRepository, times(1)).save(any(ChatMessage.class));
+        verify(messageRepository, times(1)).save(any(Message.class));
     }
 }
 ```
@@ -629,22 +592,22 @@ public class ChatWebSocketTest {
         stompSession.subscribe("/topic/chat/123", new StompFrameHandler() {
             @Override
             public Type getPayloadType(StompHeaders headers) {
-                return ChatMessage.class;
+                return Message.class;
             }
 
             @Override
             public void handleFrame(StompHeaders headers, Object payload) {
-                future.complete((ChatMessage) payload);
+                future.complete((Message) payload);
             }
         });
 
-        ChatMessage message = new ChatMessage();
-        message.setOrderId("123");
+        ChatMessageDTO message = new ChatMessageDTO();
+        message.setOrderId(10L);
         message.setContent("Test");
 
         stompSession.send("/app/chat.send", message);
 
-        ChatMessage received = future.get(5, TimeUnit.SECONDS);
+        Message received = future.get(5, TimeUnit.SECONDS);
         assertThat(received.getContent()).isEqualTo("Test");
     }
 }
@@ -683,11 +646,11 @@ public class MetricsConfig {
 
 | **Conceito** | **Aplicação no Projeto** |
 |--------------|--------------------------|
-| **Publish/Subscribe** | Redis Pub/Sub para sincronização multi-instância |
-| **Event-Driven Architecture** | Kafka para eventos de pedido |
-| **Message Broker** | Redis como broker de mensagens em tempo real |
-| **Stream Processing** | Processamento de eventos de status de pedido |
-| **Message Persistence** | MongoDB para histórico de mensagens |
+| **Publish/Subscribe** | Spring Simple Broker para broadcast WebSocket |
+| **Event-Driven Architecture** | Spring Events (`ApplicationEventPublisher`) para eventos de pedido |
+| **Message Broker** | Spring Simple Broker (in-memory) nativo do Spring |
+| **Stream Processing** | `@TransactionalEventListener` processando eventos de domínio |
+| **Message Persistence** | PostgreSQL (JPA) para histórico completo de mensagens |
 
 ### 10.2 Protocolos e Padrões
 

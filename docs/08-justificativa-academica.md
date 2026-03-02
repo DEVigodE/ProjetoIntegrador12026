@@ -15,7 +15,7 @@ Este documento apresenta o alinhamento do projeto de Backoffice de Sistema de De
 | Desenvolvimento Web | 80h | 30% | Frontend React, APIs REST, Backend Spring Boot |
 | Modelagem de Interfaces de Usuário | 60h | 25% | UI/UX Design, Componentes React, Responsividade |
 | Design de Software | 80h | 25% | Arquitetura, Padrões de Projeto, Clean Code |
-| Mensageria e Streams | 60h | 20% | Kafka, WebSocket, Redis Pub/Sub, Eventos |
+| Mensageria e Streams | 60h | 20% | Spring Events, WebSocket, Domain Events |
 
 ---
 
@@ -326,7 +326,7 @@ Design Tokens:
 
 #### 5.1.1 Arquitetura de Software
 
-**Padrão Arquitetural:** Microsserviços
+**Padrão Arquitetural:** Monolito Modular com DDD
 
 **Justificativa Acadêmica:**
 Demonstra conhecimento de arquiteturas modernas, escaláveis e amplamente adotadas na indústria.
@@ -337,7 +337,7 @@ Demonstra conhecimento de arquiteturas modernas, escaláveis e amplamente adotad
 |---------------|--------------------------|
 | **Single Responsibility** | Cada microsserviço tem uma única responsabilidade |
 | **Separation of Concerns** | Camadas bem definidas (Controller, Service, Repository) |
-| **Loose Coupling** | Comunicação via eventos (Kafka) |
+| **Loose Coupling** | Comunicação via Spring Events (`ApplicationEventPublisher`) |
 | **High Cohesion** | Funcionalidades relacionadas agrupadas no mesmo serviço |
 
 #### 5.1.2 Padrões de Projeto (Design Patterns)
@@ -378,8 +378,8 @@ public class OrderService {
     private OrderRepository orderRepository;
     
     @Autowired
-    private KafkaProducer kafkaProducer;
-    
+    private ApplicationEventPublisher eventPublisher;
+
     @Transactional
     public Order acceptOrder(Long orderId) {
         Order order = orderRepository.findById(orderId)
@@ -395,8 +395,8 @@ public class OrderService {
         
         Order saved = orderRepository.save(order);
         
-        // Publicar evento
-        kafkaProducer.send("order.accepted", new OrderAcceptedEvent(saved));
+        // Publicar evento de domínio via Spring Events
+        eventPublisher.publishEvent(new OrderAcceptedEvent(saved));
         
         return saved;
     }
@@ -441,16 +441,17 @@ public class RoundRobinAssignmentStrategy implements AssignmentStrategy {
 
 ##### **6. Observer Pattern**
 
-Implementado via **Event-Driven Architecture** com Kafka:
+Implementado via **Event-Driven Architecture** com Spring Events:
 
 ```java
 // Producer (Subject)
-kafkaTemplate.send("order.created", orderEvent);
+eventPublisher.publishEvent(new OrderCreatedEvent(orderEvent));
 
 // Consumer (Observer)
-@KafkaListener(topics = "order.created")
+@TransactionalEventListener
 public void handleOrderCreated(OrderCreatedEvent event) {
     chatService.createChat(event.getOrderId());
+}
 }
 ```
 
@@ -545,11 +546,11 @@ public class OrderServiceTest {
     private OrderRepository orderRepository;
     
     @Mock
-    private KafkaProducer kafkaProducer;
-    
+    private ApplicationEventPublisher eventPublisher;
+
     @InjectMocks
     private OrderService orderService;
-    
+
     @Test
     public void shouldAcceptOrderSuccessfully() {
         // Given
@@ -566,8 +567,7 @@ public class OrderServiceTest {
         // Then
         assertEquals(OrderStatus.ACCEPTED, result.getStatus());
         assertNotNull(result.getAcceptedAt());
-        verify(kafkaProducer, times(1)).send(eq("order.accepted"), any());
-    }
+        verify(eventPublisher, times(1)).publishEvent(any(OrderAcceptedEvent.class));
     
     @Test
     public void shouldThrowExceptionWhenOrderNotFound() {
@@ -614,100 +614,90 @@ public class OrderServiceTest {
 ```
 
 **Benefícios:**
-- **Desacoplamento**: Serviços não conhecem uns aos outros diretamente
-- **Escalabilidade**: Adicionar novos consumidores sem modificar produtores
-- **Resiliência**: Falha em um serviço não afeta outros
-- **Auditoria**: Histórico completo de eventos
+- **Desacoplamento**: Bounded contexts não conhecem uns aos outros diretamente
+- **Testabilidade**: Listeners fáceis de mockar com `@Mock ApplicationEventPublisher`
+- **Consistência**: `@TransactionalEventListener` garante execução após commit
+- **Simplicidade**: Nenhuma infraestrutura externa — integrado ao Spring
 
-#### 6.1.2 Apache Kafka
+#### 6.1.2 Spring Events (Domain Events)
 
 **Conceitos Teóricos:**
-- **Tópicos**: Categorias de mensagens
-- **Partições**: Divisão de um tópico para paralelização
-- **Producers**: Publicam mensagens
-- **Consumers**: Consomem mensagens
-- **Consumer Groups**: Múltiplos consumidores trabalhando em paralelo
-- **Offset**: Posição de leitura no log
-- **Retention**: Tempo de retenção de mensagens
+- **Domain Events**: Eventos que representam algo que aconteceu no domínio
+- **ApplicationEventPublisher**: Publica eventos dentro da JVM
+- **@EventListener**: Escuta eventos síncronos
+- **@TransactionalEventListener**: Escuta eventos após commit da transação
+- **TransactionPhase.AFTER_COMMIT**: Garante que o evento só é processado se o commit ocorreu
 
 **Implementação no Projeto:**
 
-**Producer:**
+**Publisher (dentro do OrderService):**
 
 ```java
 @Service
-public class OrderEventProducer {
-    
-    @Autowired
-    private KafkaTemplate<String, OrderEvent> kafkaTemplate;
-    
-    public void publishOrderAccepted(Order order) {
-        OrderAcceptedEvent event = OrderAcceptedEvent.builder()
-                .orderId(order.getId())
-                .orderNumber(order.getOrderNumber())
-                .items(order.getItems())
-                .timestamp(LocalDateTime.now())
-                .build();
-        
-        // Key: orderId garante que eventos do mesmo pedido vão para mesma partição
-        kafkaTemplate.send("order.accepted", order.getId().toString(), event);
+@RequiredArgsConstructor
+public class OrderService {
+
+    private final OrderRepository orderRepository;
+    private final ApplicationEventPublisher eventPublisher;
+
+    @Transactional
+    public Order acceptOrder(Long orderId) {
+        Order order = orderRepository.findById(orderId)
+                .orElseThrow(() -> new NotFoundException("Order not found"));
+
+        order.setStatus(OrderStatus.ACCEPTED);
+        order.setAcceptedAt(LocalDateTime.now());
+        Order saved = orderRepository.save(order);
+
+        // Publicar evento de domínio — processado após o commit da transação
+        eventPublisher.publishEvent(new OrderAcceptedEvent(saved));
+
+        return saved;
     }
 }
 ```
 
-**Consumer:**
+**Listener (no Catalog Context):**
 
 ```java
-@Service
-public class ProductEventConsumer {
-    
-    @Autowired
-    private ProductService productService;
-    
-    @KafkaListener(
-        topics = "order.accepted",
-        groupId = "product-service",
-        containerFactory = "kafkaListenerContainerFactory"
-    )
+@Component
+@RequiredArgsConstructor
+public class OrderAcceptedListener {
+
+    private final ProductService productService;
+
+    @TransactionalEventListener(phase = TransactionPhase.AFTER_COMMIT)
     public void handleOrderAccepted(OrderAcceptedEvent event) {
-        logger.info("Received order.accepted event: {}", event.getOrderId());
-        
-        event.getItems().forEach(item -> {
-            productService.decrementStock(item.getProductId(), item.getQuantity());
-        });
-        
-        logger.info("Stock updated for order: {}", event.getOrderId());
+        event.getItems().forEach(item ->
+            productService.decrementStock(item.getProductId(), item.getQuantity()));
     }
 }
 ```
 
-**Configuração:**
+**Listener (no Communication Context):**
 
 ```java
-@Configuration
-public class KafkaConfig {
-    
-    @Bean
-    public ProducerFactory<String, OrderEvent> producerFactory() {
-        Map<String, Object> config = new HashMap<>();
-        config.put(ProducerConfig.BOOTSTRAP_SERVERS_CONFIG, "localhost:9092");
-        config.put(ProducerConfig.KEY_SERIALIZER_CLASS_CONFIG, StringSerializer.class);
-        config.put(ProducerConfig.VALUE_SERIALIZER_CLASS_CONFIG, JsonSerializer.class);
-        config.put(ProducerConfig.ACKS_CONFIG, "all"); // Garantia de entrega
-        config.put(ProducerConfig.RETRIES_CONFIG, 3); // Retry automático
-        return new DefaultKafkaProducerFactory<>(config);
+@Component
+@RequiredArgsConstructor
+public class ChatEventListener {
+
+    private final ChatService chatService;
+    private final SimpMessagingTemplate messagingTemplate;
+
+    @TransactionalEventListener(phase = TransactionPhase.AFTER_COMMIT)
+    public void handleOrderStatusChanged(OrderStatusChangedEvent event) {
+        Message systemMessage = chatService.sendSystemMessage(
+                event.getOrderId(), buildStatusMessage(event.getNewStatus()));
+        messagingTemplate.convertAndSend("/topic/chat/" + event.getOrderId(), systemMessage);
     }
-    
-    @Bean
-    public ConsumerFactory<String, OrderEvent> consumerFactory() {
-        Map<String, Object> config = new HashMap<>();
-        config.put(ConsumerConfig.BOOTSTRAP_SERVERS_CONFIG, "localhost:9092");
-        config.put(ConsumerConfig.GROUP_ID_CONFIG, "product-service");
-        config.put(ConsumerConfig.KEY_DESERIALIZER_CLASS_CONFIG, StringDeserializer.class);
-        config.put(ConsumerConfig.VALUE_DESERIALIZER_CLASS_CONFIG, JsonDeserializer.class);
-        config.put(ConsumerConfig.AUTO_OFFSET_RESET_CONFIG, "earliest"); // Ler desde o início
-        config.put(JsonDeserializer.TRUSTED_PACKAGES, "*");
-        return new DefaultKafkaConsumerFactory<>(config);
+
+    private String buildStatusMessage(String status) {
+        return switch (status) {
+            case "ACCEPTED"         -> "✅ Pedido aceito!";
+            case "OUT_FOR_DELIVERY" -> "🚗 Pedido saiu para entrega";
+            case "DELIVERED"        -> "✅ Pedido entregue! Obrigado!";
+            default -> "Status atualizado: " + status;
+        };
     }
 }
 ```
@@ -722,7 +712,7 @@ public class KafkaConfig {
 |----------------|-----------------|--------------|-------------------|
 | HTTP/REST      | Request/Response | ~100ms | APIs CRUD |
 | WebSocket      | Full-Duplex | ~10ms | Chat, Notificações |
-| Kafka          | Pub/Sub Assíncrono | ~50ms | Eventos entre serviços |
+| Spring Events  | Síncrono in-process | <1ms | Eventos entre bounded contexts |
 
 **Implementação:**
 
@@ -730,23 +720,11 @@ public class KafkaConfig {
 // Backend - Message Handler
 @MessageMapping("/chat.send")
 public void sendMessage(@Payload ChatMessageDTO message) {
-    // Save to MongoDB
-    ChatMessage saved = chatService.save(message);
+    // Save to PostgreSQL via JPA
+    Message saved = messageService.save(message);
     
-    // Publish to Redis (para sincronizar entre instâncias)
-    redisPublisher.publish("chat." + message.getOrderId(), saved);
-}
-
-// Redis Subscriber
-@Override
-public void onMessage(Message message, byte[] pattern) {
-    ChatMessage chatMsg = deserialize(message.getBody());
-    
-    // Broadcast via WebSocket
-    simpMessagingTemplate.convertAndSend(
-        "/topic/chat/" + chatMsg.getOrderId(),
-        chatMsg
-    );
+    // Broadcast directly via Spring Simple Broker
+    messagingTemplate.convertAndSend("/topic/chat/" + message.getOrderId(), saved);
 }
 ```
 
@@ -775,46 +753,26 @@ const sendMessage = (content) => {
 };
 ```
 
-#### 6.1.4 Redis Pub/Sub
+#### 6.1.4 Garantias de Entrega com Spring Events
 
-**Conceito:** Padrão de mensageria para comunicação leve e rápida entre processos.
-
-**Uso no Projeto:** Sincronizar mensagens do chat entre múltiplas instâncias do Chat Service.
-
-**Por que Redis e não Kafka para chat?**
-- **Latência ultra-baixa**: ~1ms vs ~50ms do Kafka
-- **Simplicidade**: Ideal para mensagens efêmeras (não precisa de persistência)
-- **Performance**: Otimizado para alto throughput de mensagens pequenas
-
-#### 6.1.5 Garantias de Entrega
-
-**At-Least-Once Delivery:**
+**`@TransactionalEventListener` e consistência:**
 
 ```java
-// Kafka Producer com retries e acks
-config.put(ProducerConfig.ACKS_CONFIG, "all"); // Leader + replicas
-config.put(ProducerConfig.RETRIES_CONFIG, 3); // Retry 3x
-config.put(ProducerConfig.ENABLE_IDEMPOTENCE_CONFIG, true); // Evita duplicatas
+// Garante que o listener só executa se a transação foi commitada com sucesso
+@TransactionalEventListener(phase = TransactionPhase.AFTER_COMMIT)
+public void handleOrderAccepted(OrderAcceptedEvent event) {
+    // Se a transação falhou, este código NÃO executa
+    productService.decrementStock(event.getItems());
+}
 ```
 
-**Idempotência:**
+**Idempotência via chave única:**
 
 ```java
-// Garantir que processar o mesmo evento 2x não cause problemas
-@KafkaListener(topics = "order.accepted")
-public void handleOrderAccepted(OrderAcceptedEvent event) {
-    // Verificar se já foi processado
-    if (processedOrders.contains(event.getOrderId())) {
-        logger.warn("Event already processed: {}", event.getOrderId());
-        return;
-    }
-    
-    // Processar
-    productService.decrementStock(event.getItems());
-    
-    // Marcar como processado
-    processedOrders.add(event.getOrderId());
-}
+// O banco de dados garante unicidade via constraint
+// Se o listener executar 2x, a constraint do banco previne duplicatas
+@Column(unique = true)
+private Long orderId; // em ChatChannel
 ```
 
 #### 6.1.6 Saga Pattern
@@ -850,37 +808,38 @@ Order Service         Product Service       Chat Service
 
 ```java
 @Component
-public class KafkaMetrics {
+public class ChatMetrics {
     
     private final MeterRegistry meterRegistry;
     
-    public void recordMessageSent(String topic) {
-        meterRegistry.counter("kafka.messages.sent", "topic", topic).increment();
+    public void recordMessageSent(Long orderId) {
+        meterRegistry.counter("chat.messages.sent").increment();
     }
     
-    public void recordMessageReceived(String topic, long lag) {
-        meterRegistry.counter("kafka.messages.received", "topic", topic).increment();
-        meterRegistry.gauge("kafka.consumer.lag", lag);
+    public void recordActiveConnections(int count) {
+        meterRegistry.gauge("websocket.connections.active", count);
+    }
+    
+    public void recordEventProcessed(String eventType) {
+        meterRegistry.counter("domain.events.processed", "type", eventType).increment();
     }
 }
 ```
 
 **Dashboards:**
-- Taxa de mensagens publicadas/consumidas
-- Lag dos consumers
+- Conexões WebSocket ativas
+- Mensagens enviadas/recebidas por segundo
+- Eventos de domínio processados
 - Tempo de processamento de eventos
-- Taxa de erro
 
 ### 6.3 Entregáveis para Avaliação
 
-- [ ] **Diagrama de Eventos**: Fluxo completo de eventos no sistema
-- [ ] **Configuração Kafka**: Topics, partições, replication factor
-- [ ] **Implementação de Producers e Consumers**: Código funcional
+- [ ] **Diagrama de Eventos**: Fluxo completo de Domain Events no sistema
+- [ ] **Implementação de Event Listeners**: `@TransactionalEventListener` funcional
 - [ ] **Chat em Tempo Real**: WebSocket + STOMP funcionando
-- [ ] **Sincronização Multi-instância**: Redis Pub/Sub implementado
-- [ ] **Testes de Mensageria**: Testes com Kafka Embedded ou Testcontainers
-- [ ] **Documentação de Eventos**: Schema registry ou documentação JSON
-- [ ] **Métricas**: Dashboard Grafana com métricas de Kafka
+- [ ] **Mensagens Automáticas**: Spring Events gerando mensagens ao mudar status do pedido
+- [ ] **Testes de Spring Events**: Testes unitários com `@Mock ApplicationEventPublisher`
+- [ ] **Documentação de Eventos**: Tabela com todos os Domain Events, seus produtores e consumidores
 
 ---
 
@@ -892,13 +851,13 @@ public class KafkaMetrics {
 | RF010-RF019 (Produtos) | Product Service, ProductCRUD | Desenvolvimento Web | CRUD REST, JPA |
 | RF020-RF029 (Pedidos) | Order Service, State Machine | Design de Software | State Pattern, SOLID |
 | RF030-RF036 (Entregas) | Delivery Service | Desenvolvimento Web | REST API, Relacionamentos |
-| RF040-RF048 (Chat) | Chat Service, WebSocket | Mensageria e Streams | WebSocket, STOMP, Redis |
-| RF050-RF059 (Relatórios) | Report Service | Desenvolvimento Web | Queries complexas, Aggregation |
-| RNF001-RNF005 (Performance) | Cache, Índices | Design de Software | Otimização, Redis Cache |
-| RNF010-RNF012 (Escalabilidade) | Kubernetes, Load Balancer | Design de Software | Arquitetura Microsserviços |
+| RF040-RF048 (Chat) | Chat Context, WebSocket | Mensageria e Streams | WebSocket, STOMP, Spring Simple Broker |
+| RF050-RF059 (Relatórios) | Report Context | Desenvolvimento Web | Queries complexas, Aggregation |
+| RNF001-RNF005 (Performance) | Cache, Índices | Design de Software | Otimização, connection pool |
+| RNF010-RNF012 (Escalabilidade) | Monolito Modular, Load Balancer | Design de Software | Arquitetura Modular DDD |
 | RNF030-RNF036 (Segurança) | Keycloak, JWT, HTTPS | Desenvolvimento Web | Segurança de Aplicações, IAM |
 | Interface Completa | React Frontend | Modelagem de UI | Componentes, Design System |
-| Eventos Assíncronos | Kafka | Mensageria e Streams | Event-Driven Architecture |
+| Eventos de Domínio | Spring Events (`ApplicationEventPublisher`) | Mensageria e Streams | Event-Driven Architecture |
 
 ---
 
@@ -906,9 +865,9 @@ public class KafkaMetrics {
 
 ### 8.1 Complexidade Técnica
 
-- **Arquitetura Distribuída**: 6+ microsserviços independentes
-- **Múltiplas Tecnologias**: Java, JavaScript, PostgreSQL, MongoDB, Redis, Kafka
-- **Comunicação Híbrida**: Síncrona (REST), Assíncrona (Kafka), Tempo Real (WebSocket)
+- **Arquitetura Modular**: Monolito Modular com DDD (5 Bounded Contexts)
+- **Múltiplas Tecnologias**: Java 21, JavaScript, PostgreSQL, Keycloak, Spring Events
+- **Comunicação Híbrida**: Síncrona (REST), Domáin Events (Spring Events), Tempo Real (WebSocket)
 
 ### 8.2 Aplicação Prática
 
@@ -959,9 +918,9 @@ public class KafkaMetrics {
 
 ### 9.4 Mensageria e Streams (20 pontos)
 
-- [ ] Kafka implementado (5pts)
+- [ ] Spring Events configurado (5pts)
 - [ ] WebSocket + STOMP funcionando (10pts)
-- [ ] Redis Pub/Sub (3pts)
+- [ ] Eventos de Domínio documentados (3pts)
 - [ ] Documentação de eventos (2pts)
 
 ---

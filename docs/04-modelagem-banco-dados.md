@@ -2,7 +2,7 @@
 
 ## 1. Introdução
 
-Este documento apresenta a modelagem de dados para o sistema de Backoffice de Delivery, seguindo o padrão **Database per Service** da arquitetura de microsserviços.
+Este documento apresenta a modelagem de dados para o sistema de Backoffice de Delivery, seguindo a arquitetura **Monolito Modular com DDD**, utilizando **PostgreSQL** como único banco de dados, com schemas separados por bounded context.
 
 ---
 
@@ -11,11 +11,11 @@ Este documento apresenta a modelagem de dados para o sistema de Backoffice de De
 | **Serviço** | **Banco** | **Propósito** |
 |-------------|-----------|---------------|
 | keycloak | PostgreSQL | Usuários, roles e configurações (gerenciado pelo Keycloak) |
-| product-service | PostgreSQL | Produtos, categorias e estoque |
-| order-service | PostgreSQL | Pedidos e itens |
-| delivery-service | PostgreSQL | Entregadores e entregas |
-| chat-service | MongoDB | Mensagens em tempo real |
-| report-service | PostgreSQL | Read replica para analytics |
+| catalog (schema) | PostgreSQL | Produtos, categorias e estoque |
+| orders (schema) | PostgreSQL | Pedidos e itens |
+| delivery (schema) | PostgreSQL | Entregadores e entregas |
+| communication (schema) | PostgreSQL | Canais de chat, participantes e mensagens |
+| reporting (schema) | PostgreSQL | Views materializadas para analytics |
 
 **Nota**: O Keycloak gerencia seu próprio banco de dados. Não é necessário desenvolver schema personalizado para autenticação.
 
@@ -424,79 +424,94 @@ CREATE INDEX idx_deliveries_status ON deliveries(status);
 
 ---
 
-## 7. Chat Service Database (MongoDB)
+## 7. Communication Context Database (PostgreSQL)
 
-### 7.1 Modelo de Documento
+### 7.1 Modelo Conceitual
 
-**Collection: chats**
-
-```json
-{
-  "_id": "ObjectId",
-  "orderId": "123",
-  "participants": [
-    {
-      "type": "STORE",
-      "userId": "1",
-      "name": "Loja ABC"
-    },
-    {
-      "type": "CUSTOMER",
-      "userId": "456",
-      "name": "João Silva"
-    },
-    {
-      "type": "DELIVERY_PERSON",
-      "userId": "789",
-      "name": "Carlos Entregador",
-      "joinedAt": "2026-02-12T15:30:00Z"
-    }
-  ],
-  "status": "ACTIVE",
-  "createdAt": "2026-02-12T10:00:00Z",
-  "lastMessageAt": "2026-02-12T15:45:00Z",
-  "archivedAt": null
-}
+```
+┌─────────────┐     ┌──────────────────┐     ┌────────────┐
+│ ChatChannel │───N──│ ChatParticipant │     │  ChatChannel │
+│  (1 per order)│     └──────────────────┘     │    1:N        │
+└─────────────┘                           ┬────────────┘
+                                          │
+                                    ┌─────▼─────┐
+                                    │  Message  │
+                                    └───────────┘
 ```
 
-**Collection: messages**
+### 7.2 Modelo Lógico
 
-```json
-{
-  "_id": "ObjectId",
-  "chatId": "ObjectId (ref: chats._id)",
-  "orderId": "123",
-  "senderId": "1",
-  "senderName": "Loja ABC",
-  "senderType": "STORE",
-  "content": "Seu pedido está sendo preparado!",
-  "messageType": "TEXT",
-  "metadata": {
-    "isSystemMessage": false,
-    "statusChange": null
-  },
-  "readBy": [
-    {
-      "userId": "456",
-      "readAt": "2026-02-12T15:31:00Z"
-    }
-  ],
-  "createdAt": "2026-02-12T15:30:00Z"
-}
-```
+#### **Tabela: chat_channels**
 
-### 7.2 Indexes
+| **Campo** | **Tipo** | **Restrições** | **Descrição** |
+|-----------|----------|----------------|---------------|
+| id | BIGSERIAL | PK | Identificador único |
+| order_id | BIGINT | NOT NULL, UNIQUE | Referência ao pedido |
+| active | BOOLEAN | NOT NULL, DEFAULT TRUE | Canal ativo/inativo |
+| created_at | TIMESTAMP | NOT NULL, DEFAULT NOW() | Data de criação |
 
-```javascript
-// chats collection
-db.chats.createIndex({ "orderId": 1 }, { unique: true });
-db.chats.createIndex({ "participants.userId": 1 });
-db.chats.createIndex({ "lastMessageAt": -1 });
+#### **Tabela: chat_participants**
 
-// messages collection
-db.messages.createIndex({ "chatId": 1, "createdAt": -1 });
-db.messages.createIndex({ "orderId": 1 });
-db.messages.createIndex({ "senderId": 1 });
+| **Campo** | **Tipo** | **Restrições** | **Descrição** |
+|-----------|----------|----------------|---------------|
+| id | BIGSERIAL | PK | Identificador único |
+| channel_id | BIGINT | FK(chat_channels.id), NOT NULL | Referência ao canal |
+| participant_id | VARCHAR(255) | NOT NULL | ID do participante |
+| participant_type | VARCHAR(50) | NOT NULL | STORE, CUSTOMER ou COURIER |
+| joined_at | TIMESTAMP | NOT NULL, DEFAULT NOW() | Data de entrada |
+
+#### **Tabela: messages**
+
+| **Campo** | **Tipo** | **Restrições** | **Descrição** |
+|-----------|----------|----------------|---------------|
+| id | BIGSERIAL | PK | Identificador único |
+| channel_id | BIGINT | FK(chat_channels.id), NOT NULL | Referência ao canal |
+| order_id | BIGINT | NOT NULL | ID do pedido |
+| sender_id | VARCHAR(255) | NOT NULL | ID do remetente |
+| sender_type | VARCHAR(50) | NOT NULL | STORE, CUSTOMER, COURIER, SYSTEM |
+| content | TEXT | NOT NULL | Conteúdo da mensagem |
+| sent_at | TIMESTAMP | NOT NULL, DEFAULT NOW() | Data de envio |
+| read_at | TIMESTAMP | | Data de leitura |
+
+### 7.3 Scripts DDL
+
+```sql
+-- Schema: communication
+
+CREATE TABLE chat_channels (
+    id BIGSERIAL PRIMARY KEY,
+    order_id BIGINT NOT NULL UNIQUE,
+    active BOOLEAN NOT NULL DEFAULT TRUE,
+    created_at TIMESTAMP NOT NULL DEFAULT NOW()
+);
+
+CREATE TABLE chat_participants (
+    id BIGSERIAL PRIMARY KEY,
+    channel_id BIGINT NOT NULL REFERENCES chat_channels(id),
+    participant_id VARCHAR(255) NOT NULL,
+    participant_type VARCHAR(50) NOT NULL,
+    joined_at TIMESTAMP NOT NULL DEFAULT NOW(),
+    CONSTRAINT chk_participant_type CHECK (participant_type IN ('STORE', 'CUSTOMER', 'COURIER'))
+);
+
+CREATE TABLE messages (
+    id BIGSERIAL PRIMARY KEY,
+    channel_id BIGINT NOT NULL REFERENCES chat_channels(id),
+    order_id BIGINT NOT NULL,
+    sender_id VARCHAR(255) NOT NULL,
+    sender_type VARCHAR(50) NOT NULL,
+    content TEXT NOT NULL,
+    sent_at TIMESTAMP NOT NULL DEFAULT NOW(),
+    read_at TIMESTAMP,
+    CONSTRAINT chk_sender_type CHECK (sender_type IN ('STORE', 'CUSTOMER', 'COURIER', 'SYSTEM'))
+);
+
+-- Indexes
+CREATE INDEX idx_chat_channels_order_id ON chat_channels(order_id);
+CREATE INDEX idx_chat_participants_channel_id ON chat_participants(channel_id);
+CREATE INDEX idx_messages_channel_id ON messages(channel_id);
+CREATE INDEX idx_messages_order_id ON messages(order_id);
+CREATE INDEX idx_messages_sent_at ON messages(sent_at DESC);
 ```
 
 ---
@@ -548,11 +563,14 @@ db.messages.createIndex({ "senderId": 1 });
 └──────────────────────────────────────────────────────────────────┘
 
 ┌──────────────────────────────────────────────────────────────────┐
-│                   CHAT SERVICE (MongoDB)                          │
+│               COMMUNICATION CONTEXT (PostgreSQL)                │
 ├──────────────────────────────────────────────────────────────────┤
-│  ┌───────┐  1:N  ┌──────────┐                                   │
-│  │ Chat  │───────│ Message  │                                   │
-│  └───────┘       └──────────┘                                   │
+│  ┌─────────────┐  1:N  ┌───────────┐                         │
+│  │ ChatChannel │──────│  Message  │                         │
+│  └─────────────┘       └───────────┘                         │
+│         └ 1:N ┌─────────────────┐                         │
+│              │ ChatParticipant │                         │
+│              └─────────────────┘                         │
 └──────────────────────────────────────────────────────────────────┘
 ```
 
@@ -592,7 +610,7 @@ public Product findById(Long id) {
 
 - **Frequência**: Backups diários automáticos
 - **Retenção**: 30 dias
-- **Ferramenta**: pg_dump (PostgreSQL), mongodump (MongoDB)
+- **Ferramenta**: pg_dump (PostgreSQL)
 - **Armazenamento**: S3 ou storage equivalente
 
 ### 10.2 Recovery Time Objective (RTO)

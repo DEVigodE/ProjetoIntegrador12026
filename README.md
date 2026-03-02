@@ -91,10 +91,9 @@ Sistema de backoffice (área administrativa) para gestão de operações de deli
     │              │              │
 ┌───▼────┐  ┌──────▼───────┐  ┌──▼──────┐
 │  DB    │  │   Events     │  │Keycloak │
-│Postgres│  │ (Internal    │  │  (IAM)  │
-│  +     │  │  EventBus)   │  └─────────┘
-│MongoDB │  └──────────────┘
-└────────┘
+│Postgres│  │ (Spring      │  │  (IAM)  │
+│  SQL   │  │  Events)     │  └─────────┘
+└────────┘  └──────────────┘
 ```
 
 ### Stack Tecnológica
@@ -105,9 +104,8 @@ Sistema de backoffice (área administrativa) para gestão de operações de deli
 - **Design Pattern**: Clean Architecture com Bounded Contexts
 - **Autenticação**: Keycloak (OAuth 2.0 / OpenID Connect)
 - **Segurança**: Spring Security
-- **Banco de Dados**: PostgreSQL (principal), MongoDB (chat)
-- **Cache**: Redis
-- **Mensageria**: Event Bus interno (Spring Events) + Redis Pub/Sub
+- **Banco de Dados**: PostgreSQL 15+ (esquemas separados por bounded context)
+- **Mensageria**: Spring Events (Domain Events) + `@TransactionalEventListener`
 - **Tempo Real**: WebSocket + STOMP
 - **Documentação**: OpenAPI (Swagger)
 
@@ -150,7 +148,7 @@ Toda a documentação está organizada na pasta [`docs/`](./docs/):
 
 ### Pré-requisitos
 
-- **Java**: JDK 17+
+- **Java**: JDK 21+
 - **Node.js**: v18+
 - **Docker**: v20+
 - **Docker Compose**: v2+
@@ -167,7 +165,7 @@ cd ProjetoIntegrador12026
 ### 2. Subir Infraestrutura (Docker Compose)
 
 ```bash
-# Subir PostgreSQL, MongoDB, Redis, Keycloak
+# Subir PostgreSQL e Keycloak
 docker-compose up -d
 ```
 
@@ -391,7 +389,7 @@ Este projeto está sob a licença MIT. Veja o arquivo [LICENSE](./LICENSE) para 
 
 - [Spring Boot Documentation](https://spring.io/projects/spring-boot)
 - [React Documentation](https://react.dev/)
-- [Apache Kafka Documentation](https://kafka.apache.org/documentation/)
+- [Spring Events Documentation](https://docs.spring.io/spring-framework/reference/core/beans/context-introduction.html#context-functionality-events)
 - [Kubernetes Documentation](https://kubernetes.io/docs/)
 - [Material-UI](https://mui.com/)
 

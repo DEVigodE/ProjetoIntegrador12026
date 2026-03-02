@@ -57,11 +57,8 @@ Este documento apresenta a arquitetura do sistema de Backoffice para Delivery, b
 │  │                                                                  │ │
 │  │   ┌─────────────────────────────────────────────────────────┐  │ │
 │  │   │          PostgreSQL (Single Database Instance)          │  │ │
-│  │   │  - Schema: catalog, orders, delivery, reporting         │  │ │
-│  │   └─────────────────────────────────────────────────────────┘  │ │
-│  │                                                                  │ │
-│  │   ┌─────────────────────────────────────────────────────────┐  │ │
-│  │   │              MongoDB (Chat Messages)                     │  │ │
+│  │   │  - Schema: catalog, orders, delivery, communication,    │  │ │
+│  │   │            reporting                                    │  │ │
 │  │   └─────────────────────────────────────────────────────────┘  │ │
 │  └──────────────────────────────────────────────────────────────────┘ │
 └───────────────────────────────────────────────────────────────────────┘
@@ -131,7 +128,7 @@ Este documento apresenta a arquitetura do sistema de Backoffice para Delivery, b
   - `Message`: Mensagem individual com remetente, conteúdo, timestamp
 - **Value Objects**: `ParticipantType`, `MessageStatus`, `Participant`
 - **Domain Events**: `ChatChannelCreated`, `MessageSent`, `MessageRead`
-- **Tecnologia**: WebSocket + STOMP, MongoDB para persistir mensagens
+- **Tecnologia**: WebSocket + STOMP, PostgreSQL (JPA) para persistir mensagens
 - **Endpoints WebSocket**:
   - `WS /ws` - Conexão WebSocket
   - `/app/chat/{orderId}/send` - Enviar mensagem
@@ -225,8 +222,7 @@ Este documento apresenta a arquitetura do sistema de Backoffice para Delivery, b
 │  │                                                                    │ │
 │  │  ┌──────────────────────────────────────────────────────────────┐  │ │
 │  │  │              Repository Implementations                      │  │ │
-│  │  │  • JPA Repositories (PostgreSQL)                             │  │ │
-│  │  │  • MongoDB Repositories (Chat)                               │  │ │
+│  │  │  • JPA Repositories (PostgreSQL — todos os contextos)         │  │ │
 │  │  └──────────────────────────────────────────────────────────────┘  │ │
 │  │                                                                    │ │
 │  │  ┌──────────────────────────────────────────────────────────────┐  │ │
@@ -251,17 +247,11 @@ Este documento apresenta a arquitetura do sistema de Backoffice para Delivery, b
 │  │           PostgreSQL 15+ (Single Database Instance)            │     │
 │  │                                                                │     │
 │  │   Schemas (Logical Separation):                                │     │
-│  │   • catalog_schema   - Products, Categories, Stock             │     │
-│  │   • orders_schema    - Orders, Order Items                     │     │
-│  │   • delivery_schema  - Couriers, Deliveries                    │     │
-│  │   • reporting_schema - Materialized Views, Analytics           │     │
-│  └────────────────────────────────────────────────────────────────┘     │
-│                                                                         │
-│  ┌────────────────────────────────────────────────────────────────┐     │
-│  │              MongoDB 6+ (Document Database)                    │     │
-│  │   Collections:                                                 │     │
-│  │   • chat_channels  - Chat metadata                             │     │
-│  │   • messages       - Chat messages (time-series)               │     │
+│  │   • catalog_schema        - Products, Categories, Stock        │     │
+│  │   • orders_schema         - Orders, Order Items                │     │
+│  │   • delivery_schema       - Couriers, Deliveries               │     │
+│  │   • communication_schema  - Chat Channels, Participants, Msgs  │     │
+│  │   • reporting_schema      - Materialized Views, Analytics      │     │
 │  └────────────────────────────────────────────────────────────────┘     │
 └─────────────────────────────────────────────────────────────────────────┘
 
@@ -439,7 +429,7 @@ public class OrderEventListener {
 - Method-level security com `@PreAuthorize`
 
 **4. Configuration**:
-- Configuração de datasources (PostgreSQL, MongoDB)
+- Configuração de datasource (PostgreSQL)
 - Configuração de WebSocket, CORS, etc.
 - Integration com Keycloak
 
@@ -594,7 +584,7 @@ public class ChatEventListener {
 3. Cliente se inscreve no tópico `/topic/chat/{orderId}` para receber mensagens
 4. Quando mensagem é enviada ao `/app/chat/{orderId}/send`:
    - Backend valida permissão do usuário
-   - Salva mensagem no MongoDB
+   - Salva mensagem no PostgreSQL via JPA
    - Publica para todos os clientes subscritos em `/topic/chat/{orderId}`
 5. Todos os clientes conectados ao tópico recebem a mensagem instantaneamente
 
@@ -628,7 +618,7 @@ public class ChatWebSocketController {
     public void sendMessage(@DestinationVariable String orderId, 
                           ChatMessageDTO message,
                           Principal principal) {
-        // Salva no MongoDB
+        // Salva no PostgreSQL via JPA
         Message savedMessage = chatService.saveMessage(orderId, message, principal.getName());
         
         // Publica para todos os clientes subscritos
@@ -644,7 +634,7 @@ public class ChatWebSocketController {
 - **In-memory broker**: Simple broker do Spring para aplicação monolítica
 - **Bidirecional**: Cliente e servidor podem iniciar comunicação
 - **Autenticação**: JWT token validado no handshake WebSocket
-- **Persistência**: Mensagens salvas em MongoDB para histórico
+- **Persistência**: Mensagens salvas em PostgreSQL (JPA) para histórico
 - **Escalável**: Para múltiplas instâncias, pode-se adicionar Redis broker futuramente
 
 ---
@@ -754,7 +744,7 @@ O monolito utiliza uma única instância PostgreSQL com schemas separados por bo
 | Catalog Context | PostgreSQL (schema: catalog) | Dados relacionais de produtos, categorias e estoque |
 | Orders Context | PostgreSQL (schema: orders) | Transações ACID, integridade referencial de pedidos |
 | Delivery Context | PostgreSQL (schema: delivery) | Dados relacionais de entregadores e entregas |
-| Communication Context | MongoDB (database: chat) | Documentos flexíveis, alto volume de mensagens em tempo real |
+| Communication Context | PostgreSQL (schema: communication) | Dados relacionais de chat (canais, participantes, mensagens) com JPA |
 | Reporting Context | PostgreSQL (schema: reporting) | Views materializadas para queries analíticas de leitura |
 | Identity (Externo) | Keycloak (PostgreSQL próprio) | Gerenciado pelo próprio Keycloak |
 
@@ -925,13 +915,13 @@ public class OrderService {
 ### 10.2 Dockerfile Exemplo
 
 ```dockerfile
-FROM maven:3.9-eclipse-temurin-17-alpine AS build
+FROM maven:3.9-eclipse-temurin-21-alpine AS build
 WORKDIR /app
 COPY pom.xml .
 COPY src ./src
 RUN mvn clean package -DskipTests
 
-FROM eclipse-temurin:17-jre-alpine
+FROM eclipse-temurin:21-jre-alpine
 WORKDIR /app
 COPY --from=build /app/target/delivery-backoffice.jar app.jar
 EXPOSE 8080
@@ -955,15 +945,8 @@ services:
     volumes:
       - postgres_data:/var/lib/postgresql/data
 
-  mongodb:
-    image: mongo:7
-    ports:
-      - "27017:27017"
-    volumes:
-      - mongo_data:/data/db
-
   keycloak:
-    image: quay.io/keycloak/keycloak:23.0
+    image: quay.io/keycloak/keycloak:24.0
     command: start-dev
     environment:
       KEYCLOAK_ADMIN: admin
@@ -978,16 +961,13 @@ services:
     environment:
       SPRING_PROFILES_ACTIVE: production
       SPRING_DATASOURCE_URL: jdbc:postgresql://postgres:5432/delivery
-      SPRING_DATA_MONGODB_URI: mongodb://mongodb:27017/chat
       SPRING_SECURITY_OAUTH2_RESOURCESERVER_JWT_ISSUER_URI: http://keycloak:8080/realms/delivery
     depends_on:
       - postgres
-      - mongodb
       - keycloak
 
 volumes:
   postgres_data:
-  mongo_data:
 ```
 
 ---
@@ -1072,7 +1052,7 @@ server {
 | **Spring Events** | Comunicação interna eficiente, transaction-aware, simplicidade | Event Store externo (complexidade desnecessária) |
 | **WebSocket + STOMP** | Bidirecional, baixa latência, padrão da indústria | Server-Sent Events (unidirecional) |
 | **PostgreSQL (schemas)** | ACID, schemas isolados por contexto, transações cross-schema | Bancos separados (overhead operacional) |
-| **MongoDB (chat)** | Escrita rápida, schema flexível, alta volumetria | PostgreSQL+JSONB (mais sobrecarga) |
+| **PostgreSQL para chat** | Banco único, ACID, sem overhead operacional extra, JPA nativo | MongoDB (complexidade adicional sem ganho real neste contexto) |
 | **Docker Compose** | Simplicidade para deploy de monolito, fácil desenvolvimento local | Kubernetes (excesso de complexidade) |
 | **React** | Componentização, ecossistema rico, demanda de mercado | Vue, Angular (menos adoção) |
 
