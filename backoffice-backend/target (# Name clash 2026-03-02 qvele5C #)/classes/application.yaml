@@ -44,7 +44,4 @@ springdoc:
     operations-sorter: method
     tags-sorter: alpha
     display-request-duration: true
-    oauth:
-      client-id: backoffice-webapp
-      use-pkce-with-authorization-code-grant: true
 

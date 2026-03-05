@@ -1,11 +1,11 @@
 # 🚚 Logdash Backoffice - Sistema de Delivery
 
-![Logo](./logo.png)
+![Logo](./Logo.png)
 
 ![Status](https://img.shields.io/badge/Status-Em%20Desenvolvimento-yellow)
 ![License](https://img.shields.io/badge/License-MIT-blue)
-![Java](https://img.shields.io/badge/Java-17-orange)
-![Spring Boot](https://img.shields.io/badge/Spring%20Boot-3.x-brightgreen)
+![Java](https://img.shields.io/badge/Java-21-red)
+![Spring Boot](https://img.shields.io/badge/Spring%20Boot-4.0.3-brightgreen)
 ![React](https://img.shields.io/badge/React-18-blue)
 ![DDD](https://img.shields.io/badge/Architecture-DDD-purple)
 
@@ -103,7 +103,7 @@ Sistema de backoffice (área administrativa) para gestão de operações de deli
 #### Backend
 
 - **Arquitetura**: Domain-Driven Design (DDD) - Monolito Modular
-- **Framework**: Spring Boot 3.x
+- **Framework**: Spring Boot 4.0.3
 - **Design Pattern**: Clean Architecture com Bounded Contexts
 - **Autenticação**: Keycloak (OAuth 2.0 / OpenID Connect)
 - **Segurança**: Spring Security
