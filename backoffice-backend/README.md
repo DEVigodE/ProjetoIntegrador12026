@@ -125,6 +125,59 @@ A aplicação estará disponível em `http://localhost:8081`.
 - **Enviar**: `/app/chat/{orderId}/send`
 - **Receber**: `/topic/chat/{orderId}`
 
+## Autenticação (Login)
+
+Para obter um token de acesso, faça uma requisição `POST` ao Keycloak:
+
+**URL:**
+```
+POST http://localhost:8080/realms/logdash/protocol/openid-connect/token
+```
+
+**Headers:**
+```
+Content-Type: application/x-www-form-urlencoded
+```
+
+**Body (x-www-form-urlencoded):**
+
+| Campo           | Valor               |
+|-----------------|----------------------|
+| `grant_type`    | `password`           |
+| `client_id`     | `auth-service`       |
+| `client_secret` | `lZhH1OGMQaoKlgwFJYP6teazLZ9KzgY6` |
+| `username`      | `igorobm`            |
+| `password`      | `123456`             |
+
+**Exemplo com cURL:**
+```bash
+curl -X POST http://localhost:8080/realms/logdash/protocol/openid-connect/token \
+  -H "Content-Type: application/x-www-form-urlencoded" \
+  -d "grant_type=password" \
+  -d "client_id=auth-service" \
+  -d "client_secret=lZhH1OGMQaoKlgwFJYP6teazLZ9KzgY6" \
+  -d "username=igorobm" \
+  -d "password=123456"
+```
+
+**Resposta (JSON):**
+```json
+{
+  "access_token": "eyJhbGciOiJSUzI1NiIsInR5cCI...",
+  "expires_in": 300,
+  "refresh_expires_in": 1800,
+  "refresh_token": "eyJhbGciOiJIUzUxMiIsInR5cCI...",
+  "token_type": "Bearer",
+  "scope": "profile email"
+}
+```
+
+Utilize o `access_token` retornado como **Bearer Token** no header `Authorization` das requisições à API:
+
+```
+Authorization: Bearer <access_token>
+```
+
 ## Roles
 
 | Role       | Acesso                                     |
