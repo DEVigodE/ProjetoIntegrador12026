@@ -8,6 +8,7 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.http.ResponseEntity;
+import org.springdoc.core.annotations.ParameterObject;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
@@ -23,7 +24,7 @@ public class OrderController {
     @GetMapping
     public Page<OrderResponse> listOrders(
             @RequestParam(required = false) OrderStatus status,
-            Pageable pageable) {
+            @ParameterObject Pageable pageable) {
         return orderService.listOrders(status, pageable);
     }
 
@@ -39,7 +40,7 @@ public class OrderController {
     }
 
     @GetMapping("/active")
-    public Page<OrderResponse> getActiveOrders(Pageable pageable) {
+    public Page<OrderResponse> getActiveOrders(@ParameterObject Pageable pageable) {
         return orderService.getActiveOrders(pageable);
     }
 

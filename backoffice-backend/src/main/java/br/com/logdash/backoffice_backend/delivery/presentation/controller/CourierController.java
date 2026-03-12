@@ -10,6 +10,7 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
+import org.springdoc.core.annotations.ParameterObject;
 
 import java.util.List;
 
@@ -21,7 +22,7 @@ public class CourierController {
     private final DeliveryApplicationService deliveryService;
 
     @GetMapping
-    public Page<CourierResponse> listCouriers(Pageable pageable) {
+    public Page<CourierResponse> listCouriers(@ParameterObject Pageable pageable) {
         return deliveryService.listCouriers(pageable);
     }
 

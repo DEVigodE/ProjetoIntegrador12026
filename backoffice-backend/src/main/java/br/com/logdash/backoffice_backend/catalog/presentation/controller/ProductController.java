@@ -9,6 +9,7 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
+import org.springdoc.core.annotations.ParameterObject;
 
 import java.util.List;
 import java.util.Map;
@@ -26,7 +27,7 @@ public class ProductController {
     public Page<ProductResponse> listProducts(
             @RequestParam(required = false) Long categoryId,
             @RequestParam(required = false) String name,
-            Pageable pageable) {
+            @ParameterObject Pageable pageable) {
         return productService.listProducts(categoryId, name, pageable);
     }
 

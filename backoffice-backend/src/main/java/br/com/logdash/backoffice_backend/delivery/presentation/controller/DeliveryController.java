@@ -10,6 +10,7 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
+import org.springdoc.core.annotations.ParameterObject;
 
 import java.util.Map;
 
@@ -35,7 +36,7 @@ public class DeliveryController {
     }
 
     @GetMapping("/active")
-    public Page<DeliveryResponse> getActiveDeliveries(Pageable pageable) {
+    public Page<DeliveryResponse> getActiveDeliveries(@ParameterObject Pageable pageable) {
         return deliveryService.getActiveDeliveries(pageable);
     }
 }

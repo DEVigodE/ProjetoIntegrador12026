@@ -1,0 +1,23 @@
+{
+  "permissions": {
+    "allow": [
+      "WebFetch(domain:openspec.dev)",
+      "Bash(npm install:*)",
+      "Bash(cd \"C:\\\\Users\\\\igor.bittencourt\\\\Proton Drive\\\\igorobm\\\\My files\\\\repo\\\\ProjetoIntegrador12026\\\\backoffice-frontend\" && openspec init --tools claude)",
+      "Bash(cd \"C:\\\\Users\\\\igor.bittencourt\\\\Proton Drive\\\\igorobm\\\\My files\\\\repo\\\\ProjetoIntegrador12026\\\\backoffice-frontend\" && openspec instructions specs --change \"setup-boilerplate-vite-react-tailwind-keycloak\" --json)",
+      "Bash(cd \"C:\\\\Users\\\\igor.bittencourt\\\\Proton Drive\\\\igorobm\\\\My files\\\\repo\\\\ProjetoIntegrador12026\\\\backoffice-frontend\" && openspec status --change \"setup-boilerplate-vite-react-tailwind-keycloak\" --json)",
+      "Bash(cd \"C:\\\\Users\\\\igor.bittencourt\\\\Proton Drive\\\\igorobm\\\\My files\\\\repo\\\\ProjetoIntegrador12026\\\\backoffice-frontend\" && openspec instructions tasks --change \"setup-boilerplate-vite-react-tailwind-keycloak\" --json)",
+      "Bash(cd \"C:\\\\Users\\\\igor.bittencourt\\\\Proton Drive\\\\igorobm\\\\My files\\\\repo\\\\ProjetoIntegrador12026\\\\backoffice-frontend\" && openspec status --change \"setup-boilerplate-vite-react-tailwind-keycloak\")",
+      "Bash(cd \"C:\\\\Users\\\\igor.bittencourt\\\\Proton Drive\\\\igorobm\\\\My files\\\\repo\\\\ProjetoIntegrador12026\\\\backoffice-frontend\" && openspec instructions apply --change \"setup-boilerplate-vite-react-tailwind-keycloak\" --json)",
+      "Bash(cd \"C:\\\\Users\\\\igor.bittencourt\\\\Proton Drive\\\\igorobm\\\\My files\\\\repo\\\\ProjetoIntegrador12026\" && npm create vite@latest backoffice-frontend-tmp -- --template react-ts)",
+      "Bash(cd \"C:\\\\Users\\\\igor.bittencourt\\\\Proton Drive\\\\igorobm\\\\My files\\\\repo\\\\ProjetoIntegrador12026\" && cp -r backoffice-frontend-tmp/* backoffice-frontend/ && cp backoffice-frontend-tmp/.gitignore backoffice-frontend/ 2>/dev/null; cp backoffice-frontend-tmp/tsconfig*.json backoffice-frontend/ 2>/dev/null; rm -rf backoffice-frontend-tmp)",
+      "Bash(cd \"C:\\\\Users\\\\igor.bittencourt\\\\Proton Drive\\\\igorobm\\\\My files\\\\repo\\\\ProjetoIntegrador12026\\\\backoffice-frontend/src\" && mkdir -p config routes layouts components/ui components/layout components/shared features/dashboard features/catalog features/orders features/delivery features/chat features/reports features/settings store services utils)",
+      "Bash(cd \"C:\\\\Users\\\\igor.bittencourt\\\\Proton Drive\\\\igorobm\\\\My files\\\\repo\\\\ProjetoIntegrador12026\\\\backoffice-frontend/src\" && for dir in routes layouts components/ui components/layout components/shared features/dashboard features/catalog features/orders features/delivery features/chat features/reports features/settings store services utils; do touch \"$dir/.gitkeep\"; done)",
+      "Bash(cd \"C:\\\\Users\\\\igor.bittencourt\\\\Proton Drive\\\\igorobm\\\\My files\\\\repo\\\\ProjetoIntegrador12026\\\\backoffice-frontend/src\" && rm -f App.css && rm -rf assets && ls)",
+      "Bash(cd \"C:\\\\Users\\\\igor.bittencourt\\\\Proton Drive\\\\igorobm\\\\My files\\\\repo\\\\ProjetoIntegrador12026\\\\backoffice-frontend\" && npx tsc --noEmit 2>&1 | head -30)",
+      "Bash(cd \"C:\\\\Users\\\\igor.bittencourt\\\\Proton Drive\\\\igorobm\\\\My files\\\\repo\\\\ProjetoIntegrador12026\\\\backoffice-frontend\" && timeout 10 npx vite --host 2>&1 || true)",
+      "Bash(cd \"C:\\\\Users\\\\igor.bittencourt\\\\Proton Drive\\\\igorobm\\\\My files\\\\repo\\\\ProjetoIntegrador12026\\\\backoffice-frontend/openspec/specs\" && mkdir -p keycloak-auth role-based-access routing layout ui-components catalog-management order-management delivery-management real-time-chat order-notifications reports-dashboard settings error-handling)",
+      "Bash(cp -r \"C:\\\\Users\\\\igor.bittencourt\\\\Proton Drive\\\\igorobm\\\\My files\\\\repo\\\\ProjetoIntegrador12026\\\\backoffice-frontend\\\\.claude\\\\commands\" \"C:\\\\Users\\\\igor.bittencourt\\\\Proton Drive\\\\igorobm\\\\My files\\\\repo\\\\ProjetoIntegrador12026\\\\.claude/\" && cp -r \"C:\\\\Users\\\\igor.bittencourt\\\\Proton Drive\\\\igorobm\\\\My files\\\\repo\\\\ProjetoIntegrador12026\\\\backoffice-frontend\\\\.claude\\\\skills\" \"C:\\\\Users\\\\igor.bittencourt\\\\Proton Drive\\\\igorobm\\\\My files\\\\repo\\\\ProjetoIntegrador12026\\\\.claude/\")"
+    ]
+  }
+}
