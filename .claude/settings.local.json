@@ -28,7 +28,9 @@
       "Bash(cd \"/c/Users/igor.bittencourt/Proton Drive/igorobm/My files/repo/ProjetoIntegrador12026\" && openspec status --change \"add-ui-components\" --json)",
       "Bash(cd \"/c/Users/igor.bittencourt/Proton Drive/igorobm/My files/repo/ProjetoIntegrador12026\" && openspec instructions design --change \"add-ui-components\" --json)",
       "Bash(cd \"/c/Users/igor.bittencourt/Proton Drive/igorobm/My files/repo/ProjetoIntegrador12026\" && openspec instructions specs --change \"add-ui-components\" --json)",
-      "Bash(cd \"/c/Users/igor.bittencourt/Proton Drive/igorobm/My files/repo/ProjetoIntegrador12026\" && openspec instructions tasks --change \"add-ui-components\" --json)"
+      "Bash(cd \"/c/Users/igor.bittencourt/Proton Drive/igorobm/My files/repo/ProjetoIntegrador12026\" && openspec instructions tasks --change \"add-ui-components\" --json)",
+      "Bash(openspec instructions:*)",
+      "Bash(openspec status:*)"
     ]
   }
 }
