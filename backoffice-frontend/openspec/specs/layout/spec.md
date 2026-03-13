@@ -5,18 +5,30 @@ Layout principal da aplicacao com Sidebar, Header e area de conteudo.
 ## Requirements
 
 ### Requirement: MainLayout com tres areas
-O sistema SHALL ter um `MainLayout` composto por Sidebar fixa a esquerda, Header no topo e area de conteudo principal que renderiza a pagina ativa via `<Outlet />` do React Router.
+O sistema SHALL ter um `MainLayout` composto por Sidebar fixa a esquerda, Header no topo e area de conteudo principal que renderiza a pagina ativa via `<Outlet />` do React Router. O MainLayout SHALL ser usado como layout route no React Router, envolvendo todas as rotas autenticadas.
 
 #### Scenario: Layout renderiza corretamente
 - **WHEN** o usuario esta autenticado e acessa qualquer pagina
 - **THEN** o Sidebar e exibido a esquerda, o Header no topo e o conteudo da pagina no centro/direita
 
+#### Scenario: Layout usa Outlet do React Router
+- **WHEN** o usuario navega entre paginas
+- **THEN** apenas o conteudo dentro do `<Outlet />` muda, enquanto Sidebar e Header permanecem fixos
+
 ### Requirement: Sidebar com navegacao por role
-O sistema SHALL exibir um menu lateral (`Sidebar`) com fundo `slate-800`, texto branco, e item ativo destacado com cor `primary-500`. Os itens do menu SHALL ser filtrados pela role do usuario.
+O sistema SHALL exibir um menu lateral (`Sidebar`) com fundo `slate-800`, texto branco, e item ativo destacado com cor `primary-500`. Os itens do menu SHALL ser filtrados pela role do usuario. Os itens de navegacao SHALL ser definidos como uma configuracao estatica com `{ path, label, roles }` e filtrados em tempo de renderizacao.
 
 #### Scenario: Itens do menu para ADMIN
 - **WHEN** um usuario ADMIN visualiza o Sidebar
 - **THEN** ele ve: Dashboard, Pedidos, Produtos, Entregadores, Entregas, Relatorios, Configuracoes, Sair
+
+#### Scenario: Itens do menu para OPERATOR
+- **WHEN** um usuario OPERATOR visualiza o Sidebar
+- **THEN** ele ve: Dashboard, Pedidos, Produtos, Sair
+
+#### Scenario: Itens do menu para DISPATCHER
+- **WHEN** um usuario DISPATCHER visualiza o Sidebar
+- **THEN** ele ve: Entregadores, Entregas, Sair
 
 #### Scenario: Item ativo destacado
 - **WHEN** o usuario esta na pagina `/products`

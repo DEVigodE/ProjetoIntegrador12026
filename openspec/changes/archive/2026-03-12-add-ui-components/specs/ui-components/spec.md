@@ -1,8 +1,4 @@
-# UI Components
-
-Componentes genericos reutilizaveis da biblioteca interna de UI.
-
-## Requirements
+## ADDED Requirements
 
 ### Requirement: Button
 O sistema SHALL ter um componente `Button` reutilizavel com variantes (primary, secondary, danger), tamanhos (sm, md, lg), estado loading com spinner e suporte a `disabled`.

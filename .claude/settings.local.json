@@ -20,7 +20,15 @@
       "Bash(cp -r \"C:\\\\Users\\\\igor.bittencourt\\\\Proton Drive\\\\igorobm\\\\My files\\\\repo\\\\ProjetoIntegrador12026\\\\backoffice-frontend\\\\.claude\\\\commands\" \"C:\\\\Users\\\\igor.bittencourt\\\\Proton Drive\\\\igorobm\\\\My files\\\\repo\\\\ProjetoIntegrador12026\\\\.claude/\" && cp -r \"C:\\\\Users\\\\igor.bittencourt\\\\Proton Drive\\\\igorobm\\\\My files\\\\repo\\\\ProjetoIntegrador12026\\\\backoffice-frontend\\\\.claude\\\\skills\" \"C:\\\\Users\\\\igor.bittencourt\\\\Proton Drive\\\\igorobm\\\\My files\\\\repo\\\\ProjetoIntegrador12026\\\\.claude/\")",
       "Bash(cd \"/c/Users/igor.bittencourt/Proton Drive/igorobm/My files/repo/ProjetoIntegrador12026\" && openspec new change \"add-layout-and-routing\" 2>&1)",
       "Bash(cd \"/c/Users/igor.bittencourt/Proton Drive/igorobm/My files/repo/ProjetoIntegrador12026\" && openspec status --change \"add-layout-and-routing\" --json 2>&1)",
-      "Bash(cd \"/c/Users/igor.bittencourt/Proton Drive/igorobm/My files/repo/ProjetoIntegrador12026\" && openspec instructions tasks --change \"add-layout-and-routing\" --json 2>&1)"
+      "Bash(cd \"/c/Users/igor.bittencourt/Proton Drive/igorobm/My files/repo/ProjetoIntegrador12026\" && openspec instructions tasks --change \"add-layout-and-routing\" --json 2>&1)",
+      "Bash(cd \"/c/Users/igor.bittencourt/Proton Drive/igorobm/My files/repo/ProjetoIntegrador12026/backoffice-frontend\" && npm run build 2>&1)",
+      "Bash(cd \"C:\\\\Users\\\\igor.bittencourt\\\\Proton Drive\\\\igorobm\\\\My files\\\\repo\\\\ProjetoIntegrador12026\\\\backoffice-frontend\" && npm run dev)",
+      "Bash(timeout 5 cat \"C:\\\\Users\\\\IGOR~1.BIT\\\\AppData\\\\Local\\\\Temp\\\\claude\\\\C--Users-igor-bittencourt-Proton-Drive-igorobm-My-files-repo-ProjetoIntegrador12026\\\\431f0ac8-23fd-4b26-802d-3af717095f6f\\\\tasks\\\\bg1isjked.output\" 2>/dev/null || true)",
+      "Bash(cd \"/c/Users/igor.bittencourt/Proton Drive/igorobm/My files/repo/ProjetoIntegrador12026\" && openspec instructions proposal --change \"add-ui-components\" --json)",
+      "Bash(cd \"/c/Users/igor.bittencourt/Proton Drive/igorobm/My files/repo/ProjetoIntegrador12026\" && openspec status --change \"add-ui-components\" --json)",
+      "Bash(cd \"/c/Users/igor.bittencourt/Proton Drive/igorobm/My files/repo/ProjetoIntegrador12026\" && openspec instructions design --change \"add-ui-components\" --json)",
+      "Bash(cd \"/c/Users/igor.bittencourt/Proton Drive/igorobm/My files/repo/ProjetoIntegrador12026\" && openspec instructions specs --change \"add-ui-components\" --json)",
+      "Bash(cd \"/c/Users/igor.bittencourt/Proton Drive/igorobm/My files/repo/ProjetoIntegrador12026\" && openspec instructions tasks --change \"add-ui-components\" --json)"
     ]
   }
 }
