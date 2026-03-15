@@ -11,26 +11,39 @@ O sistema SHALL usar TanStack Query com `refetchInterval: 10_000` no hook `useAc
 - **WHEN** 10 segundos se passam desde a ultima consulta
 - **THEN** `GET /api/orders/active` e chamado novamente automaticamente
 
-### Requirement: Deteccao de novos pedidos PENDING
-O sistema SHALL comparar o array retornado pelo polling com o estado anterior para detectar novos pedidos com status PENDING.
+### Requirement: Hook useOrderNotifications
+O sistema SHALL implementar `useOrderNotifications(orders)` em `features/orders/hooks/useOrderNotifications.ts` que:
+1. Recebe o array de pedidos ativos do polling
+2. Usa `useRef` para armazenar IDs de pedidos PENDING da ultima consulta
+3. Compara com os IDs PENDING atuais para detectar novos
+4. Para cada novo pedido PENDING: incrementa `orderNotificationStore` e dispara toast via React Toastify
+5. Retorna `hasNewOrders: boolean` (flag para AudioAlert, auto-reset apos 1s)
 
 #### Scenario: Novo pedido detectado
-- **WHEN** o polling retorna um pedido PENDING que nao existia na consulta anterior
-- **THEN** o sistema dispara as notificacoes (toast + som + badge)
+- **WHEN** o polling retorna um pedido PENDING com ID que nao existia na consulta anterior
+- **THEN** o store incrementa, toast e exibido e hasNewOrders retorna true
 
-### Requirement: Toast de notificacao
-O sistema SHALL disparar um toast visual via React Toastify (posicao top-right) quando um novo pedido PENDING e detectado.
+#### Scenario: Sem novos pedidos
+- **WHEN** o polling retorna os mesmos pedidos PENDING
+- **THEN** hasNewOrders retorna false e nenhuma notificacao e disparada
 
-#### Scenario: Toast exibido
-- **WHEN** um novo pedido PENDING e detectado
-- **THEN** um toast e exibido no canto superior direito com informacoes do pedido
+#### Scenario: Primeiro carregamento ignorado
+- **WHEN** o hook e montado e recebe pedidos pela primeira vez
+- **THEN** nenhuma notificacao e disparada (apenas inicializa o ref com os IDs atuais)
 
-### Requirement: Alerta sonoro
-O sistema SHALL reproduzir um som de alerta via `AudioAlert` (Web Audio API) quando um novo pedido PENDING e detectado.
+### Requirement: Toast de notificacao de pedido
+O sistema SHALL exibir toast via React Toastify (posicao top-right) com texto "Novo pedido #{id}" quando um novo pedido PENDING e detectado.
 
-#### Scenario: Som tocado
-- **WHEN** um novo pedido PENDING e detectado
-- **THEN** um som de notificacao e reproduzido
+#### Scenario: Toast exibido com ID do pedido
+- **WHEN** um novo pedido PENDING com id=42 e detectado
+- **THEN** um toast e exibido com "Novo pedido #42"
+
+### Requirement: Alerta sonoro integrado
+O sistema SHALL renderizar `AudioAlert` no `OrdersPanel` com prop `play` controlada pelo `hasNewOrders` retornado do `useOrderNotifications`.
+
+#### Scenario: Som tocado ao detectar novo pedido
+- **WHEN** hasNewOrders muda para true
+- **THEN** o AudioAlert reproduz o som de notificacao
 
 ### Requirement: Badge numerico no menu
 O sistema SHALL atualizar o badge numerico no item "Pedidos" do Sidebar via Zustand (`orderNotificationStore`) quando novos pedidos PENDING sao detectados.
@@ -39,9 +52,12 @@ O sistema SHALL atualizar o badge numerico no item "Pedidos" do Sidebar via Zust
 - **WHEN** 2 novos pedidos PENDING sao detectados
 - **THEN** o pendingCount do orderNotificationStore incrementa em 2 e o badge exibe o total
 
-#### Scenario: Badge limpo ao acessar pedidos
+### Requirement: Badge limpo ao acessar pedidos
+O sistema SHALL chamar `orderNotificationStore.clear()` quando o `OrdersPage` e montado, zerando o badge no Sidebar.
+
+#### Scenario: Badge zerado ao navegar
 - **WHEN** o usuario navega para `/orders`
-- **THEN** o pendingCount e zerado via `clear()`
+- **THEN** o pendingCount do store e zerado e o badge desaparece do Sidebar
 
 ### Requirement: orderNotificationStore (Zustand)
 O sistema SHALL ter um store Zustand com a interface:
