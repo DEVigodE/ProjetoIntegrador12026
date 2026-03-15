@@ -38,6 +38,18 @@ public class CourierController {
         return deliveryService.updateCourier(id, request);
     }
 
+    @PatchMapping("/{id}/activate")
+    @PreAuthorize("hasAnyRole('ADMIN', 'DISPATCHER')")
+    public CourierResponse activateCourier(@PathVariable Long id) {
+        return deliveryService.activateCourier(id);
+    }
+
+    @PatchMapping("/{id}/deactivate")
+    @PreAuthorize("hasAnyRole('ADMIN', 'DISPATCHER')")
+    public CourierResponse deactivateCourier(@PathVariable Long id) {
+        return deliveryService.deactivateCourier(id);
+    }
+
     @GetMapping("/available")
     public List<CourierResponse> getAvailableCouriers() {
         return deliveryService.getAvailableCouriers();

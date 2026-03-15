@@ -9,7 +9,6 @@ interface UpdateCourierData {
   email?: string;
   vehicleType?: string;
   vehiclePlate?: string;
-  active: boolean;
 }
 
 export function useUpdateCourier() {

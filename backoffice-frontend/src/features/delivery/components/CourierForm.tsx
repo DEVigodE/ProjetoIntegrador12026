@@ -6,6 +6,20 @@ import Input from '../../../components/ui/Input';
 import Button from '../../../components/ui/Button';
 import type { Courier } from '../types/delivery.types';
 
+function formatPlate(value: string): string {
+  const clean = value.toUpperCase().replace(/[^A-Z0-9]/g, '').slice(0, 7);
+  if (clean.length <= 3) return clean;
+  return `${clean.slice(0, 3)}-${clean.slice(3)}`;
+}
+
+function formatPhone(value: string): string {
+  const digits = value.replace(/\D/g, '').slice(0, 11);
+  if (digits.length <= 2) return digits.length ? `(${digits}` : '';
+  if (digits.length <= 6) return `(${digits.slice(0, 2)}) ${digits.slice(2)}`;
+  if (digits.length <= 10) return `(${digits.slice(0, 2)}) ${digits.slice(2, 6)}-${digits.slice(6)}`;
+  return `(${digits.slice(0, 2)}) ${digits.slice(2, 7)}-${digits.slice(7)}`;
+}
+
 const courierSchema = z.object({
   name: z.string().min(1, 'Nome e obrigatorio'),
   phone: z.string().min(1, 'Telefone e obrigatorio'),
@@ -20,14 +34,17 @@ interface CourierFormProps {
   courier?: Courier;
   onSubmit: (data: CourierFormData) => void;
   onCancel: () => void;
+  onToggleActive?: (courier: Courier) => void;
+  canToggleActive?: boolean;
   isSubmitting: boolean;
 }
 
-export default function CourierForm({ courier, onSubmit, onCancel, isSubmitting }: CourierFormProps) {
+export default function CourierForm({ courier, onSubmit, onCancel, onToggleActive, canToggleActive = false, isSubmitting }: CourierFormProps) {
   const {
     register,
     handleSubmit,
     reset,
+    setValue,
     formState: { errors },
   } = useForm<CourierFormData>({
     resolver: zodResolver(courierSchema),
@@ -65,6 +82,7 @@ export default function CourierForm({ courier, onSubmit, onCancel, isSubmitting 
         placeholder="(11) 99999-9999"
         error={errors.phone?.message}
         {...register('phone')}
+        onChange={(e) => setValue('phone', formatPhone(e.target.value), { shouldValidate: true })}
       />
       <Input
         label="Email"
@@ -82,15 +100,29 @@ export default function CourierForm({ courier, onSubmit, onCancel, isSubmitting 
           label="Placa"
           placeholder="ABC-1234"
           {...register('vehiclePlate')}
+          onChange={(e) => setValue('vehiclePlate', formatPlate(e.target.value), { shouldValidate: true })}
         />
       </div>
-      <div className="flex justify-end gap-3">
-        <Button variant="secondary" type="button" onClick={onCancel} disabled={isSubmitting}>
-          Cancelar
-        </Button>
-        <Button type="submit" loading={isSubmitting}>
-          Salvar
-        </Button>
+      <div className="flex justify-between gap-3">
+        {courier && canToggleActive && onToggleActive && (
+          <Button
+            type="button"
+            variant={courier.active ? 'danger' : 'success'}
+            onClick={() => onToggleActive(courier)}
+            disabled={isSubmitting}
+            aria-label={courier.active ? 'Desativar entregador' : 'Ativar entregador'}
+          >
+            {courier.active ? 'Desativar' : 'Ativar'}
+          </Button>
+        )}
+        <div className="flex gap-3 ml-auto">
+          <Button variant="secondary" type="button" onClick={onCancel} disabled={isSubmitting}>
+            Cancelar
+          </Button>
+          <Button type="submit" loading={isSubmitting}>
+            Salvar
+          </Button>
+        </div>
       </div>
     </form>
   );

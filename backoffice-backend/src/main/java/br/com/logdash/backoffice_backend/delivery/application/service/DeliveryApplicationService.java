@@ -57,6 +57,24 @@ public class DeliveryApplicationService {
         return CourierResponse.from(courier);
     }
 
+    @Transactional
+    public CourierResponse activateCourier(Long id) {
+        Courier courier = courierRepository.findById(id)
+                .orElseThrow(() -> new ResourceNotFoundException("Entregador não encontrado: " + id));
+        courier.activate();
+        courier = courierRepository.save(courier);
+        return CourierResponse.from(courier);
+    }
+
+    @Transactional
+    public CourierResponse deactivateCourier(Long id) {
+        Courier courier = courierRepository.findById(id)
+                .orElseThrow(() -> new ResourceNotFoundException("Entregador não encontrado: " + id));
+        courier.deactivate();
+        courier = courierRepository.save(courier);
+        return CourierResponse.from(courier);
+    }
+
     @Transactional(readOnly = true)
     public List<CourierResponse> getAvailableCouriers() {
         return courierRepository.findAvailable().stream()

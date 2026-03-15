@@ -57,7 +57,7 @@ public class Courier extends AbstractAggregateRoot<Courier> {
         courier.email = email;
         courier.vehicleType = vehicleType;
         courier.vehiclePlate = vehiclePlate;
-        courier.status = CourierStatus.AVAILABLE;
+        courier.status = CourierStatus.OFFLINE;
         courier.active = true;
         courier.createdAt = LocalDateTime.now();
         courier.updatedAt = LocalDateTime.now();
@@ -93,9 +93,18 @@ public class Courier extends AbstractAggregateRoot<Courier> {
         this.updatedAt = LocalDateTime.now();
     }
 
+    public void activate() {
+        if (!this.active) {
+            this.active = true;
+            this.updatedAt = LocalDateTime.now();
+        }
+    }
+
     public void deactivate() {
-        this.active = false;
-        this.updatedAt = LocalDateTime.now();
+        if (this.active) {
+            this.active = false;
+            this.updatedAt = LocalDateTime.now();
+        }
     }
 
     public boolean isAvailable() {

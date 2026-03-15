@@ -7,10 +7,9 @@ import type { Courier } from '../types/delivery.types';
 interface CourierTableProps {
   couriers: Courier[];
   onEdit: (courier: Courier) => void;
-  onToggleActive: (courier: Courier) => void;
 }
 
-export default function CourierTable({ couriers, onEdit, onToggleActive }: CourierTableProps) {
+export default function CourierTable({ couriers, onEdit }: CourierTableProps) {
   const columns: Column<Courier>[] = [
     { key: 'name', header: 'Nome', sortable: true },
     { key: 'phone', header: 'Telefone' },
@@ -31,19 +30,9 @@ export default function CourierTable({ couriers, onEdit, onToggleActive }: Couri
       key: 'active',
       header: 'Ativo',
       render: (c) => (
-        <button
-          type="button"
-          onClick={(e) => {
-            e.stopPropagation();
-            onToggleActive(c);
-          }}
-          className="cursor-pointer"
-          aria-label={c.active ? 'Desativar entregador' : 'Ativar entregador'}
-        >
-          <Badge variant={c.active ? 'green' : 'gray'}>
-            {c.active ? 'Ativo' : 'Inativo'}
-          </Badge>
-        </button>
+        <Badge variant={c.active ? 'green' : 'gray'}>
+          {c.active ? 'Ativo' : 'Inativo'}
+        </Badge>
       ),
     },
     {

@@ -1,5 +1,6 @@
 import { useState } from 'react';
 import { toast } from 'react-toastify';
+import { useKeycloak } from '@react-keycloak/web';
 import PageHeader from '../../../components/layout/PageHeader';
 import Button from '../../../components/ui/Button';
 import Spinner from '../../../components/ui/Spinner';
@@ -10,15 +11,21 @@ import CourierForm, { type CourierFormData } from '../components/CourierForm';
 import { useCouriers } from '../hooks/useCouriers';
 import { useCreateCourier } from '../hooks/useCreateCourier';
 import { useUpdateCourier } from '../hooks/useUpdateCourier';
+import { useToggleCourierActive } from '../hooks/useToggleCourierActive';
 import type { Courier } from '../types/delivery.types';
 
 export default function CouriersPage() {
   const [showForm, setShowForm] = useState(false);
   const [editingCourier, setEditingCourier] = useState<Courier | undefined>();
 
+  const { keycloak } = useKeycloak();
+  const userRoles: string[] = keycloak.tokenParsed?.realm_access?.roles ?? [];
+  const isAdmin = userRoles.includes('ADMIN');
+
   const { data: couriers, isLoading, isError } = useCouriers();
   const createCourier = useCreateCourier();
   const updateCourier = useUpdateCourier();
+  const toggleCourierActive = useToggleCourierActive();
 
   function handleOpenCreate() {
     setEditingCourier(undefined);
@@ -45,7 +52,7 @@ export default function CouriersPage() {
 
     if (editingCourier) {
       updateCourier.mutate(
-        { ...payload, id: editingCourier.id, active: editingCourier.active },
+        { ...payload, id: editingCourier.id },
         {
           onSuccess: () => {
             toast.success('Entregador atualizado com sucesso.');
@@ -66,17 +73,11 @@ export default function CouriersPage() {
   }
 
   function handleToggleActive(courier: Courier) {
-    updateCourier.mutate(
+    toggleCourierActive.mutate(
+      { id: courier.id, active: !courier.active },
       {
-        id: courier.id,
-        name: courier.name,
-        phone: courier.phone,
-        email: courier.email,
-        vehicleType: courier.vehicleType,
-        vehiclePlate: courier.vehiclePlate,
-        active: !courier.active,
-      },
-      {
+        onSuccess: () =>
+          toast.success(`Entregador ${courier.active ? 'desativado' : 'ativado'} com sucesso.`),
         onError: () => toast.error('Erro ao alterar status do entregador.'),
       }
     );
@@ -115,7 +116,6 @@ export default function CouriersPage() {
         <CourierTable
           couriers={couriers}
           onEdit={handleOpenEdit}
-          onToggleActive={handleToggleActive}
         />
       )}
 
@@ -128,6 +128,8 @@ export default function CouriersPage() {
           courier={editingCourier}
           onSubmit={handleSubmit}
           onCancel={handleClose}
+          onToggleActive={handleToggleActive}
+          canToggleActive={isAdmin}
           isSubmitting={createCourier.isPending || updateCourier.isPending}
         />
       </Modal>
