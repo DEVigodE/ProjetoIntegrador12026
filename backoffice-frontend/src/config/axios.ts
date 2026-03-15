@@ -6,11 +6,18 @@ const api = axios.create({
 });
 
 api.interceptors.request.use(async (config) => {
-  if (keycloak.isTokenExpired(30)) {
-    await keycloak.updateToken(30);
-  }
-  if (keycloak.token) {
-    config.headers.Authorization = `Bearer ${keycloak.token}`;
+  if (keycloak.authenticated) {
+    try {
+      if (keycloak.isTokenExpired(30)) {
+        await keycloak.updateToken(30);
+      }
+    } catch {
+      keycloak.login();
+      return Promise.reject(new Error('Session expired'));
+    }
+    if (keycloak.token) {
+      config.headers.Authorization = `Bearer ${keycloak.token}`;
+    }
   }
   return config;
 });

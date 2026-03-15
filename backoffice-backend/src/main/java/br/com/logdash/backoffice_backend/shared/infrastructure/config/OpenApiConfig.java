@@ -31,7 +31,7 @@ public class OpenApiConfig {
                 .info(new Info()
                         .title("Logdash Backoffice API")
                         .description("API do Backoffice para Delivery de Alimentos")
-                        .version("1.0.0")
+                        .version("1.0.1")
                         .contact(new Contact()
                                 .name("Logdash")
                                 .email("contato@logdash.com.br")))

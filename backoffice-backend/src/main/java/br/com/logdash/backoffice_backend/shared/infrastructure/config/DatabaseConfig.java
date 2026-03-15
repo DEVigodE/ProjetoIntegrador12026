@@ -1,21 +1,26 @@
 package br.com.logdash.backoffice_backend.shared.infrastructure.config;
 
 import org.flywaydb.core.Flyway;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.hibernate.autoconfigure.HibernatePropertiesCustomizer;
 import org.springframework.boot.sql.init.dependency.DependsOnDatabaseInitialization;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 
 import javax.sql.DataSource;
+import java.util.List;
 
 @Configuration
 public class DatabaseConfig {
+
+    @Value("${spring.flyway.locations:classpath:db/migration}")
+    private List<String> flywayLocations;
 
     @Bean(initMethod = "migrate")
     public Flyway flyway(DataSource dataSource) {
         return Flyway.configure()
                 .dataSource(dataSource)
-                .locations("classpath:db/migration")
+                .locations(flywayLocations.toArray(String[]::new))
                 .load();
     }
 

@@ -10,7 +10,7 @@
 	</parent>
 	<groupId>br.com.logdash</groupId>
 	<artifactId>backoffice-backend</artifactId>
-	<version>0.0.1-SNAPSHOT</version>
+	<version>1.0.1</version>
 	<name>backoffice-backend</name>
 	<description>Backoffice para Delivery de Alimentos</description>
 

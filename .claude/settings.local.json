@@ -30,7 +30,12 @@
       "Bash(cd \"/c/Users/igor.bittencourt/Proton Drive/igorobm/My files/repo/ProjetoIntegrador12026\" && openspec instructions specs --change \"add-ui-components\" --json)",
       "Bash(cd \"/c/Users/igor.bittencourt/Proton Drive/igorobm/My files/repo/ProjetoIntegrador12026\" && openspec instructions tasks --change \"add-ui-components\" --json)",
       "Bash(openspec instructions:*)",
-      "Bash(openspec status:*)"
+      "Bash(openspec status:*)",
+      "Bash(npm run:*)",
+      "Bash(cd \"/c/Users/igor.bittencourt/Proton Drive/igorobm/My files/repo/ProjetoIntegrador12026\" && openspec new change \"implement-catalog-management\" 2>&1)",
+      "Bash(cd \"/c/Users/igor.bittencourt/Proton Drive/igorobm/My files/repo/ProjetoIntegrador12026\" && openspec new change \"implement-order-management\" 2>&1)",
+      "Bash(cd \"/c/Users/igor.bittencourt/Proton Drive/igorobm/My files/repo/ProjetoIntegrador12026\" && openspec new change \"implement-delivery-management\" 2>&1)",
+      "Bash(cd \"/c/Users/igor.bittencourt/Proton Drive/igorobm/My files/repo/ProjetoIntegrador12026/backoffice-frontend\" && npx tsc --noEmit 2>&1 | head -30)"
     ]
   }
 }
