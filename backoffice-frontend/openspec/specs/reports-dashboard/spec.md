@@ -32,19 +32,63 @@ O sistema SHALL exibir uma lista resumida de pedidos ativos (em andamento) no da
 - **WHEN** o usuario clica em um pedido ativo na lista do dashboard
 - **THEN** ele e navegado para `/orders/:id`
 
-### Requirement: ReportsPage com filtro de data
-O sistema SHALL exibir em `ReportsPage` um `DateRangePicker` para selecionar periodo, e os dados de relatorio sao filtrados pelo periodo selecionado.
+### Requirement: Tipos TypeScript de reports
+O sistema SHALL definir tipos em `features/reports/types/report.types.ts`:
+- `SalesReportData`: startDate, endDate, totalOrders, totalRevenue, averageOrderValue, deliveredOrders, cancelledOrders
+- `TopProduct`: productId, productName, totalQuantitySold, totalRevenue
+
+#### Scenario: Tipos espelham DTOs do backend
+- **WHEN** o backend retorna dados via GET /api/reports/sales
+- **THEN** a resposta e corretamente tipada como `SalesReportData`
+
+### Requirement: Hooks TanStack Query para reports
+O sistema SHALL implementar os seguintes hooks em `features/reports/hooks/`:
+
+| Hook | Metodo | Endpoint |
+|---|---|---|
+| `useDashboard` | GET | `/api/reports/dashboard` |
+| `useSalesReport` | GET | `/api/reports/sales?startDate=&endDate=` |
+| `useTopSellingProducts` | GET | `/api/reports/products/top-selling?limit=10` |
+| `useMetrics` | GET | `/api/reports/metrics` |
+
+O hook `useSalesReport` SHALL receber `startDate` e `endDate` como parametros e inclui-los na queryKey.
+
+#### Scenario: Dashboard hook carrega dados
+- **WHEN** DashboardPage monta
+- **THEN** `useDashboard` faz GET /api/reports/dashboard e retorna os dados
+
+#### Scenario: Sales report carrega com filtro de data
+- **WHEN** `useSalesReport` e chamado com startDate=2026-03-01 e endDate=2026-03-10
+- **THEN** GET /api/reports/sales?startDate=2026-03-01&endDate=2026-03-10 e executado
+
+#### Scenario: Top selling products carrega
+- **WHEN** `useTopSellingProducts` e chamado
+- **THEN** GET /api/reports/products/top-selling?limit=10 e executado
+
+### Requirement: DateRangePicker
+O sistema SHALL implementar `DateRangePicker` em `features/reports/components/DateRangePicker.tsx` com dois inputs de data (inicio e fim) e botao "Filtrar". O periodo padrao SHALL ser os ultimos 7 dias. Ao clicar em "Filtrar", SHALL chamar callback `onFilter(startDate, endDate)`.
+
+#### Scenario: Periodo padrao
+- **WHEN** o DateRangePicker e montado
+- **THEN** os inputs exibem os ultimos 7 dias como periodo padrao
 
 #### Scenario: Filtrar por periodo
-- **WHEN** o usuario seleciona um periodo de 01/03 a 10/03
-- **THEN** os dados de vendas sao filtrados para esse periodo via `GET /api/reports/sales?startDate=&endDate=`
+- **WHEN** o usuario seleciona datas e clica "Filtrar"
+- **THEN** o callback onFilter e chamado com as datas selecionadas
 
-### Requirement: Tabela de vendas por dia
-O sistema SHALL exibir uma tabela de relatorio de vendas agrupada por dia.
+### Requirement: MetricsCards
+O sistema SHALL implementar `MetricsCards` em `features/reports/components/MetricsCards.tsx` exibindo cards com: total de pedidos, total faturado (BRL), ticket medio (BRL), pedidos entregues e pedidos cancelados. Os dados vem do `useMetrics`.
 
-#### Scenario: Tabela de vendas
-- **WHEN** o ReportsPage carrega com periodo selecionado
-- **THEN** uma tabela com vendas por dia e exibida
+#### Scenario: Cards de metricas exibidos
+- **WHEN** o ReportsPage carrega
+- **THEN** 5 cards de metricas sao exibidos com dados do endpoint /api/reports/metrics
+
+### Requirement: SalesReportTable
+O sistema SHALL implementar `SalesReportTable` em `features/reports/components/SalesReportTable.tsx` exibindo uma tabela com os dados do periodo filtrado: total pedidos, faturamento, ticket medio, entregues e cancelados.
+
+#### Scenario: Tabela de vendas exibida
+- **WHEN** o usuario filtra por periodo
+- **THEN** a tabela exibe os dados agregados do periodo
 
 ### Requirement: Grafico de evolucao de pedidos
 O sistema SHALL exibir um grafico de linha (Recharts `LineChart`) mostrando a evolucao de pedidos no periodo selecionado.
@@ -53,30 +97,20 @@ O sistema SHALL exibir um grafico de linha (Recharts `LineChart`) mostrando a ev
 - **WHEN** o ReportsPage carrega
 - **THEN** um grafico de linha com evolucao de pedidos e exibido
 
-### Requirement: Cards de metricas
-O sistema SHALL exibir cards de metricas: total de pedidos, total faturado, ticket medio e taxa de aceitacao.
-
-#### Scenario: Metricas exibidas
-- **WHEN** o ReportsPage carrega
-- **THEN** os cards de metricas sao exibidos com dados de `GET /api/reports/metrics`
-
-### Requirement: Top produtos mais vendidos
-O sistema SHALL exibir uma lista dos produtos mais vendidos no periodo via `GET /api/reports/products/top-selling`.
+### Requirement: TopSellingProducts
+O sistema SHALL implementar `TopSellingProducts` em `features/reports/components/TopSellingProducts.tsx` exibindo tabela rankeada com: posicao, nome do produto, quantidade vendida e receita total (BRL).
 
 #### Scenario: Top produtos exibidos
 - **WHEN** o ReportsPage carrega
-- **THEN** a lista de top produtos e exibida
+- **THEN** a tabela exibe os 10 produtos mais vendidos com ranking
 
-### Requirement: Hooks TanStack Query para reports
-O sistema SHALL implementar os seguintes hooks:
+### Requirement: ReportsPage completa
+O sistema SHALL implementar `ReportsPage` com PageHeader, DateRangePicker, MetricsCards, SalesReportTable e TopSellingProducts. Loading e empty states SHALL ser tratados. Somente ADMIN tem acesso (rota ja protegida por RoleGuard).
 
-| Hook | Metodo | Endpoint |
-|---|---|---|
-| `useDashboard` | GET | `/api/reports/dashboard` |
-| `useSalesReport` | GET | `/api/reports/sales?startDate=&endDate=` |
-| `useTopSellingProducts` | GET | `/api/reports/products/top-selling` |
-| `useMetrics` | GET | `/api/reports/metrics` |
+#### Scenario: Pagina completa
+- **WHEN** o usuario ADMIN acessa `/reports`
+- **THEN** a pagina exibe filtro de data, metricas, tabela de vendas e top produtos
 
-#### Scenario: Dashboard hook carrega dados
-- **WHEN** DashboardPage monta
-- **THEN** `useDashboard` faz GET /api/reports/dashboard e retorna os dados
+#### Scenario: Loading state
+- **WHEN** os dados estao carregando
+- **THEN** Spinner e exibido
