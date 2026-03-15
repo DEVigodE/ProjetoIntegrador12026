@@ -6,7 +6,9 @@ import { QueryClientProvider } from '@tanstack/react-query';
 import keycloak from './config/keycloak';
 import queryClient from './config/queryClient';
 import AuthLayout from './layouts/AuthLayout';
+import { ToastContainer } from 'react-toastify';
 import App from './App';
+import 'react-toastify/dist/ReactToastify.css';
 import './index.css';
 
 createRoot(document.getElementById('root')!).render(
@@ -19,6 +21,7 @@ createRoot(document.getElementById('root')!).render(
       <QueryClientProvider client={queryClient}>
         <BrowserRouter>
           <App />
+          <ToastContainer position="top-right" />
         </BrowserRouter>
       </QueryClientProvider>
     </ReactKeycloakProvider>
