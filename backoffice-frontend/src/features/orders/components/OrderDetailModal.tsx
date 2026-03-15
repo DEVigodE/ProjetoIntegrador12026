@@ -3,6 +3,7 @@ import Badge from '../../../components/ui/Badge';
 import Spinner from '../../../components/ui/Spinner';
 import OrderTimeline from './OrderTimeline';
 import OrderActions from './OrderActions';
+import ChatPanel from '../../chat/components/ChatPanel';
 import { getStatusLabel, getStatusColor } from '../../../utils/orderStatusLabel';
 import { useOrder } from '../hooks/useOrder';
 import type { Order, OrderStatus } from '../types/order.types';
@@ -127,23 +128,8 @@ export default function OrderDetailModal({
             <OrderTimeline currentStatus={order.status} />
           </div>
 
-          {/* Chat placeholder */}
-          <div className="rounded-lg border border-dashed border-gray-300 p-4 text-center">
-            <svg
-              className="mx-auto mb-2 h-8 w-8 text-gray-300"
-              fill="none"
-              viewBox="0 0 24 24"
-              stroke="currentColor"
-            >
-              <path
-                strokeLinecap="round"
-                strokeLinejoin="round"
-                strokeWidth={1.5}
-                d="M8 12h.01M12 12h.01M16 12h.01M21 12c0 4.418-4.03 8-9 8a9.863 9.863 0 01-4.255-.949L3 20l1.395-3.72C3.512 15.042 3 13.574 3 12c0-4.418 4.03-8 9-8s9 3.582 9 8z"
-              />
-            </svg>
-            <p className="text-sm text-gray-400">Chat disponivel em breve</p>
-          </div>
+          {/* Chat */}
+          <ChatPanel orderId={order.id} />
 
           {/* Acoes */}
           <div className="border-t pt-4">
