@@ -1,8 +1,4 @@
-# Delivery Management
-
-Gerenciamento de entregadores e entregas.
-
-## Requirements
+## ADDED Requirements
 
 ### Requirement: Tipos TypeScript de delivery
 O sistema SHALL definir os tipos em `features/delivery/types/delivery.types.ts`:
@@ -34,21 +30,6 @@ O sistema SHALL implementar funcoes `getCourierStatusLabel`, `getCourierStatusCo
 #### Scenario: CourierStatus BUSY mapeado
 - **WHEN** um entregador tem status `BUSY`
 - **THEN** o badge exibe "Ocupado" com cor amarela
-
-### Requirement: Enums de Delivery (source of truth do backend)
-O sistema SHALL usar os seguintes enums:
-- **CourierStatus**: `AVAILABLE | BUSY | OFFLINE`
-- **DeliveryStatus**: `PENDING | ASSIGNED | PICKED_UP | DELIVERED`
-
-ATENCAO: O documento `PROMPT-AGENTE-FRONTEND.md` contem valores incorretos (IN_DELIVERY, IN_PROGRESS, COMPLETED, CANCELLED). Usar SEMPRE os valores acima.
-
-#### Scenario: CourierStatus BUSY mapeado corretamente
-- **WHEN** o backend retorna um entregador com status "BUSY"
-- **THEN** o frontend exibe "Ocupado" (nao "Em Entrega")
-
-#### Scenario: DeliveryStatus tem apenas 4 valores
-- **WHEN** o frontend define o tipo DeliveryStatus
-- **THEN** ele contem exatamente: PENDING, ASSIGNED, PICKED_UP, DELIVERED
 
 ### Requirement: Hooks TanStack Query para delivery
 O sistema SHALL implementar os seguintes hooks em `features/delivery/hooks/`:

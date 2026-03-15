@@ -1,8 +1,4 @@
-# Catalog Management
-
-Gerenciamento de produtos e categorias do catalogo.
-
-## Requirements
+## ADDED Requirements
 
 ### Requirement: Tipos TypeScript do catalogo
 O sistema SHALL definir os tipos `Product` e `Category` em `features/catalog/types/product.types.ts` espelhando os DTOs do backend. `Product` SHALL conter: id, name, description, price, imageUrl, available, stockQuantity, minStockAlert, category (Category), deletedAt, createdAt, updatedAt. `Category` SHALL conter: id, name, description, active.

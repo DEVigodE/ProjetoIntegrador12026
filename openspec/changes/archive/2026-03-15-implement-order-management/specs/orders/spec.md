@@ -1,8 +1,4 @@
-# Order Management
-
-Gerenciamento de pedidos com painel Kanban, ciclo de vida de status e acoes.
-
-## Requirements
+## ADDED Requirements
 
 ### Requirement: Utilitario de mapeamento de status
 O sistema SHALL implementar `src/utils/orderStatusLabel.ts` com funcoes para mapear `OrderStatus` para rotulo em PT-BR e variante de cor do Badge.
@@ -21,41 +17,18 @@ O sistema SHALL implementar `src/utils/orderStatusLabel.ts` com funcoes para map
 - **WHEN** o frontend recebe um pedido com status `OUT_FOR_DELIVERY`
 - **THEN** o rotulo exibido e "Saiu para Entrega" com badge azul
 
-### Requirement: Enums de OrderStatus
-O sistema SHALL usar os seguintes valores de enum (source of truth do backend Java):
-
-`PENDING | ACCEPTED | PREPARING | READY | OUT_FOR_DELIVERY | DELIVERED | CANCELLED`
-
-#### Scenario: Status mapeados corretamente
-- **WHEN** o backend retorna um pedido com status "OUT_FOR_DELIVERY"
-- **THEN** o frontend exibe o badge "Saiu para Entrega" (azul)
-
-### Requirement: Tipos TypeScript de pedidos
-O sistema SHALL definir os tipos em `order.types.ts`:
-
-```ts
-type OrderStatus = 'PENDING' | 'ACCEPTED' | 'PREPARING' | 'READY' | 'OUT_FOR_DELIVERY' | 'DELIVERED' | 'CANCELLED';
-interface OrderItem { id: number; productId: number; productName: string; unitPrice: number; quantity: number; subtotal: number; notes?: string; }
-interface Order { id: number; status: OrderStatus; customerName: string; customerPhone: string; customerEmail?: string; deliveryStreet: string; deliveryNumber: string; deliveryComplement?: string; deliveryNeighborhood: string; deliveryCity: string; deliveryState: string; deliveryZipCode: string; totalAmount: number; notes?: string; rejectedReason?: string; items: OrderItem[]; createdAt: string; updatedAt: string; }
-```
-
-#### Scenario: Tipos espelham DTOs do backend
-- **WHEN** o backend retorna um pedido via GET /api/orders/{id}
-- **THEN** a resposta e corretamente tipada como `Order`
-
 ### Requirement: Hooks TanStack Query para pedidos
 O sistema SHALL implementar os seguintes hooks em `features/orders/hooks/`:
 
 | Hook | Metodo | Endpoint |
 |---|---|---|
 | `useOrders` | GET | `/api/orders?status=&page=&size=` |
-| `useActiveOrders` | GET | `/api/orders/active` |
 | `useOrder` | GET | `/api/orders/{id}` |
 | `useAcceptOrder` | PATCH | `/api/orders/{id}/accept` |
 | `useRejectOrder` | PATCH | `/api/orders/{id}/reject` |
 | `useUpdateOrderStatus` | PATCH | `/api/orders/{id}/status` |
 
-O hook `useActiveOrders` usa `refetchInterval: 10_000` para polling automatico.
+O hook `useActiveOrders` ja existe e SHALL ser reutilizado.
 
 #### Scenario: useOrders retorna lista paginada com filtro
 - **WHEN** `useOrders` e chamado com `{ status: 'CANCELLED', page: 0, size: 20 }`
@@ -153,8 +126,8 @@ O sistema SHALL implementar `RejectOrderModal` com campo de texto obrigatorio pa
 - **WHEN** o usuario tenta confirmar com motivo vazio
 - **THEN** uma mensagem de erro e exibida e a requisicao NAO e enviada
 
-### Requirement: Chat embutido no detalhe do pedido
-O sistema SHALL reservar espaco no `OrderDetailModal` e `OrderDetailPage` para o `ChatPanel`. Atualmente exibe placeholder visual indicando "Chat disponivel em breve", conectado ao canal WebSocket do pedido quando implementado.
+### Requirement: Placeholder para ChatPanel
+O sistema SHALL reservar espaco no `OrderDetailModal` e `OrderDetailPage` para o chat com um placeholder visual indicando "Chat disponivel em breve".
 
 #### Scenario: Placeholder visivel
 - **WHEN** o usuario abre detalhes de um pedido
