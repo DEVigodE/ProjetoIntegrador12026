@@ -19,7 +19,7 @@ public class ReportingController {
     private final ReportingApplicationService reportingService;
 
     @GetMapping("/sales")
-    @PreAuthorize("hasRole('ADMIN')")
+    @PreAuthorize("hasAnyRole('ADMIN', 'OPERATOR')")
     public SalesReportResponse getSalesReport(
             @RequestParam @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate startDate,
             @RequestParam @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate endDate) {
@@ -27,14 +27,14 @@ public class ReportingController {
     }
 
     @GetMapping("/products/top-selling")
-    @PreAuthorize("hasRole('ADMIN')")
+    @PreAuthorize("hasAnyRole('ADMIN', 'OPERATOR')")
     public List<DashboardResponse.TopProductResponse> getTopSellingProducts(
             @RequestParam(defaultValue = "10") int limit) {
         return reportingService.getTopSellingProducts(limit);
     }
 
     @GetMapping("/metrics")
-    @PreAuthorize("hasRole('ADMIN')")
+    @PreAuthorize("hasAnyRole('ADMIN', 'OPERATOR')")
     public SalesReportResponse getMetrics() {
         return reportingService.getMetrics();
     }
