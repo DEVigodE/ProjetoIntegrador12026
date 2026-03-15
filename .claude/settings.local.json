@@ -37,8 +37,12 @@
       "Bash(cd \"/c/Users/igor.bittencourt/Proton Drive/igorobm/My files/repo/ProjetoIntegrador12026\" && openspec new change \"implement-delivery-management\" 2>&1)",
       "Bash(cd \"/c/Users/igor.bittencourt/Proton Drive/igorobm/My files/repo/ProjetoIntegrador12026/backoffice-frontend\" && npx tsc --noEmit 2>&1 | head -30)",
       "Bash(cd \"/c/Users/igor.bittencourt/Proton Drive/igorobm/My files/repo/ProjetoIntegrador12026\" && openspec new change \"implement-real-time-chat\")",
+<<<<<<< HEAD
       "Bash(cd \"/c/Users/igor.bittencourt/Proton Drive/igorobm/My files/repo/ProjetoIntegrador12026/backoffice-frontend\" && npx tsc --noEmit 2>&1)",
       "Bash(cd \"/c/Users/igor.bittencourt/Proton Drive/igorobm/My files/repo/ProjetoIntegrador12026\" && mv openspec/changes/implement-real-time-chat openspec/changes/archive/2026-03-15-implement-real-time-chat)"
+=======
+      "Bash(cd \"/c/Users/igor.bittencourt/Proton Drive/igorobm/My files/repo/ProjetoIntegrador12026/backoffice-frontend\" && npx tsc --noEmit 2>&1)"
+>>>>>>> 9a99fec7571d2d5875b451dd512941d29ff90628
     ]
   }
 }
