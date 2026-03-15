@@ -58,8 +58,8 @@ export default function Table<T extends Record<string, unknown>>({
             {columns.map((col) => (
               <th
                 key={col.key}
-                className={`px-4 py-3 text-left text-xs font-medium uppercase tracking-wider text-gray-500 ${
-                  col.sortable ? 'cursor-pointer select-none hover:text-gray-700' : ''
+                className={`px-4 py-3 text-left text-xs font-medium uppercase tracking-wider text-gray-700 ${
+                  col.sortable ? 'cursor-pointer select-none hover:text-gray-900' : ''
                 }`}
                 onClick={col.sortable ? () => handleSort(col.key) : undefined}
               >

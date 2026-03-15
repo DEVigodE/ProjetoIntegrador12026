@@ -39,7 +39,7 @@ export default function OrderCard({ order, onClick }: OrderCardProps) {
         </span>
         <StatusBadge status={order.status} />
       </div>
-      <p className="mt-1 text-sm text-gray-600">{order.customerName}</p>
+      <p className="mt-1 text-sm text-gray-700">{order.customerName}</p>
       <div className="mt-2 flex items-center justify-between">
         <span className="text-sm font-medium text-gray-900">{formattedValue}</span>
         <span className="text-xs text-gray-500">{timeAgo}</span>

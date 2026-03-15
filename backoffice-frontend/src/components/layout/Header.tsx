@@ -16,10 +16,10 @@ export default function Header({ title }: HeaderProps) {
       <h2 className="text-xl font-semibold text-gray-800">{title}</h2>
 
       <div className="flex items-center gap-4">
-        <span className="text-sm text-gray-600">{userName}</span>
+        <span className="text-sm text-gray-700">{userName}</span>
         <button
           onClick={() => keycloak.logout()}
-          className="text-sm text-gray-500 hover:text-gray-700 transition-colors"
+          className="text-sm text-gray-600 hover:text-gray-900 transition-colors"
         >
           Sair
         </button>

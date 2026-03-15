@@ -22,8 +22,8 @@ const STYLE_MAP = {
   },
   SYSTEM: {
     align: 'justify-center',
-    bubble: 'bg-gray-50 text-gray-500 italic',
-    time: 'text-gray-400',
+    bubble: 'bg-gray-200 text-gray-700 italic',
+    time: 'text-gray-500',
   },
 } as const;
 

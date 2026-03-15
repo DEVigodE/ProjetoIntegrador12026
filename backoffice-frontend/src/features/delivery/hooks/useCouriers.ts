@@ -6,8 +6,10 @@ export function useCouriers() {
   return useQuery<Courier[]>({
     queryKey: ['couriers'],
     queryFn: async () => {
-      const { data } = await api.get<Courier[]>('/api/couriers');
-      return data;
+      const { data } = await api.get<{ content: Courier[] }>('/api/couriers', {
+        params: { size: 100 },
+      });
+      return data.content;
     },
   });
 }

@@ -30,10 +30,10 @@ export default function ActiveOrdersList({ orders }: ActiveOrdersListProps) {
         >
           <div className="flex items-center gap-4">
             <span className="text-sm font-medium text-gray-900">#{order.id}</span>
-            <span className="text-sm text-gray-600">{order.customerName}</span>
+            <span className="text-sm text-gray-700">{order.customerName}</span>
             <StatusBadge status={order.status} />
           </div>
-          <div className="flex items-center gap-4 text-sm text-gray-500">
+          <div className="flex items-center gap-4 text-sm text-gray-700">
             <span>{formatCurrency(order.totalAmount)}</span>
             <span>{formatDistanceToNow(parseISO(order.createdAt), { addSuffix: true, locale: ptBR })}</span>
           </div>

@@ -6,8 +6,8 @@ export function useDeliveries() {
   return useQuery<Delivery[]>({
     queryKey: ['deliveries'],
     queryFn: async () => {
-      const { data } = await api.get<Delivery[]>('/api/deliveries/active');
-      return data;
+      const { data } = await api.get<{ content: Delivery[] }>('/api/deliveries/active');
+      return data.content;
     },
   });
 }

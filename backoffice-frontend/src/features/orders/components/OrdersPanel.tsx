@@ -32,7 +32,7 @@ export default function OrdersPanel({ orders, onOrderClick }: OrdersPanelProps) 
           <div key={col.label} className="rounded-lg bg-gray-50 p-3">
             <div className="mb-3 flex items-center justify-between">
               <h3 className="text-sm font-semibold text-gray-700">{col.label}</h3>
-              <span className="rounded-full bg-gray-200 px-2 py-0.5 text-xs font-medium text-gray-600">
+              <span className="rounded-full bg-gray-200 px-2 py-0.5 text-xs font-medium text-gray-800">
                 {columnOrders.length}
               </span>
             </div>

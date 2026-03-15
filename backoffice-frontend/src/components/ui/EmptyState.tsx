@@ -28,7 +28,7 @@ export default function EmptyState({ icon, title, description }: EmptyStateProps
       )}
       <h3 className="text-sm font-medium text-gray-900">{title}</h3>
       {description && (
-        <p className="mt-1 text-sm text-gray-500">{description}</p>
+        <p className="mt-1 text-sm text-gray-600">{description}</p>
       )}
     </div>
   );

@@ -12,7 +12,7 @@ export default function PageHeader({ title, breadcrumbs }: PageHeaderProps) {
   return (
     <div className="mb-6">
       {breadcrumbs && breadcrumbs.length > 0 && (
-        <nav className="text-sm text-gray-500 mb-1">
+        <nav className="text-sm text-gray-600 mb-1">
           {breadcrumbs.map((crumb, index) => (
             <span key={crumb.label}>
               {index > 0 && <span className="mx-1">/</span>}
@@ -21,7 +21,7 @@ export default function PageHeader({ title, breadcrumbs }: PageHeaderProps) {
           ))}
         </nav>
       )}
-      <h1 className="text-2xl font-bold text-gray-800">{title}</h1>
+      <h1 className="text-2xl font-bold text-gray-900">{title}</h1>
     </div>
   );
 }

@@ -24,7 +24,7 @@ export default function DateRangePicker({
   return (
     <div className="flex items-end gap-4">
       <div>
-        <label htmlFor="startDate" className="block text-sm font-medium text-gray-700 mb-1">
+        <label htmlFor="startDate" className="block text-sm font-medium text-gray-800 mb-1">
           Data Inicio
         </label>
         <input
@@ -36,7 +36,7 @@ export default function DateRangePicker({
         />
       </div>
       <div>
-        <label htmlFor="endDate" className="block text-sm font-medium text-gray-700 mb-1">
+        <label htmlFor="endDate" className="block text-sm font-medium text-gray-800 mb-1">
           Data Fim
         </label>
         <input

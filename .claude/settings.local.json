@@ -17,7 +17,11 @@
       "Bash(cd \"/c/Users/igor.bittencourt/Proton Drive/igorobm/My files/repo/ProjetoIntegrador12026\" && openspec instructions apply --change \"implement-error-handling\" --json)",
       "Bash(cd \"/c/Users/igor.bittencourt/Proton Drive/igorobm/My files/repo/ProjetoIntegrador12026/backoffice-frontend\" && npx tsc --noEmit 2>&1 | head -30)",
       "Bash(cd \"/c/Users/igor.bittencourt/Proton Drive/igorobm/My files/repo/ProjetoIntegrador12026\" && openspec status --change \"implement-error-handling\" --json)",
-      "Bash(cd \"/c/Users/igor.bittencourt/Proton Drive/igorobm/My files/repo/ProjetoIntegrador12026\" && mv openspec/changes/implement-error-handling openspec/changes/archive/2026-03-15-implement-error-handling)"
+      "Bash(cd \"/c/Users/igor.bittencourt/Proton Drive/igorobm/My files/repo/ProjetoIntegrador12026\" && mv openspec/changes/implement-error-handling openspec/changes/archive/2026-03-15-implement-error-handling)",
+      "Bash(find \"/c/Users/igor.bittencourt/Proton Drive/igorobm/My files/repo/ProjetoIntegrador12026\" -type f -name \"*.tsx\" -o -name \"*.ts\" -o -name \"*.java\" -o -name \"*.yaml\" -o -name \"*.yml\" -o -name \"*.md\" 2>/dev/null | head -50)",
+      "Bash(grep -r \"import.*OrderDetailPage\" \"/c/Users/igor.bittencourt/Proton Drive/igorobm/My files/repo/ProjetoIntegrador12026/backoffice-frontend/src\" 2>/dev/null | head -5)",
+      "Bash(cd \"/c/Users/igor.bittencourt/Proton Drive/igorobm/My files/repo/ProjetoIntegrador12026\" && mv \"backoffice-frontend/src/features/orders/components/OrderDetailModal \\(# Name clash 2026-03-15 0s145yC #\\).tsx\" \"backoffice-frontend/src/features/orders/components/OrderDetailModal.tsx\")",
+      "Bash(cd \"/c/Users/igor.bittencourt/Proton Drive/igorobm/My files/repo/ProjetoIntegrador12026/backoffice-frontend\" && npx tsc --noEmit 2>&1 | head -20)"
     ]
   }
 }
