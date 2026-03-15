@@ -15,27 +15,53 @@ O sistema SHALL restringir a pagina `/settings` exclusivamente a usuarios com ro
 - **WHEN** um usuario OPERATOR ou DISPATCHER tenta acessar `/settings`
 - **THEN** o acesso e negado
 
-### Requirement: CategoryManager - listar categorias
-O sistema SHALL exibir uma lista de categorias existentes com nome e status (ativo/inativo).
+### Requirement: Hook useCreateCategory
+O sistema SHALL implementar `useCreateCategory` em `features/settings/hooks/useCreateCategory.ts` usando TanStack Query mutation para `POST /api/categories` com payload `{ name, description }`. Ao sucesso, SHALL invalidar a query `['categories']`.
+
+#### Scenario: Criar categoria com sucesso
+- **WHEN** `useCreateCategory` executa com `{ name: "Bebidas", description: "Bebidas em geral" }`
+- **THEN** POST /api/categories e chamado e a query `['categories']` e invalidada
+
+### Requirement: CategoryManager com lista e criacao
+O sistema SHALL implementar `CategoryManager` em `features/settings/components/CategoryManager.tsx` que:
+1. Lista categorias existentes via `useCategories` (reutilizado de catalog) como cards com nome, descricao e badge ativo/inativo
+2. Exibe formulario inline com campos nome (obrigatorio) e descricao (opcional)
+3. Valida com Zod via React Hook Form (nome obrigatorio)
+4. Ao submeter, chama `useCreateCategory` com toast de sucesso/erro
+5. Exibe Spinner durante carregamento e EmptyState se nao ha categorias
 
 #### Scenario: Categorias listadas
 - **WHEN** a SettingsPage carrega
-- **THEN** todas as categorias sao listadas via `GET /api/categories`
-
-### Requirement: CategoryManager - criar categoria
-O sistema SHALL permitir criar uma nova categoria com nome e descricao via `POST /api/categories`.
+- **THEN** todas as categorias sao listadas com nome, descricao e badge de status
 
 #### Scenario: Criar categoria
-- **WHEN** o usuario preenche o nome da categoria e clica "Criar"
-- **THEN** `POST /api/categories` e chamado e a lista e atualizada
+- **WHEN** o usuario preenche o nome e clica "Criar"
+- **THEN** POST /api/categories e chamado e a lista atualiza com toast de sucesso
 
 #### Scenario: Validacao de nome obrigatorio
-- **WHEN** o usuario tenta criar uma categoria sem nome
-- **THEN** uma mensagem de erro e exibida
+- **WHEN** o usuario tenta criar sem nome
+- **THEN** mensagem de erro e exibida no campo
+
+#### Scenario: Estado vazio
+- **WHEN** nao existem categorias
+- **THEN** EmptyState e exibido com mensagem informativa
 
 ### Requirement: CategoryManager - editar nome da categoria
 O sistema SHALL permitir editar o nome de uma categoria existente.
 
+> **Nota**: O backend ainda nao suporta PUT/PATCH para edicao de categorias. Este requisito sera implementado quando o endpoint estiver disponivel.
+
 #### Scenario: Editar categoria
 - **WHEN** o usuario clica em editar, altera o nome e salva
 - **THEN** a categoria e atualizada e a lista reflete a mudanca
+
+### Requirement: SettingsPage completa
+O sistema SHALL implementar `SettingsPage` com PageHeader e CategoryManager. Somente ADMIN tem acesso (rota ja protegida por RoleGuard).
+
+#### Scenario: Pagina completa
+- **WHEN** o usuario ADMIN acessa `/settings`
+- **THEN** a pagina exibe header e CategoryManager
+
+#### Scenario: Acesso restrito a ADMIN
+- **WHEN** um usuario OPERATOR tenta acessar `/settings`
+- **THEN** o acesso e negado pelo RoleGuard
