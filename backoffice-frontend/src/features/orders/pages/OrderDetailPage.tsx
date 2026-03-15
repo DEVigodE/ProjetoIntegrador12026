@@ -8,6 +8,7 @@ import EmptyState from '../../../components/ui/EmptyState';
 import OrderTimeline from '../components/OrderTimeline';
 import OrderActions from '../components/OrderActions';
 import RejectOrderModal from '../components/RejectOrderModal';
+import ChatPanel from '../../chat/components/ChatPanel';
 import { useOrder } from '../hooks/useOrder';
 import { useAcceptOrder } from '../hooks/useAcceptOrder';
 import { useRejectOrder } from '../hooks/useRejectOrder';
@@ -169,23 +170,8 @@ export default function OrderDetailPage() {
             </div>
           )}
 
-          {/* Chat placeholder */}
-          <div className="rounded-lg border border-dashed border-gray-300 bg-white p-8 text-center">
-            <svg
-              className="mx-auto mb-3 h-10 w-10 text-gray-300"
-              fill="none"
-              viewBox="0 0 24 24"
-              stroke="currentColor"
-            >
-              <path
-                strokeLinecap="round"
-                strokeLinejoin="round"
-                strokeWidth={1.5}
-                d="M8 12h.01M12 12h.01M16 12h.01M21 12c0 4.418-4.03 8-9 8a9.863 9.863 0 01-4.255-.949L3 20l1.395-3.72C3.512 15.042 3 13.574 3 12c0-4.418 4.03-8 9-8s9 3.582 9 8z"
-              />
-            </svg>
-            <p className="text-sm text-gray-400">Chat disponivel em breve</p>
-          </div>
+          {/* Chat */}
+          <ChatPanel orderId={order.id} />
         </div>
 
         {/* Sidebar */}
