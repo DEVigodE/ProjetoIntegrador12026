@@ -34,7 +34,7 @@ export default function ProductTable({
     {
       key: 'category',
       header: 'Categoria',
-      render: (product) => product.category?.name ?? '—',
+      render: (product) => product.categoryName ?? '—',
     },
     {
       key: 'price',

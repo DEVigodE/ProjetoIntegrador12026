@@ -14,8 +14,8 @@ export interface Product {
   available: boolean;
   stockQuantity: number;
   minStockAlert: number;
-  category: Category;
-  deletedAt?: string;
+  categoryId: number | null;
+  categoryName: string | null;
   createdAt: string;
   updatedAt: string;
 }

@@ -21,7 +21,8 @@
       "Bash(find \"/c/Users/igor.bittencourt/Proton Drive/igorobm/My files/repo/ProjetoIntegrador12026\" -type f -name \"*.tsx\" -o -name \"*.ts\" -o -name \"*.java\" -o -name \"*.yaml\" -o -name \"*.yml\" -o -name \"*.md\" 2>/dev/null | head -50)",
       "Bash(grep -r \"import.*OrderDetailPage\" \"/c/Users/igor.bittencourt/Proton Drive/igorobm/My files/repo/ProjetoIntegrador12026/backoffice-frontend/src\" 2>/dev/null | head -5)",
       "Bash(cd \"/c/Users/igor.bittencourt/Proton Drive/igorobm/My files/repo/ProjetoIntegrador12026\" && mv \"backoffice-frontend/src/features/orders/components/OrderDetailModal \\(# Name clash 2026-03-15 0s145yC #\\).tsx\" \"backoffice-frontend/src/features/orders/components/OrderDetailModal.tsx\")",
-      "Bash(cd \"/c/Users/igor.bittencourt/Proton Drive/igorobm/My files/repo/ProjetoIntegrador12026/backoffice-frontend\" && npx tsc --noEmit 2>&1 | head -20)"
+      "Bash(cd \"/c/Users/igor.bittencourt/Proton Drive/igorobm/My files/repo/ProjetoIntegrador12026/backoffice-frontend\" && npx tsc --noEmit 2>&1 | head -20)",
+      "Bash(grep -r \"MapStruct\\\\|@Mapper\\\\|ModelMapper\" /c/dev/projects/ProjetoIntegrador12026/backoffice-backend/src/main/java --include=*.java)"
     ]
   }
 }

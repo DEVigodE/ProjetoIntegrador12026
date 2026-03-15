@@ -1,5 +1,5 @@
 import { useEffect } from 'react';
-import { useForm } from 'react-hook-form';
+import { useForm, type Resolver } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { z } from 'zod';
 import Input from '../../../components/ui/Input';
@@ -31,8 +31,8 @@ export default function ProductForm({ product, onSubmit, isSubmitting }: Product
     handleSubmit,
     reset,
     formState: { errors },
-  } = useForm<ProductFormData>({
-    resolver: zodResolver(productSchema),
+  } = useForm<ProductFormData, unknown, ProductFormData>({
+    resolver: zodResolver(productSchema) as Resolver<ProductFormData>,
     defaultValues: {
       name: '',
       description: '',
@@ -50,7 +50,7 @@ export default function ProductForm({ product, onSubmit, isSubmitting }: Product
         name: product.name,
         description: product.description ?? '',
         price: product.price,
-        categoryId: product.category.id,
+        categoryId: product.categoryId ?? 0,
         imageUrl: product.imageUrl ?? '',
         stockQuantity: product.stockQuantity,
         minStockAlert: product.minStockAlert,
