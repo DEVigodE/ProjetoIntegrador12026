@@ -15,7 +15,9 @@
       "Bash(cd \"/c/Users/igor.bittencourt/Proton Drive/igorobm/My files/repo/ProjetoIntegrador12026\" && openspec instructions tasks --change \"implement-error-handling\" --json)",
       "Bash(cd \"/c/Users/igor.bittencourt/Proton Drive/igorobm/My files/repo/ProjetoIntegrador12026\" && openspec status --change \"implement-error-handling\")",
       "Bash(cd \"/c/Users/igor.bittencourt/Proton Drive/igorobm/My files/repo/ProjetoIntegrador12026\" && openspec instructions apply --change \"implement-error-handling\" --json)",
-      "Bash(cd \"/c/Users/igor.bittencourt/Proton Drive/igorobm/My files/repo/ProjetoIntegrador12026/backoffice-frontend\" && npx tsc --noEmit 2>&1 | head -30)"
+      "Bash(cd \"/c/Users/igor.bittencourt/Proton Drive/igorobm/My files/repo/ProjetoIntegrador12026/backoffice-frontend\" && npx tsc --noEmit 2>&1 | head -30)",
+      "Bash(cd \"/c/Users/igor.bittencourt/Proton Drive/igorobm/My files/repo/ProjetoIntegrador12026\" && openspec status --change \"implement-error-handling\" --json)",
+      "Bash(cd \"/c/Users/igor.bittencourt/Proton Drive/igorobm/My files/repo/ProjetoIntegrador12026\" && mv openspec/changes/implement-error-handling openspec/changes/archive/2026-03-15-implement-error-handling)"
     ]
   }
 }
