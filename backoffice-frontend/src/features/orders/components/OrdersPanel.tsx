@@ -1,6 +1,7 @@
 import OrderCard from './OrderCard';
+import AudioAlert from '../../../components/shared/AudioAlert';
+import { useOrderNotifications } from '../hooks/useOrderNotifications';
 import type { Order, OrderStatus } from '../types/order.types';
-import { getStatusLabel } from '../../../utils/orderStatusLabel';
 
 interface KanbanColumn {
   status: OrderStatus[];
@@ -20,8 +21,11 @@ interface OrdersPanelProps {
 }
 
 export default function OrdersPanel({ orders, onOrderClick }: OrdersPanelProps) {
+  const { hasNewOrders } = useOrderNotifications(orders);
+
   return (
     <div className="grid grid-cols-4 gap-4">
+      <AudioAlert play={hasNewOrders} />
       {COLUMNS.map((col) => {
         const columnOrders = orders.filter((o) => col.status.includes(o.status));
         return (

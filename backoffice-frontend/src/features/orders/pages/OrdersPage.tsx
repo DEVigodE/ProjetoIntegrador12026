@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { toast } from 'react-toastify';
 import PageHeader from '../../../components/layout/PageHeader';
 import Spinner from '../../../components/ui/Spinner';
@@ -16,6 +16,7 @@ import { useAcceptOrder } from '../hooks/useAcceptOrder';
 import { useRejectOrder } from '../hooks/useRejectOrder';
 import { useUpdateOrderStatus } from '../hooks/useUpdateOrderStatus';
 import { getStatusLabel, getStatusColor } from '../../../utils/orderStatusLabel';
+import { useOrderNotificationStore } from '../../../store/orderNotificationStore';
 import type { Order, OrderStatus } from '../types/order.types';
 
 type ViewMode = 'kanban' | 'list';
@@ -26,6 +27,11 @@ export default function OrdersPage() {
   const [rejectOrderId, setRejectOrderId] = useState<number | undefined>();
   const [statusFilter, setStatusFilter] = useState<OrderStatus | ''>('');
   const [page, setPage] = useState(0);
+  const clearNotifications = useOrderNotificationStore((s) => s.clear);
+
+  useEffect(() => {
+    clearNotifications();
+  }, [clearNotifications]);
 
   const { data: activeOrders, isLoading: loadingActive } = useActiveOrders();
   const { data: ordersPage, isLoading: loadingList } = useOrders({
