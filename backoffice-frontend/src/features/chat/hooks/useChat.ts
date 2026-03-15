@@ -12,5 +12,6 @@ export function useChat(orderId: number | undefined) {
       return data;
     },
     enabled: !!orderId,
+    refetchOnMount: 'always',
   });
 }
