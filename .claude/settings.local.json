@@ -1,7 +1,7 @@
 {
   "permissions": {
     "allow": [
-      "Bash(cd \"/c/Users/igor.bittencourt/Proton Drive/igorobm/My files/repo/ProjetoIntegrador12026/backoffice-frontend\" && npx tsc --noEmit 2>&1)",
+      "Bash(cd \"/c/Users/igor.bittencourt/Proton Drive/igorobm/My files/repo/ProjetoIntegrador12026/logdash-frontend-web\" && npx tsc --noEmit 2>&1)",
       "Bash(cd \"/c/Users/igor.bittencourt/Proton Drive/igorobm/My files/repo/ProjetoIntegrador12026\" && openspec status --change \"implement-order-notifications\" --json)",
       "Bash(cd \"/c/Users/igor.bittencourt/Proton Drive/igorobm/My files/repo/ProjetoIntegrador12026\" && mv openspec/changes/implement-order-notifications openspec/changes/archive/2026-03-15-implement-order-notifications)",
       "Bash(cd \"/c/Users/igor.bittencourt/Proton Drive/igorobm/My files/repo/ProjetoIntegrador12026\" && openspec new change \"implement-reports-dashboard\")",
@@ -15,14 +15,17 @@
       "Bash(cd \"/c/Users/igor.bittencourt/Proton Drive/igorobm/My files/repo/ProjetoIntegrador12026\" && openspec instructions tasks --change \"implement-error-handling\" --json)",
       "Bash(cd \"/c/Users/igor.bittencourt/Proton Drive/igorobm/My files/repo/ProjetoIntegrador12026\" && openspec status --change \"implement-error-handling\")",
       "Bash(cd \"/c/Users/igor.bittencourt/Proton Drive/igorobm/My files/repo/ProjetoIntegrador12026\" && openspec instructions apply --change \"implement-error-handling\" --json)",
-      "Bash(cd \"/c/Users/igor.bittencourt/Proton Drive/igorobm/My files/repo/ProjetoIntegrador12026/backoffice-frontend\" && npx tsc --noEmit 2>&1 | head -30)",
+      "Bash(cd \"/c/Users/igor.bittencourt/Proton Drive/igorobm/My files/repo/ProjetoIntegrador12026/logdash-frontend-web\" && npx tsc --noEmit 2>&1 | head -30)",
       "Bash(cd \"/c/Users/igor.bittencourt/Proton Drive/igorobm/My files/repo/ProjetoIntegrador12026\" && openspec status --change \"implement-error-handling\" --json)",
       "Bash(cd \"/c/Users/igor.bittencourt/Proton Drive/igorobm/My files/repo/ProjetoIntegrador12026\" && mv openspec/changes/implement-error-handling openspec/changes/archive/2026-03-15-implement-error-handling)",
       "Bash(find \"/c/Users/igor.bittencourt/Proton Drive/igorobm/My files/repo/ProjetoIntegrador12026\" -type f -name \"*.tsx\" -o -name \"*.ts\" -o -name \"*.java\" -o -name \"*.yaml\" -o -name \"*.yml\" -o -name \"*.md\" 2>/dev/null | head -50)",
-      "Bash(grep -r \"import.*OrderDetailPage\" \"/c/Users/igor.bittencourt/Proton Drive/igorobm/My files/repo/ProjetoIntegrador12026/backoffice-frontend/src\" 2>/dev/null | head -5)",
-      "Bash(cd \"/c/Users/igor.bittencourt/Proton Drive/igorobm/My files/repo/ProjetoIntegrador12026\" && mv \"backoffice-frontend/src/features/orders/components/OrderDetailModal \\(# Name clash 2026-03-15 0s145yC #\\).tsx\" \"backoffice-frontend/src/features/orders/components/OrderDetailModal.tsx\")",
-      "Bash(cd \"/c/Users/igor.bittencourt/Proton Drive/igorobm/My files/repo/ProjetoIntegrador12026/backoffice-frontend\" && npx tsc --noEmit 2>&1 | head -20)",
-      "Bash(grep -r \"MapStruct\\\\|@Mapper\\\\|ModelMapper\" /c/dev/projects/ProjetoIntegrador12026/backoffice-backend/src/main/java --include=*.java)"
+      "Bash(grep -r \"import.*OrderDetailPage\" \"/c/Users/igor.bittencourt/Proton Drive/igorobm/My files/repo/ProjetoIntegrador12026/logdash-frontend-web/src\" 2>/dev/null | head -5)",
+      "Bash(cd \"/c/Users/igor.bittencourt/Proton Drive/igorobm/My files/repo/ProjetoIntegrador12026\" && mv \"logdash-frontend-web/src/features/orders/components/OrderDetailModal \\(# Name clash 2026-03-15 0s145yC #\\).tsx\" \"logdash-frontend-web/src/features/orders/components/OrderDetailModal.tsx\")",
+      "Bash(cd \"/c/Users/igor.bittencourt/Proton Drive/igorobm/My files/repo/ProjetoIntegrador12026/logdash-frontend-web\" && npx tsc --noEmit 2>&1 | head -20)",
+      "Bash(grep -r \"MapStruct\\\\|@Mapper\\\\|ModelMapper\" /c/dev/projects/ProjetoIntegrador12026/logdash-backend/src/main/java --include=*.java)",
+      "Bash(grep -r backoffice-backend c:/dev/projects/ProjetoIntegrador12026 --include=*.json --include=*.xml --include=*.yml --include=*.yaml --include=*.md)",
+      "Bash(ls -la c:/dev/projects/ProjetoIntegrador12026/logdash-frontend-web/.env*)",
+      "Bash(python3 -c \":*)"
     ]
   }
 }

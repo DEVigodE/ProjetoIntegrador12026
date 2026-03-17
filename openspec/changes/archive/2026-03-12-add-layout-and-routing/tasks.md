@@ -35,4 +35,4 @@
 
 ## 6. Verification
 
-- [x] 6.1 Run `npm run build` in `backoffice-frontend/` to verify TypeScript compilation and no import errors
+- [x] 6.1 Run `npm run build` in `logdash-frontend-web/` to verify TypeScript compilation and no import errors

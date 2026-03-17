@@ -41,21 +41,21 @@ O backend já existe e expõe APIs REST + WebSocket (STOMP). O frontend deve con
 ### Localização do projeto
 
 ```
-backoffice-frontend/
+logdash-frontend-web/
 ```
 
 ### Criar com Vite
 
 ```bash
-npm create vite@latest backoffice-frontend -- --template react-ts
-cd backoffice-frontend
+npm create vite@latest logdash-frontend-web -- --template react-ts
+cd logdash-frontend-web
 npm install
 ```
 
 ### Estrutura de pastas (seguir EXATAMENTE)
 
 ```
-backoffice-frontend/
+logdash-frontend-web/
 ├── index.html
 ├── vite.config.ts
 ├── tailwind.config.ts
@@ -232,7 +232,7 @@ backoffice-frontend/
 ```
 URL:      http://localhost:8080
 Realm:    delivery-backoffice
-Client:   backoffice-frontend  (public client, PKCE habilitado)
+Client:   logdash-frontend-web  (public client, PKCE habilitado)
 ```
 
 ### `src/config/keycloak.ts`
@@ -298,7 +298,7 @@ export default api;
 VITE_API_BASE_URL=http://localhost:8081
 VITE_KEYCLOAK_URL=http://localhost:8080
 VITE_KEYCLOAK_REALM=delivery-backoffice
-VITE_KEYCLOAK_CLIENT_ID=backoffice-frontend
+VITE_KEYCLOAK_CLIENT_ID=logdash-frontend-web
 VITE_WS_URL=http://localhost:8081/ws
 ```
 

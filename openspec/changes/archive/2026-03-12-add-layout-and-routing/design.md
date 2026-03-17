@@ -1,6 +1,6 @@
 ## Context
 
-The frontend project (`backoffice-frontend/`) is bootstrapped with Vite + React 19 + TypeScript. Dependencies are installed (react-router-dom v7, @react-keycloak/web, zustand, tailwindcss v4). The `main.tsx` already wraps the app with `ReactKeycloakProvider` and `QueryClientProvider`. However, `App.tsx` is a static welcome page — no routing, no layout shell. The directory structure has empty placeholder folders (`src/layouts/`, `src/routes/`, `src/components/layout/`, `src/features/*/`).
+The frontend project (`logdash-frontend-web/`) is bootstrapped with Vite + React 19 + TypeScript. Dependencies are installed (react-router-dom v7, @react-keycloak/web, zustand, tailwindcss v4). The `main.tsx` already wraps the app with `ReactKeycloakProvider` and `QueryClientProvider`. However, `App.tsx` is a static welcome page — no routing, no layout shell. The directory structure has empty placeholder folders (`src/layouts/`, `src/routes/`, `src/components/layout/`, `src/features/*/`).
 
 The backend is fully implemented with REST APIs, Keycloak realm configured with three roles (ADMIN, OPERATOR, DISPATCHER), and three test users.
 

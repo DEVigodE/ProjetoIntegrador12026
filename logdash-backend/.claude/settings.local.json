@@ -1,0 +1,8 @@
+{
+  "permissions": {
+    "allow": [
+      "Bash(cd \"C:\\\\Users\\\\igor.bittencourt\\\\Proton Drive\\\\igorobm\\\\My files\\\\repo\\\\ProjetoIntegrador12026\\\\logdash-backend\" && docker-compose down -v && docker-compose up -d)",
+      "Bash(cd \"C:\\\\Users\\\\igor.bittencourt\\\\Proton Drive\\\\igorobm\\\\My files\\\\repo\\\\ProjetoIntegrador12026\\\\logdash-backend\" && ./mvnw spring-boot:run -Dspring-boot.run.profiles=dev)"
+    ]
+  }
+}
