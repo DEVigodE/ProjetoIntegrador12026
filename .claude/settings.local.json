@@ -25,7 +25,11 @@
       "Bash(grep -r \"MapStruct\\\\|@Mapper\\\\|ModelMapper\" /c/dev/projects/ProjetoIntegrador12026/logdash-backend/src/main/java --include=*.java)",
       "Bash(grep -r backoffice-backend c:/dev/projects/ProjetoIntegrador12026 --include=*.json --include=*.xml --include=*.yml --include=*.yaml --include=*.md)",
       "Bash(ls -la c:/dev/projects/ProjetoIntegrador12026/logdash-frontend-web/.env*)",
-      "Bash(python3 -c \":*)"
+      "Bash(python3 -c \":*)",
+      "Bash(npx skills:*)",
+      "Bash(find c:/dev/projects/ProjetoIntegrador12026/logdash-frontend-mobile/ -maxdepth 3 -not -path */.* -type d)",
+      "Bash(flutter pub:*)",
+      "Bash(flutter analyze:*)"
     ]
   }
 }
