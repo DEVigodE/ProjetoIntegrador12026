@@ -3,12 +3,12 @@ server:
 
 spring:
   application:
-    name: delivery-backoffice
+    name: logdash-backoffice
 
   datasource:
-    url: jdbc:postgresql://localhost:5432/delivery_db
-    username: delivery_user
-    password: delivery_pass
+    url: jdbc:postgresql://localhost:5432/logdash_db
+    username: logdash_user
+    password: logdash_pass
     driver-class-name: org.postgresql.Driver
 
   jpa:
@@ -20,8 +20,11 @@ spring:
         format_sql: true
         default_schema: public
 
+#  flyway:
+#    enabled: false  # Configurado manualmente em DatabaseConfig.java
   flyway:
-    enabled: false  # Configurado manualmente em DatabaseConfig.java
+    enabled: true
+    locations: classpath:db/migration,classpath:db/seed
 
   security:
     oauth2:

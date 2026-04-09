@@ -32,34 +32,34 @@ SELECT setval('catalog_schema.categories_id_seq', 6);
 -- =============================================================================
 INSERT INTO catalog_schema.products (id, category_id, name, description, price, image_url, available, stock_quantity, min_stock_alert) VALUES
 -- Lanches
-(1,  1, 'X-Burguer Clássico',     'Hambúrguer 180g, queijo, alface, tomate e molho especial',          25.90, NULL, true,  50, 10),
-(2,  1, 'X-Bacon',                 'Hambúrguer 180g, bacon crocante, queijo cheddar e cebola caramelizada', 29.90, NULL, true,  40, 10),
-(3,  1, 'X-Salada',                'Hambúrguer 180g, alface, tomate, milho e ervilha',                  23.90, NULL, true,  35, 10),
-(4,  1, 'Wrap Frango',             'Wrap de tortilha com frango grelhado, cream cheese e rúcula',       22.50, NULL, true,  30, 10),
-(5,  1, 'Smash Burger Duplo',      'Dois hambúrgueres smash 90g, queijo americano e pickles',           32.90, NULL, true,  25, 5),
+(1,  1, 'X-Burguer Clássico',     'Hambúrguer 180g, queijo, alface, tomate e molho especial',          25.90, 'http://lorempixel.com.br/400/400/?1', true,  50, 10),
+(2,  1, 'X-Bacon',                 'Hambúrguer 180g, bacon crocante, queijo cheddar e cebola caramelizada', 29.90, 'http://lorempixel.com.br/400/400/?2', true,  40, 10),
+(3,  1, 'X-Salada',                'Hambúrguer 180g, alface, tomate, milho e ervilha',                  23.90, 'http://lorempixel.com.br/400/400/?3', true,  35, 10),
+(4,  1, 'Wrap Frango',             'Wrap de tortilha com frango grelhado, cream cheese e rúcula',       22.50, 'http://lorempixel.com.br/400/400/?4', true,  30, 10),
+(5,  1, 'Smash Burger Duplo',      'Dois hambúrgueres smash 90g, queijo americano e pickles',           32.90, 'http://lorempixel.com.br/400/400/?5', true,  25, 5),
 -- Pizzas
-(6,  2, 'Pizza Margherita',        'Molho de tomate, mussarela de búfala, manjericão fresco',           45.90, NULL, true,  20, 5),
-(7,  2, 'Pizza Calabresa',         'Calabresa fatiada, cebola e azeitonas',                             42.90, NULL, true,  20, 5),
-(8,  2, 'Pizza Quatro Queijos',    'Mussarela, provolone, gorgonzola e parmesão',                       49.90, NULL, true,  15, 5),
-(9,  2, 'Pizza Portuguesa',        'Presunto, ovo, cebola, azeitona, ervilha e mussarela',              47.90, NULL, true,  18, 5),
+(6,  2, 'Pizza Margherita',        'Molho de tomate, mussarela de búfala, manjericão fresco',           45.90, 'http://lorempixel.com.br/400/400/?6', true,  20, 5),
+(7,  2, 'Pizza Calabresa',         'Calabresa fatiada, cebola e azeitonas',                             42.90, 'http://lorempixel.com.br/400/400/?7', true,  20, 5),
+(8,  2, 'Pizza Quatro Queijos',    'Mussarela, provolone, gorgonzola e parmesão',                       49.90, 'http://lorempixel.com.br/400/400/?8', true,  15, 5),
+(9,  2, 'Pizza Portuguesa',        'Presunto, ovo, cebola, azeitona, ervilha e mussarela',              47.90, 'http://lorempixel.com.br/400/400/?9', true,  18, 5),
 -- Bebidas
-(10, 3, 'Coca-Cola 350ml',         'Lata gelada',                                                        6.90, NULL, true, 100, 20),
-(11, 3, 'Guaraná Antarctica 350ml','Lata gelada',                                                        5.90, NULL, true, 100, 20),
-(12, 3, 'Suco de Laranja 500ml',   'Suco natural de laranja',                                           10.90, NULL, true,  40, 10),
-(13, 3, 'Água Mineral 500ml',      'Sem gás',                                                            4.50, NULL, true, 120, 20),
+(10, 3, 'Coca-Cola 350ml',         'Lata gelada',                                                        6.90, 'http://lorempixel.com.br/400/400/?10', true, 100, 20),
+(11, 3, 'Guaraná Antarctica 350ml','Lata gelada',                                                        5.90, 'http://lorempixel.com.br/400/400/?11', true, 100, 20),
+(12, 3, 'Suco de Laranja 500ml',   'Suco natural de laranja',                                           10.90, 'http://lorempixel.com.br/400/400/?12', true,  40, 10),
+(13, 3, 'Água Mineral 500ml',      'Sem gás',                                                            4.50, 'http://lorempixel.com.br/400/400/?13', true, 120, 20),
 -- Sobremesas
-(14, 4, 'Brownie com Sorvete',     'Brownie de chocolate com bola de sorvete de creme',                 18.90, NULL, true,  25, 5),
-(15, 4, 'Pudim',                   'Pudim de leite condensado',                                         12.90, NULL, true,  20, 5),
-(16, 4, 'Petit Gâteau',            'Bolo de chocolate com centro cremoso e sorvete',                    22.90, NULL, true,  15, 5),
+(14, 4, 'Brownie com Sorvete',     'Brownie de chocolate com bola de sorvete de creme',                 18.90, 'http://lorempixel.com.br/400/400/?14', true,  25, 5),
+(15, 4, 'Pudim',                   'Pudim de leite condensado',                                         12.90, 'http://lorempixel.com.br/400/400/?15', true,  20, 5),
+(16, 4, 'Petit Gâteau',            'Bolo de chocolate com centro cremoso e sorvete',                    22.90, 'http://lorempixel.com.br/400/400/?16', true,  15, 5),
 -- Pratos Executivos
-(17, 5, 'Frango Grelhado',         'Peito de frango grelhado, arroz, feijão e salada',                  28.90, NULL, true,  30, 10),
-(18, 5, 'Bife Acebolado',          'Bife bovino com cebola, arroz, feijão e batata frita',              32.90, NULL, true,  25, 10),
-(19, 5, 'Parmegiana de Frango',    'Filé empanado, molho de tomate, queijo gratinado e arroz',          34.90, NULL, true,  20, 10),
+(17, 5, 'Frango Grelhado',         'Peito de frango grelhado, arroz, feijão e salada',                  28.90, 'http://lorempixel.com.br/400/400/?17', true,  30, 10),
+(18, 5, 'Bife Acebolado',          'Bife bovino com cebola, arroz, feijão e batata frita',              32.90, 'http://lorempixel.com.br/400/400/?18', true,  25, 10),
+(19, 5, 'Parmegiana de Frango',    'Filé empanado, molho de tomate, queijo gratinado e arroz',          34.90, 'http://lorempixel.com.br/400/400/?19', true,  20, 10),
 -- Açaí
-(20, 6, 'Açaí 300ml',             'Açaí batido com banana e granola',                                  16.90, NULL, true,  40, 10),
-(21, 6, 'Açaí 500ml',             'Açaí batido com morango, banana, granola e leite condensado',        22.90, NULL, true,  35, 10),
+(20, 6, 'Açaí 300ml',             'Açaí batido com banana e granola',                                  16.90, 'http://lorempixel.com.br/400/400/?20', true,  40, 10),
+(21, 6, 'Açaí 500ml',             'Açaí batido com morango, banana, granola e leite condensado',        22.90, 'http://lorempixel.com.br/400/400/?21', true,  35, 10),
 -- Produto indisponível (para teste)
-(22, 1, 'X-Tudo Especial',        'Todos os ingredientes com hambúrguer duplo',                         38.90, NULL, false,  0, 5);
+(22, 1, 'X-Tudo Especial',        'Todos os ingredientes com hambúrguer duplo',                         38.90, 'http://lorempixel.com.br/400/400/?22', false,  0, 5);
 
 SELECT setval('catalog_schema.products_id_seq', 22);
 

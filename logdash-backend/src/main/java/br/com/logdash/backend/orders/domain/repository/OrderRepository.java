@@ -13,4 +13,6 @@ public interface OrderRepository {
     Page<Order> findAll(Pageable pageable);
     Page<Order> findByStatus(OrderStatus status, Pageable pageable);
     Page<Order> findActive(Pageable pageable);
+    Page<Order> findByCustomerId(String customerId, Pageable pageable);
+    Page<Order> findByCustomerIdAndStatus(String customerId, OrderStatus status, Pageable pageable);
 }

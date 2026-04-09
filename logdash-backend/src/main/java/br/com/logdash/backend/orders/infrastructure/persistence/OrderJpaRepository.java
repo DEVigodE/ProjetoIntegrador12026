@@ -13,4 +13,8 @@ public interface OrderJpaRepository extends JpaRepository<Order, Long> {
 
     @Query("SELECT o FROM Order o WHERE o.status NOT IN ('DELIVERED', 'CANCELLED')")
     Page<Order> findActive(Pageable pageable);
+
+    Page<Order> findByCustomerId(String customerId, Pageable pageable);
+
+    Page<Order> findByCustomerIdAndStatus(String customerId, OrderStatus status, Pageable pageable);
 }

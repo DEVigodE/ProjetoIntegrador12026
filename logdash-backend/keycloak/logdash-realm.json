@@ -4,9 +4,22 @@
   "sslRequired": "none",
   "roles": {
     "realm": [
-      { "name": "ADMIN", "description": "Administrador — acesso total ao sistema" },
-      { "name": "OPERATOR", "description": "Operador — gerencia produtos e pedidos" },
-      { "name": "DISPATCHER", "description": "Despachante — gerencia entregas e entregadores" }
+      {
+        "name": "ADMIN",
+        "description": "Administrador — acesso total ao sistema"
+      },
+      {
+        "name": "OPERATOR",
+        "description": "Operador — gerencia produtos e pedidos"
+      },
+      {
+        "name": "DISPATCHER",
+        "description": "Despachante — gerencia entregas e entregadores"
+      },
+      {
+        "name": "CLIENT",
+        "description": "Cliente — usuário final"
+      }
     ]
   },
   "clients": [
@@ -32,9 +45,30 @@
         "http://localhost:3000/*",
         "http://localhost:8081/swagger-ui/oauth2-redirect.html"
       ],
-      "webOrigins": ["*"],
+      "webOrigins": [
+        "*"
+      ],
       "protocol": "openid-connect",
-      "defaultClientScopes": ["openid", "profile", "email", "roles"]
+      "defaultClientScopes": [
+        "openid",
+        "profile",
+        "email",
+        "roles"
+      ],
+      "protocolMappers": [
+        {
+          "name": "sub",
+          "protocol": "openid-connect",
+          "protocolMapper": "oidc-sub-mapper",
+          "consentRequired": false,
+          "config": {
+            "id.token.claim": "false",
+            "access.token.claim": "true",
+            "lightweight.claim": "false",
+            "introspection.token.claim": "true"
+          }
+        }
+      ]
     }
   ],
   "users": [
@@ -52,7 +86,9 @@
           "temporary": false
         }
       ],
-      "realmRoles": ["ADMIN"]
+      "realmRoles": [
+        "ADMIN"
+      ]
     },
     {
       "username": "operador",
@@ -68,7 +104,9 @@
           "temporary": false
         }
       ],
-      "realmRoles": ["OPERATOR"]
+      "realmRoles": [
+        "OPERATOR"
+      ]
     },
     {
       "username": "despachante",
@@ -84,7 +122,27 @@
           "temporary": false
         }
       ],
-      "realmRoles": ["DISPATCHER"]
+      "realmRoles": [
+        "DISPATCHER"
+      ]
+    },
+    {
+      "username": "cliente",
+      "enabled": true,
+      "emailVerified": true,
+      "email": "cliente@logdash.dev",
+      "firstName": "Cliente",
+      "lastName": "User",
+      "credentials": [
+        {
+          "type": "password",
+          "value": "cliente123",
+          "temporary": false
+        }
+      ],
+      "realmRoles": [
+        "CLIENT"
+      ]
     }
   ]
 }

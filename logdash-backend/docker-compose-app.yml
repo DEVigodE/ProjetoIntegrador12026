@@ -42,11 +42,11 @@ services:
     networks:
       - logdash-network
     healthcheck:
-      test: ["CMD-SHELL", "exec 3<>/dev/tcp/localhost/8080 && echo done"]
+      test: ["CMD", "bash", "-c", "exec 3<>/dev/tcp/localhost/8080 && echo -e 'GET /health/ready HTTP/1.1\r\nHost: localhost\r\nConnection: close\r\n\r\n' >&3 && cat <&3 | grep -q '\"UP\"'"]
       interval: 10s
       timeout: 5s
-      retries: 15
-      start_period: 30s
+      retries: 30
+      start_period: 240s
 
   logdash-backend:
     build: .

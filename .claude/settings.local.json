@@ -29,7 +29,9 @@
       "Bash(npx skills:*)",
       "Bash(find c:/dev/projects/ProjetoIntegrador12026/logdash-frontend-mobile/ -maxdepth 3 -not -path */.* -type d)",
       "Bash(flutter pub:*)",
-      "Bash(flutter analyze:*)"
+      "Bash(flutter analyze:*)",
+      "Bash(find /c/dev/projects/ProjetoIntegrador12026/logdash-frontend-mobile/lib -type f -name \"*.dart\" -exec wc -l {} +)",
+      "Bash(find c:devprojectsProjetoIntegrador12026 -type d -name *chat* -o -type d -name *order* -o -type d -name *cart*)"
     ]
   }
 }

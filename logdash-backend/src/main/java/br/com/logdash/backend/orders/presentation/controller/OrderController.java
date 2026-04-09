@@ -10,6 +10,7 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.http.ResponseEntity;
 import org.springdoc.core.annotations.ParameterObject;
 import org.springframework.security.access.prepost.PreAuthorize;
+import org.springframework.security.core.Authentication;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.Map;
@@ -24,22 +25,40 @@ public class OrderController {
     @GetMapping
     public Page<OrderResponse> listOrders(
             @RequestParam(required = false) OrderStatus status,
-            @ParameterObject Pageable pageable) {
+            @ParameterObject Pageable pageable,
+            Authentication authentication) {
+        if (authentication != null && isClient(authentication)) {
+            return orderService.listOrdersForCustomer(authentication.getName(), status, pageable);
+        }
         return orderService.listOrders(status, pageable);
     }
 
+    @GetMapping("/my")
+    @PreAuthorize("isAuthenticated()")
+    public Page<OrderResponse> listMyOrders(
+            @RequestParam(required = false) OrderStatus status,
+            @ParameterObject Pageable pageable,
+            Authentication authentication) {
+        return orderService.listOrdersForCustomer(authentication.getName(), status, pageable);
+    }
+
     @GetMapping("/{id}")
+    @PreAuthorize("hasAnyRole('ADMIN', 'OPERATOR') or (hasRole('CLIENT') and @orderSecurity.isOwner(#id, authentication))")
     public OrderResponse getOrder(@PathVariable Long id) {
         return orderService.getOrder(id);
     }
 
     @PostMapping
-    @PreAuthorize("hasAnyRole('ADMIN', 'OPERATOR')")
-    public ResponseEntity<OrderResponse> createOrder(@Valid @RequestBody CreateOrderRequest request) {
-        return ResponseEntity.status(201).body(orderService.createOrder(request));
+    @PreAuthorize("hasAnyRole('ADMIN', 'OPERATOR', 'CLIENT')")
+    public ResponseEntity<OrderResponse> createOrder(
+            @Valid @RequestBody CreateOrderRequest request,
+            Authentication authentication) {
+        String customerId = isClient(authentication) ? authentication.getName() : null;
+        return ResponseEntity.status(201).body(orderService.createOrder(request, customerId));
     }
 
     @GetMapping("/active")
+    @PreAuthorize("hasAnyRole('ADMIN', 'OPERATOR')")
     public Page<OrderResponse> getActiveOrders(@ParameterObject Pageable pageable) {
         return orderService.getActiveOrders(pageable);
     }
@@ -68,5 +87,10 @@ public class OrderController {
         OrderStatus newStatus = OrderStatus.valueOf(body.get("status"));
         orderService.updateStatus(id, newStatus);
         return ResponseEntity.ok().build();
+    }
+
+    private boolean isClient(Authentication authentication) {
+        return authentication != null && authentication.getAuthorities().stream()
+                .anyMatch(a -> a.getAuthority().equals("ROLE_CLIENT"));
     }
 }

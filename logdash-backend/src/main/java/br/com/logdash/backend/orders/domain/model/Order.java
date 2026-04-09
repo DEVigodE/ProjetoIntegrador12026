@@ -38,6 +38,9 @@ public class Order extends AbstractAggregateRoot<Order> {
     @Column(name = "customer_email")
     private String customerEmail;
 
+    @Column(name = "customer_id", length = 255)
+    private String customerId;
+
     @Column(name = "delivery_street")
     private String deliveryStreet;
 
@@ -80,12 +83,13 @@ public class Order extends AbstractAggregateRoot<Order> {
     public static Order create(String customerName, String customerPhone, String customerEmail,
                                 String deliveryStreet, String deliveryNumber, String deliveryComplement,
                                 String deliveryNeighborhood, String deliveryCity, String deliveryState,
-                                String deliveryZipCode, String notes) {
+                                String deliveryZipCode, String notes, String customerId) {
         Order order = new Order();
         order.status = OrderStatus.PENDING;
         order.customerName = customerName;
         order.customerPhone = customerPhone;
         order.customerEmail = customerEmail;
+        order.customerId = customerId;
         order.deliveryStreet = deliveryStreet;
         order.deliveryNumber = deliveryNumber;
         order.deliveryComplement = deliveryComplement;

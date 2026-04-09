@@ -24,6 +24,7 @@ public class OrderResponse {
     private String customerName;
     private String customerPhone;
     private String customerEmail;
+    private String customerId;
     private String deliveryStreet;
     private String deliveryNumber;
     private String deliveryComplement;
@@ -45,6 +46,7 @@ public class OrderResponse {
                 .customerName(order.getCustomerName())
                 .customerPhone(order.getCustomerPhone())
                 .customerEmail(order.getCustomerEmail())
+                .customerId(order.getCustomerId())
                 .deliveryStreet(order.getDeliveryStreet())
                 .deliveryNumber(order.getDeliveryNumber())
                 .deliveryComplement(order.getDeliveryComplement())

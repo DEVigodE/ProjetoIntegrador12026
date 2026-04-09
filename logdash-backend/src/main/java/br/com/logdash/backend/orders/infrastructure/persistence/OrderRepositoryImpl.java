@@ -40,4 +40,14 @@ public class OrderRepositoryImpl implements OrderRepository {
     public Page<Order> findActive(Pageable pageable) {
         return jpaRepository.findActive(pageable);
     }
+
+    @Override
+    public Page<Order> findByCustomerId(String customerId, Pageable pageable) {
+        return jpaRepository.findByCustomerId(customerId, pageable);
+    }
+
+    @Override
+    public Page<Order> findByCustomerIdAndStatus(String customerId, OrderStatus status, Pageable pageable) {
+        return jpaRepository.findByCustomerIdAndStatus(customerId, status, pageable);
+    }
 }

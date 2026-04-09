@@ -55,6 +55,12 @@ dependencies:
   flutter_secure_storage: ^9.0.0
   jwt_decoder: ^2.0.0
 
+  # Images
+  cached_network_image: ^3.4.1
+
+  # WebSocket (STOMP) — reservado para upgrade pós-MVP
+  stomp_dart_client: ^2.0.0
+
 dev_dependencies:
   flutter_test:
     sdk: flutter

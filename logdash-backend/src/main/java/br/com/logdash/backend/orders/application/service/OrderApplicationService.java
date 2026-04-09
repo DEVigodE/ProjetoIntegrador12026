@@ -33,7 +33,7 @@ public class OrderApplicationService {
     }
 
     @Transactional
-    public OrderResponse createOrder(CreateOrderRequest request) {
+    public OrderResponse createOrder(CreateOrderRequest request, String customerId) {
         Order order = Order.create(
                 request.getCustomerName(),
                 request.getCustomerPhone(),
@@ -45,7 +45,8 @@ public class OrderApplicationService {
                 request.getDeliveryCity(),
                 request.getDeliveryState(),
                 request.getDeliveryZipCode(),
-                request.getNotes()
+                request.getNotes(),
+                customerId
         );
 
         for (CreateOrderRequest.OrderItemRequest itemReq : request.getItems()) {
@@ -62,6 +63,14 @@ public class OrderApplicationService {
         order.markAsCreated();
         order = orderRepository.save(order);
         return OrderResponse.from(order);
+    }
+
+    @Transactional(readOnly = true)
+    public Page<OrderResponse> listOrdersForCustomer(String customerId, OrderStatus status, Pageable pageable) {
+        if (status != null) {
+            return orderRepository.findByCustomerIdAndStatus(customerId, status, pageable).map(OrderResponse::from);
+        }
+        return orderRepository.findByCustomerId(customerId, pageable).map(OrderResponse::from);
     }
 
     @Transactional(readOnly = true)

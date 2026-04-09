@@ -41,4 +41,10 @@ class UserModel {
   }
 
   String get displayName => name ?? username;
+
+  bool get isClient => roles.contains('CLIENT');
+  bool get isAdmin => roles.contains('ADMIN');
+  bool get isOperator => roles.contains('OPERATOR');
+  bool get isDispatcher => roles.contains('DISPATCHER');
+  bool get isStaff => isAdmin || isOperator || isDispatcher;
 }
