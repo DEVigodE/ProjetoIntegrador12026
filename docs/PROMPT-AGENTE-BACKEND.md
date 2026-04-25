@@ -35,7 +35,7 @@ Você é um engenheiro sênior Java/Spring Boot. Sua tarefa é criar **do zero**
 ### Localização do projeto
 
 ```
-backend/delivery-backoffice/
+backend/logdash/
 ```
 
 ### Package base
@@ -488,8 +488,8 @@ spring:
     oauth2:
       resourceserver:
         jwt:
-          issuer-uri: http://localhost:8080/realms/delivery-backoffice
-          jwk-set-uri: http://localhost:8080/realms/delivery-backoffice/protocol/openid-connect/certs
+          issuer-uri: http://localhost:8080/realms/logdash
+          jwk-set-uri: http://localhost:8080/realms/logdash/protocol/openid-connect/certs
 ```
 
 ### Roles (extraídas do JWT)
@@ -543,7 +543,7 @@ server:
 
 spring:
   application:
-    name: delivery-backoffice
+    name: logdash
 
   datasource:
     url: jdbc:postgresql://localhost:5432/delivery_db
@@ -568,8 +568,8 @@ spring:
     oauth2:
       resourceserver:
         jwt:
-          issuer-uri: http://localhost:8080/realms/delivery-backoffice
-          jwk-set-uri: http://localhost:8080/realms/delivery-backoffice/protocol/openid-connect/certs
+          issuer-uri: http://localhost:8080/realms/logdash
+          jwk-set-uri: http://localhost:8080/realms/logdash/protocol/openid-connect/certs
 
 management:
   endpoints:
@@ -897,7 +897,7 @@ Implemente nesta ordem:
 
 Ao finalizar, o projeto deve conter:
 
-- [ ] `backend/delivery-backoffice/pom.xml` — dependências completas
+- [ ] `backend/logdash/pom.xml` — dependências completas
 - [ ] `docker-compose.yml` — PostgreSQL, Keycloak
 - [ ] `src/main/resources/application.yml` — configuração completa
 - [ ] `src/main/resources/application-dev.yml` — perfil desenvolvimento
@@ -905,7 +905,7 @@ Ao finalizar, o projeto deve conter:
 - [ ] Todos os bounded contexts implementados (catalog, orders, delivery, communication, reporting) — todos usando apenas PostgreSQL via JPA
 - [ ] Shared: SecurityConfig, WebSocketConfig, GlobalExceptionHandler
 - [ ] Testes unitários para domínio de cada contexto
-- [ ] `README.md` dentro de `backend/delivery-backoffice/` com instruções para rodar
+- [ ] `README.md` dentro de `backend/logdash/` com instruções para rodar
 
 ---
 

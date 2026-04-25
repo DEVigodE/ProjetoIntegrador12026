@@ -36,8 +36,16 @@ class OrderService {
   AsyncResult<OrderModel> getOrder(int id) async {
     try {
       final response = await _dio.get('/api/orders/$id');
-      return Success(
-          OrderModel.fromJson(response.data as Map<String, dynamic>));
+      final dynamic raw = response.data;
+      final Map<String, dynamic> data;
+      if (raw is List) {
+        data = raw.first as Map<String, dynamic>;
+      } else if (raw is Map<String, dynamic> && raw.containsKey('content')) {
+        data = (raw['content'] as List<dynamic>).first as Map<String, dynamic>;
+      } else {
+        data = raw as Map<String, dynamic>;
+      }
+      return Success(OrderModel.fromJson(data));
     } on DioException catch (e) {
       final msg = e.response?.data?['message'] ?? 'Erro ao carregar pedido';
       return Failure(Exception(msg.toString()));

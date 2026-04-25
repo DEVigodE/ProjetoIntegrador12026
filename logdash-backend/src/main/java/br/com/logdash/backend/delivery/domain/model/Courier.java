@@ -21,6 +21,9 @@ public class Courier extends AbstractAggregateRoot<Courier> {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
+    @Column(name = "keycloak_id", unique = true)
+    private String keycloakId;
+
     @Column(nullable = false)
     private String name;
 
@@ -50,8 +53,10 @@ public class Courier extends AbstractAggregateRoot<Courier> {
     private LocalDateTime updatedAt;
 
     public static Courier create(String name, String phone, String email,
-                                  String vehicleType, String vehiclePlate) {
+                                  String vehicleType, String vehiclePlate,
+                                  String keycloakId) {
         Courier courier = new Courier();
+        courier.keycloakId = keycloakId;
         courier.name = name;
         courier.phone = phone;
         courier.email = email;

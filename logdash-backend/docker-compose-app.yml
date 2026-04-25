@@ -41,15 +41,10 @@ services:
         condition: service_healthy
     networks:
       - logdash-network
-    healthcheck:
-      test: ["CMD", "bash", "-c", "exec 3<>/dev/tcp/localhost/8080 && echo -e 'GET /health/ready HTTP/1.1\r\nHost: localhost\r\nConnection: close\r\n\r\n' >&3 && cat <&3 | grep -q '\"UP\"'"]
-      interval: 10s
-      timeout: 5s
-      retries: 30
-      start_period: 240s
 
   logdash-backend:
     build: .
+    image: logdash-backend:latest
     container_name: logdash-backend
     environment:
       SPRING_PROFILES_ACTIVE: dev
@@ -64,7 +59,7 @@ services:
       postgres:
         condition: service_healthy
       keycloak:
-        condition: service_healthy
+        condition: service_completed_successfully
     networks:
       - logdash-network
 

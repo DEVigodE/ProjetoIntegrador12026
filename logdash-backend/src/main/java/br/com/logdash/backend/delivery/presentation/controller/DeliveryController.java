@@ -9,10 +9,12 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
+import org.springframework.security.core.Authentication;
 import org.springframework.web.bind.annotation.*;
 import org.springdoc.core.annotations.ParameterObject;
 
 import java.util.Map;
+import java.util.Optional;
 
 @RestController
 @RequestMapping("/api/deliveries")
@@ -38,5 +40,40 @@ public class DeliveryController {
     @GetMapping("/active")
     public Page<DeliveryResponse> getActiveDeliveries(@ParameterObject Pageable pageable) {
         return deliveryService.getActiveDeliveries(pageable);
+    }
+
+    // ---- Endpoints para entregador (COURIER) ----
+
+    @GetMapping("/my-active")
+    @PreAuthorize("isAuthenticated()")
+    public ResponseEntity<DeliveryResponse> getMyActiveDelivery(Authentication authentication) {
+        Optional<DeliveryResponse> delivery = deliveryService.getMyActiveDelivery(authentication.getName());
+        return delivery.map(ResponseEntity::ok)
+                .orElse(ResponseEntity.noContent().build());
+    }
+
+    @PostMapping("/self-assign")
+    @PreAuthorize("isAuthenticated()")
+    public ResponseEntity<DeliveryResponse> selfAssign(
+            @RequestBody Map<String, Long> body,
+            Authentication authentication) {
+        return ResponseEntity.status(201)
+                .body(deliveryService.selfAssign(body.get("orderId"), authentication.getName()));
+    }
+
+    @PatchMapping("/{id}/pickup")
+    @PreAuthorize("isAuthenticated()")
+    public DeliveryResponse markPickedUp(
+            @PathVariable Long id,
+            Authentication authentication) {
+        return deliveryService.markPickedUp(id, authentication.getName());
+    }
+
+    @PatchMapping("/{id}/complete")
+    @PreAuthorize("isAuthenticated()")
+    public DeliveryResponse completeDelivery(
+            @PathVariable Long id,
+            Authentication authentication) {
+        return deliveryService.completeDelivery(id, authentication.getName());
     }
 }

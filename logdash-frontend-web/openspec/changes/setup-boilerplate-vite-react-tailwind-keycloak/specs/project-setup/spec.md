@@ -52,4 +52,4 @@ O sistema SHALL ter um arquivo `.env.example` com todas as variaveis de ambiente
 
 #### Scenario: .env.example existe com valores corretos
 - **WHEN** ler o arquivo `.env.example`
-- **THEN** ele contem: VITE_API_BASE_URL=http://localhost:8081, VITE_KEYCLOAK_URL=http://localhost:8080, VITE_KEYCLOAK_REALM=delivery-backoffice, VITE_KEYCLOAK_CLIENT_ID=backoffice-webapp, VITE_WS_URL=http://localhost:8081/ws
+- **THEN** ele contem: VITE_API_BASE_URL=http://localhost:8081, VITE_KEYCLOAK_URL=http://localhost:8080, VITE_KEYCLOAK_REALM=logdash, VITE_KEYCLOAK_CLIENT_ID=backoffice-webapp, VITE_WS_URL=http://localhost:8081/ws

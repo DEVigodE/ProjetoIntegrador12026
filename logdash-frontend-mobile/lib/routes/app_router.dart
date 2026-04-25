@@ -6,6 +6,9 @@ import 'package:logdash_frontend_mobile/features/auth/ui/register_page.dart';
 import 'package:logdash_frontend_mobile/features/cart/ui/cart_page.dart';
 import 'package:logdash_frontend_mobile/features/catalog/ui/home_client_page.dart';
 import 'package:logdash_frontend_mobile/features/chat/ui/chat_page.dart';
+import 'package:logdash_frontend_mobile/features/courier/ui/active_delivery_page.dart';
+import 'package:logdash_frontend_mobile/features/courier/ui/courier_home_page.dart';
+import 'package:logdash_frontend_mobile/features/courier/ui/courier_profile_setup_page.dart';
 import 'package:logdash_frontend_mobile/features/home/ui/home_page.dart';
 import 'package:logdash_frontend_mobile/features/orders/ui/checkout_page.dart';
 import 'package:logdash_frontend_mobile/features/orders/ui/my_orders_page.dart';
@@ -23,10 +26,14 @@ final appRouter = GoRouter(
 
     if (!isAuth && !publicPaths.contains(path)) return '/login';
     if (isAuth && publicPaths.contains(path)) {
+      if (user?.isCourier == true) return '/courier';
       return user?.isClient == true ? '/home-client' : '/';
     }
     if (isAuth && user?.isClient == true && path == '/') {
       return '/home-client';
+    }
+    if (isAuth && user?.isCourier == true && path == '/') {
+      return '/courier';
     }
     return null;
   },
@@ -68,6 +75,24 @@ final appRouter = GoRouter(
       name: 'chat',
       builder: (context, state) => ChatPage(
         orderId: int.parse(state.pathParameters['orderId']!),
+      ),
+    ),
+    // --- Rotas do Entregador ---
+    GoRoute(
+      path: '/courier',
+      name: 'courier-home',
+      builder: (context, state) => const CourierHomePage(),
+    ),
+    GoRoute(
+      path: '/courier/setup',
+      name: 'courier-setup',
+      builder: (context, state) => const CourierProfileSetupPage(),
+    ),
+    GoRoute(
+      path: '/courier/delivery/:id',
+      name: 'active-delivery',
+      builder: (context, state) => ActiveDeliveryPage(
+        deliveryId: int.parse(state.pathParameters['id']!),
       ),
     ),
     GoRoute(

@@ -46,5 +46,6 @@ class UserModel {
   bool get isAdmin => roles.contains('ADMIN');
   bool get isOperator => roles.contains('OPERATOR');
   bool get isDispatcher => roles.contains('DISPATCHER');
+  bool get isCourier => roles.contains('COURIER');
   bool get isStaff => isAdmin || isOperator || isDispatcher;
 }

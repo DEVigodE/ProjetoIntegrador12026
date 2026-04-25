@@ -1,12 +1,18 @@
 import 'package:dio/dio.dart';
+import 'package:logdash_frontend_mobile/core/config/app_config.dart';
 import 'package:result_dart/result_dart.dart';
 
-const _keycloakBase = 'http://10.0.2.2:8080';
 const _realm = 'logdash';
 const _clientId = 'logdash-webapp';
 
 class AuthService {
-  final _dio = Dio(BaseOptions(baseUrl: _keycloakBase));
+  final _dio = Dio(
+    BaseOptions(
+      baseUrl: AppConfig.keycloakBaseUrl,
+      connectTimeout: const Duration(seconds: 10),
+      receiveTimeout: const Duration(seconds: 10),
+    ),
+  );
 
   AsyncResult<Map<String, dynamic>> login(
     String username,

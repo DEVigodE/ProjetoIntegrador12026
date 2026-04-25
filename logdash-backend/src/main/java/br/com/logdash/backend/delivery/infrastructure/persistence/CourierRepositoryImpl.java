@@ -27,6 +27,11 @@ public class CourierRepositoryImpl implements CourierRepository {
     }
 
     @Override
+    public Optional<Courier> findByKeycloakId(String keycloakId) {
+        return jpaRepository.findByKeycloakId(keycloakId);
+    }
+
+    @Override
     public Page<Courier> findAll(Pageable pageable) {
         return jpaRepository.findAll(pageable);
     }

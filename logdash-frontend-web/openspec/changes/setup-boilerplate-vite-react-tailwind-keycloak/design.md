@@ -2,7 +2,7 @@
 
 O diretorio `backoffice-frontend/` esta vazio (sem codigo). O backend Spring Boot ja esta funcional em `logdash-backend/` com APIs REST, WebSocket/STOMP e autenticacao via Keycloak. O frontend sera uma SPA React que consome essas APIs.
 
-A infraestrutura (PostgreSQL + Keycloak) sobe via `docker-compose` no backend. O Keycloak ja tem o realm `delivery-backoffice` com o client `backoffice-webapp` (public, PKCE) e redirect URIs para `localhost:3000`.
+A infraestrutura (PostgreSQL + Keycloak) sobe via `docker-compose` no backend. O Keycloak ja tem o realm `logdash` com o client `backoffice-webapp` (public, PKCE) e redirect URIs para `localhost:3000`.
 
 ## Goals / Non-Goals
 
@@ -28,7 +28,7 @@ A infraestrutura (PostgreSQL + Keycloak) sobe via `docker-compose` no backend. O
 ### 1. Vite na porta 3000
 
 **Decisao**: Configurar `server.port: 3000` no `vite.config.ts`.
-**Razao**: O Keycloak realm (`delivery-backoffice-realm.json`) tem redirect URIs apenas para `localhost:3000` e `localhost:8081`. A porta default do Vite (5173) nao esta autorizada.
+**Razao**: O Keycloak realm (`logdash-realm.json`) tem redirect URIs apenas para `localhost:3000` e `localhost:8081`. A porta default do Vite (5173) nao esta autorizada.
 **Alternativa descartada**: Alterar o realm JSON para adicionar localhost:5173 — evitamos mexer na config do backend.
 
 ### 2. keycloak-js + @react-keycloak/web

@@ -28,5 +28,5 @@ O projeto `logdash-frontend-web/` ainda nao possui codigo. Precisamos criar a ba
 - **Codigo**: Cria toda a estrutura base em `logdash-frontend-web/src/`
 - **Dependencias**: Instala ~20 pacotes (React, TailwindCSS, Axios, Keycloak-js, TanStack Query, Zustand, etc.)
 - **Configuracao**: `vite.config.ts`, `tailwind.config.ts`, `tsconfig.json`, `postcss.config.js`, `.env.example`
-- **Keycloak**: Depende do Keycloak rodando em `localhost:8080` com realm `delivery-backoffice` e client `backoffice-webapp`
+- **Keycloak**: Depende do Keycloak rodando em `localhost:8080` com realm `logdash` e client `backoffice-webapp`
 - **Backend**: Depende do backend rodando em `localhost:8081` para chamadas autenticadas

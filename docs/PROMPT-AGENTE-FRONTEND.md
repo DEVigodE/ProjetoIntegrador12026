@@ -231,7 +231,7 @@ logdash-frontend-web/
 
 ```
 URL:      http://localhost:8080
-Realm:    delivery-backoffice
+Realm:    logdash
 Client:   logdash-frontend-web  (public client, PKCE habilitado)
 ```
 
@@ -297,7 +297,7 @@ export default api;
 ```env
 VITE_API_BASE_URL=http://localhost:8081
 VITE_KEYCLOAK_URL=http://localhost:8080
-VITE_KEYCLOAK_REALM=delivery-backoffice
+VITE_KEYCLOAK_REALM=logdash
 VITE_KEYCLOAK_CLIENT_ID=logdash-frontend-web
 VITE_WS_URL=http://localhost:8081/ws
 ```

@@ -23,7 +23,7 @@ Isso inicia:
 ### 2. Configurar Keycloak
 
 1. Acesse `http://localhost:8080` e faça login como `admin`/`admin`
-2. Crie um Realm chamado `delivery-backoffice`
+2. Crie um Realm chamado `logdash`
 3. Crie um Client (tipo `confidential` ou `public`) para a aplicação
 4. Crie as roles no Realm: `ADMIN`, `OPERATOR`, `DISPATCHER`
 5. Crie usuários e atribua as roles

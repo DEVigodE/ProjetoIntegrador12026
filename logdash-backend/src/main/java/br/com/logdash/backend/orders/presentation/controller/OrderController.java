@@ -63,6 +63,12 @@ public class OrderController {
         return orderService.getActiveOrders(pageable);
     }
 
+    @GetMapping("/ready-for-pickup")
+    @PreAuthorize("isAuthenticated()")
+    public Page<OrderResponse> getOrdersReadyForPickup(@ParameterObject Pageable pageable) {
+        return orderService.listOrders(OrderStatus.READY, pageable);
+    }
+
     @PatchMapping("/{id}/accept")
     @PreAuthorize("hasAnyRole('ADMIN', 'OPERATOR')")
     public ResponseEntity<Void> acceptOrder(@PathVariable Long id) {

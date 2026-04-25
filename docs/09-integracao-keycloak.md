@@ -147,7 +147,7 @@ docker-compose up -d
 #### Passo 1: Criar Realm
 1. Acessar Admin Console
 2. Clicar em **Add realm**
-3. Nome: `delivery-backoffice`
+3. Nome: `logdash`
 4. Clicar em **Create**
 
 #### Passo 2: Criar Client
@@ -215,7 +215,7 @@ import Keycloak from 'keycloak-js';
 
 const keycloak = new Keycloak({
   url: 'http://localhost:8080',
-  realm: 'delivery-backoffice',
+  realm: 'logdash',
   clientId: 'backoffice-webapp'
 });
 
@@ -412,8 +412,8 @@ spring:
     oauth2:
       resourceserver:
         jwt:
-          issuer-uri: http://localhost:8080/realms/delivery-backoffice
-          jwk-set-uri: http://localhost:8080/realms/delivery-backoffice/protocol/openid-connect/certs
+          issuer-uri: http://localhost:8080/realms/logdash
+          jwk-set-uri: http://localhost:8080/realms/logdash/protocol/openid-connect/certs
 
   cloud:
     gateway:
@@ -453,7 +453,7 @@ public class SecurityConfig {
     @Bean
     public ReactiveJwtDecoder jwtDecoder() {
         return ReactiveJwtDecoders.fromIssuerLocation(
-            "http://localhost:8080/realms/delivery-backoffice"
+            "http://localhost:8080/realms/logdash"
         );
     }
 
@@ -497,8 +497,8 @@ spring:
     oauth2:
       resourceserver:
         jwt:
-          issuer-uri: http://keycloak:8080/realms/delivery-backoffice
-          jwk-set-uri: http://keycloak:8080/realms/delivery-backoffice/protocol/openid-connect/certs
+          issuer-uri: http://keycloak:8080/realms/logdash
+          jwk-set-uri: http://keycloak:8080/realms/logdash/protocol/openid-connect/certs
 ```
 
 **SecurityConfig.java**
@@ -598,7 +598,7 @@ public class ProductController {
 ### 8.1 Obter Token via cURL (Direct Access Grant)
 
 ```bash
-curl -X POST http://localhost:8080/realms/delivery-backoffice/protocol/openid-connect/token \
+curl -X POST http://localhost:8080/realms/logdash/protocol/openid-connect/token \
   -H "Content-Type: application/x-www-form-urlencoded" \
   -d "client_id=backoffice-webapp" \
   -d "username=admin@delivery.com" \
@@ -631,7 +631,7 @@ curl -X GET http://localhost:8081/api/products \
 ### 8.3 Verificar Token (Introspection)
 
 ```bash
-curl -X POST http://localhost:8080/realms/delivery-backoffice/protocol/openid-connect/token/introspect \
+curl -X POST http://localhost:8080/realms/logdash/protocol/openid-connect/token/introspect \
   -H "Content-Type: application/x-www-form-urlencoded" \
   -d "client_id=backoffice-webapp" \
   -d "token=eyJhbGc..."
@@ -644,13 +644,13 @@ curl -X POST http://localhost:8080/realms/delivery-backoffice/protocol/openid-co
 ### 9.1 Desenvolvimento
 
 - URL Keycloak: `http://localhost:8080`
-- Realm: `delivery-backoffice`
+- Realm: `logdash`
 - Facilitar testes com Direct Access Grants habilitado
 
 ### 9.2 Produção
 
 - URL Keycloak: `https://keycloak.delivery.com`
-- Realm: `delivery-backoffice`
+- Realm: `logdash`
 - Desabilitar Direct Access Grants
 - Configurar HTTPS obrigatório
 - Configurar CORS adequadamente

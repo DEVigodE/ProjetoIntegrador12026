@@ -82,7 +82,7 @@ Este documento apresenta o planejamento detalhado do projeto dividido em sprints
 **US-004: Como administrador, quero fazer login no sistema via Keycloak**
 - **Tarefas**:
   - [ ] Setup Keycloak via Docker Compose
-  - [ ] Criar realm `delivery-backoffice`
+  - [ ] Criar realm `logdash`
   - [ ] Criar client `backoffice-webapp`
   - [ ] Criar roles (ADMIN, OPERATOR, DISPATCHER)
   - [ ] Criar usuários de teste

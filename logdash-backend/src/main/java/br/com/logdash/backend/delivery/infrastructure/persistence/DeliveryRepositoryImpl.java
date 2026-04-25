@@ -26,6 +26,16 @@ public class DeliveryRepositoryImpl implements DeliveryRepository {
     }
 
     @Override
+    public Optional<Delivery> findActiveByCourierId(Long courierId) {
+        return jpaRepository.findActiveByCourierId(courierId);
+    }
+
+    @Override
+    public boolean existsByOrderIdAndStatusNotDelivered(Long orderId) {
+        return jpaRepository.existsByOrderIdAndStatusNotDelivered(orderId);
+    }
+
+    @Override
     public Page<Delivery> findActive(Pageable pageable) {
         return jpaRepository.findActive(pageable);
     }

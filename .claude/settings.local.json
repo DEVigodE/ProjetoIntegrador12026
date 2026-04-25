@@ -31,7 +31,9 @@
       "Bash(flutter pub:*)",
       "Bash(flutter analyze:*)",
       "Bash(find /c/dev/projects/ProjetoIntegrador12026/logdash-frontend-mobile/lib -type f -name \"*.dart\" -exec wc -l {} +)",
-      "Bash(find c:devprojectsProjetoIntegrador12026 -type d -name *chat* -o -type d -name *order* -o -type d -name *cart*)"
+      "Bash(find c:devprojectsProjetoIntegrador12026 -type d -name *chat* -o -type d -name *order* -o -type d -name *cart*)",
+      "Bash(xargs -r sed -i 's/delivery-backoffice/logdash/g')",
+      "Bash(npm install:*)"
     ]
   }
 }

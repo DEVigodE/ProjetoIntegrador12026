@@ -1,11 +1,12 @@
 import 'package:dio/dio.dart';
+import 'package:logdash_frontend_mobile/core/config/app_config.dart';
 import 'package:logdash_frontend_mobile/features/auth/data/auth_repository.dart';
 import 'package:pretty_dio_logger/pretty_dio_logger.dart';
 
 Dio createDioClient(AuthRepository authRepository) {
   final dio = Dio(
     BaseOptions(
-      baseUrl: 'http://10.0.2.2:8081',
+      baseUrl: AppConfig.backendBaseUrl,
       connectTimeout: const Duration(seconds: 10),
       receiveTimeout: const Duration(seconds: 10),
       headers: {

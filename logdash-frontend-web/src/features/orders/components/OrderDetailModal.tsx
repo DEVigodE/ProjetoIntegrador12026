@@ -4,6 +4,7 @@ import Spinner from '../../../components/ui/Spinner';
 import OrderTimeline from './OrderTimeline';
 import OrderActions from './OrderActions';
 import ChatPanel from '../../chat/components/ChatPanel';
+import CourierMapPanel from '../../delivery/components/CourierMapPanel';
 import { getStatusLabel, getStatusColor } from '../../../utils/orderStatusLabel';
 import { useOrder } from '../hooks/useOrder';
 import type { Order, OrderStatus } from '../types/order.types';
@@ -127,6 +128,14 @@ export default function OrderDetailModal({
             <h4 className="text-sm font-semibold text-gray-700 mb-2">Timeline</h4>
             <OrderTimeline currentStatus={order.status} />
           </div>
+
+          {/* Mapa do entregador */}
+          {order.status === 'OUT_FOR_DELIVERY' && (
+            <div>
+              <h4 className="text-sm font-semibold text-gray-700 mb-2">Localizacao do Entregador</h4>
+              <CourierMapPanel orderId={order.id} />
+            </div>
+          )}
 
           {/* Chat */}
           <ChatPanel orderId={order.id} />

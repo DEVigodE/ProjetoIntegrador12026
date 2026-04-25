@@ -9,6 +9,7 @@ import OrderTimeline from '../components/OrderTimeline';
 import OrderActions from '../components/OrderActions';
 import RejectOrderModal from '../components/RejectOrderModal';
 import ChatPanel from '../../chat/components/ChatPanel';
+import DeliveryMiniMap from '../components/DeliveryMiniMap';
 import { useOrder } from '../hooks/useOrder';
 import { useAcceptOrder } from '../hooks/useAcceptOrder';
 import { useRejectOrder } from '../hooks/useRejectOrder';
@@ -168,6 +169,11 @@ export default function OrderDetailPage() {
               <h2 className="text-lg font-semibold text-red-700 mb-2">Motivo da Recusa</h2>
               <p className="text-sm text-red-600">{order.rejectedReason}</p>
             </div>
+          )}
+
+          {/* Minimapa do entregador */}
+          {order.status === 'OUT_FOR_DELIVERY' && (
+            <DeliveryMiniMap orderId={order.id} />
           )}
 
           {/* Chat */}

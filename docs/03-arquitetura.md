@@ -856,7 +856,7 @@ public void handleOrderAccepted(OrderAccepted event) {
 {
   "timestamp": "2026-02-12T10:30:00Z",
   "level": "INFO",
-  "application": "delivery-backoffice",
+  "application": "logdash",
   "context": "orders",
   "traceId": "abc123",
   "userId": "user-456",
@@ -923,7 +923,7 @@ RUN mvn clean package -DskipTests
 
 FROM eclipse-temurin:21-jre-alpine
 WORKDIR /app
-COPY --from=build /app/target/delivery-backoffice.jar app.jar
+COPY --from=build /app/target/logdash.jar app.jar
 EXPOSE 8080
 ENTRYPOINT ["java", "-jar", "app.jar"]
 ```
@@ -954,7 +954,7 @@ services:
     ports:
       - "8180:8080"
 
-  delivery-backoffice:
+  logdash:
     build: .
     ports:
       - "8080:8080"
@@ -981,7 +981,7 @@ Para um monolito, o escalonamento vertical é a abordagem mais direta:
 ```yaml
 # Docker Compose
 services:
-  delivery-backoffice:
+  logdash:
     deploy:
       resources:
         limits:
@@ -999,7 +999,7 @@ O monolito é **stateless** e pode ter múltiplas instâncias com load balancer:
 ```yaml
 # Docker Compose com replicação
 services:
-  delivery-backoffice:
+  logdash:
     build: .
     deploy:
       replicas: 3
@@ -1013,15 +1013,15 @@ services:
     volumes:
       - ./nginx.conf:/etc/nginx/nginx.conf
     depends_on:
-      - delivery-backoffice
+      - logdash
 ```
 
 **nginx.conf (Load Balancer)**:
 ```nginx
 upstream backend {
-    server delivery-backoffice-1:8080;
-    server delivery-backoffice-2:8080;
-    server delivery-backoffice-3:8080;
+    server logdash-1:8080;
+    server logdash-2:8080;
+    server logdash-3:8080;
 }
 
 server {

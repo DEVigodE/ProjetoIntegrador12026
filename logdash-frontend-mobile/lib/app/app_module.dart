@@ -11,6 +11,10 @@ import 'package:logdash_frontend_mobile/features/catalog/data/catalog_service.da
 import 'package:logdash_frontend_mobile/features/chat/chat_view_model.dart';
 import 'package:logdash_frontend_mobile/features/chat/data/chat_repository.dart';
 import 'package:logdash_frontend_mobile/features/chat/data/chat_service.dart';
+import 'package:logdash_frontend_mobile/features/courier/courier_view_model.dart';
+import 'package:logdash_frontend_mobile/features/courier/data/courier_location_service.dart';
+import 'package:logdash_frontend_mobile/features/courier/data/courier_repository.dart';
+import 'package:logdash_frontend_mobile/features/courier/data/courier_service.dart';
 import 'package:logdash_frontend_mobile/features/orders/data/order_repository.dart';
 import 'package:logdash_frontend_mobile/features/orders/data/order_service.dart';
 import 'package:logdash_frontend_mobile/features/orders/orders_view_model.dart';
@@ -69,6 +73,21 @@ void setupInjector() {
   );
   injector.addSingleton<ChatViewModel>(
     () => ChatViewModel(injector.get<ChatRepository>()),
+  );
+
+  // Courier (entregador)
+  injector.addSingleton<CourierService>(
+    () => CourierService(injector.get<Dio>()),
+  );
+  injector.addSingleton<CourierRepository>(
+    () => CourierRepository(injector.get<CourierService>()),
+  );
+  injector.addSingleton<CourierLocationService>(CourierLocationService.new);
+  injector.addSingleton<CourierViewModel>(
+    () => CourierViewModel(
+      injector.get<CourierRepository>(),
+      injector.get<CourierLocationService>(),
+    ),
   );
 
   injector.commit();

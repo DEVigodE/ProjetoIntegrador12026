@@ -1,8 +1,10 @@
 package br.com.logdash.backend.orders.infrastructure.listener;
 
+import br.com.logdash.backend.delivery.domain.event.DeliveryAssignedEvent;
 import br.com.logdash.backend.delivery.domain.event.DeliveryCompletedEvent;
 import br.com.logdash.backend.orders.domain.model.Order;
 import br.com.logdash.backend.orders.domain.repository.OrderRepository;
+import br.com.logdash.backend.orders.domain.valueobject.OrderStatus;
 import br.com.logdash.backend.shared.application.exception.ResourceNotFoundException;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -16,6 +18,16 @@ import org.springframework.transaction.annotation.Transactional;
 public class OrderEventListener {
 
     private final OrderRepository orderRepository;
+
+    @EventListener
+    @Transactional
+    public void handleDeliveryAssigned(DeliveryAssignedEvent event) {
+        log.info("Entrega atribuída - movendo pedido {} para OUT_FOR_DELIVERY", event.getOrderId());
+        Order order = orderRepository.findById(event.getOrderId())
+                .orElseThrow(() -> new ResourceNotFoundException("Pedido não encontrado: " + event.getOrderId()));
+        order.updateStatus(OrderStatus.OUT_FOR_DELIVERY);
+        orderRepository.save(order);
+    }
 
     @EventListener
     @Transactional

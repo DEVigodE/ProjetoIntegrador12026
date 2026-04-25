@@ -186,7 +186,7 @@ Seguir instruções de configuração em: [Integração com Keycloak](./docs/09-
 ### 4. Executar Aplicação Backend (Monolito)
 
 ```bash
-cd backend/delivery-backoffice
+cd backend/logdash
 mvn spring-boot:run
 ```
 
@@ -224,7 +224,7 @@ npm run dev
 
 ```bash
 # Todos os testes
-cd backend/delivery-backoffice
+cd backend/logdash
 mvn test
 
 # Testes de um contexto específico
@@ -259,11 +259,11 @@ npm run test:e2e
 
 ```bash
 # Build JAR
-cd backend/delivery-backoffice
+cd backend/logdash
 mvn clean package -DskipTests
 
 # Build Docker Image
-docker build -t delivery-backoffice:latest .
+docker build -t logdash:latest .
 ```
 
 ### Deploy com Docker Compose
@@ -277,8 +277,8 @@ docker-compose -f docker-compose.prod.yml up -d
 
 ```bash
 # Build e push da imagem
-docker build -t seu-registry/delivery-backoffice:latest .
-docker push seu-registry/delivery-backoffice:latest
+docker build -t seu-registry/logdash:latest .
+docker push seu-registry/logdash:latest
 
 # Deploy
 kubectl apply -f k8s/
@@ -311,7 +311,7 @@ http://localhost:8080/actuator/prometheus
 
 ```bash
 # Ver logs da aplicação
-docker logs -f delivery-backoffice
+docker logs -f logdash
 
 # Logs em arquivo
 tail -f logs/application.log

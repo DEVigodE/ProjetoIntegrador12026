@@ -37,7 +37,7 @@ O Keycloak gerencia seu próprio schema de banco de dados automaticamente. O sch
 
 ### 3.2 Configuração do Realm
 
-Será criado um realm chamado `delivery-backoffice` com:
+Será criado um realm chamado `logdash` com:
 
 **Roles**:
 - `ADMIN` - Acesso total ao sistema

@@ -216,9 +216,9 @@ Convenção de nomenclatura: `V{numero}__descricao.sql`
 ## Seguranca
 
 - **Autenticacao**: Keycloak (OAuth2 Resource Server com JWT)
-- **Realm**: `delivery-backoffice`
-- **Client**: `backoffice-webapp` (public, Authorization Code + PKCE)
-- **JWT issuer-uri**: `http://localhost:8080/realms/delivery-backoffice`
+- **Realm**: `logdash`
+- **Clients**: `logdash-webapp` (mobile app) e `backoffice-webapp` (Swagger/web)
+- **JWT issuer-uri**: `http://localhost:8080/realms/logdash`
 - **Roles extraidas de**: claim `realm_access.roles` do JWT, prefixadas com `ROLE_`
 - **Sessao**: STATELESS (sem estado no servidor)
 - **CSRF**: desabilitado (API stateless)

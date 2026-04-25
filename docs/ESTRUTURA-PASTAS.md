@@ -18,7 +18,7 @@ ProjetoIntegrador12026/
 │
 ├── backend/                                 # ☕ Backend (Monólito DDD)
 │   │
-│   └── delivery-backoffice/                 # Aplicação Monolítica
+│   └── logdash/                 # Aplicação Monolítica
 │       ├── src/
 │       │   ├── main/
 │       │   │   ├── java/

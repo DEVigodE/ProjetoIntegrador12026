@@ -10,6 +10,7 @@ import java.util.Optional;
 public interface CourierRepository {
     Courier save(Courier courier);
     Optional<Courier> findById(Long id);
+    Optional<Courier> findByKeycloakId(String keycloakId);
     Page<Courier> findAll(Pageable pageable);
     List<Courier> findAvailable();
 }

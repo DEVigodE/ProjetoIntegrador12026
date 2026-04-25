@@ -71,13 +71,13 @@ Arquivo `.env.example`:
 ```env
 VITE_API_BASE_URL=http://localhost:8081
 VITE_KEYCLOAK_URL=http://localhost:8080
-VITE_KEYCLOAK_REALM=delivery-backoffice
-VITE_KEYCLOAK_CLIENT_ID=backoffice-webapp
+VITE_KEYCLOAK_REALM=logdash
+VITE_KEYCLOAK_CLIENT_ID=logdash-webapp
 VITE_WS_URL=http://localhost:8081/ws
 ```
 
-**Valores corretos** (extraidos do `keycloak/delivery-backoffice-realm.json`):
-- Realm: `delivery-backoffice`
+**Valores corretos** (extraidos do `keycloak/logdash-realm.json`):
+- Realm: `logdash`
 - Client ID: `backoffice-webapp` (public client, PKCE habilitado)
 - NAO usar `logdash-frontend-web` — o client correto no Keycloak eh `backoffice-webapp`
 
@@ -251,7 +251,7 @@ import Keycloak from 'keycloak-js';
 
 const keycloak = new Keycloak({
   url: import.meta.env.VITE_KEYCLOAK_URL,      // http://localhost:8080
-  realm: import.meta.env.VITE_KEYCLOAK_REALM,   // delivery-backoffice
+  realm: import.meta.env.VITE_KEYCLOAK_REALM,   // logdash
   clientId: import.meta.env.VITE_KEYCLOAK_CLIENT_ID, // backoffice-webapp
 });
 
@@ -297,7 +297,7 @@ export default api;
 
 ### Dados do Keycloak (realm JSON importado automaticamente)
 
-- **Realm**: `delivery-backoffice`
+- **Realm**: `logdash`
 - **Client frontend**: `backoffice-webapp` (public, Authorization Code + PKCE)
 - **Client backend**: `backoffice-api` (bearer-only)
 - **Redirect URIs**: `http://localhost:3000/*`, `http://localhost:8081/*`
@@ -313,7 +313,7 @@ Roles extraidas do JWT via `realm_access.roles`:
 | `OPERATOR` | Dashboard, produtos (CRUD), pedidos (aceitar/recusar/atualizar status), chat |
 | `DISPATCHER` | Entregas, entregadores (CRUD), atribuicao de entregador, chat |
 
-### Usuarios de Teste (do `delivery-backoffice-realm.json`)
+### Usuarios de Teste (do `logdash-realm.json`)
 
 | Usuario | Senha | Role | Email |
 |---|---|---|---|

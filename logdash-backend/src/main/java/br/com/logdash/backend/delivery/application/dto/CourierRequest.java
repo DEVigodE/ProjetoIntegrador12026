@@ -12,6 +12,8 @@ import lombok.Setter;
 @AllArgsConstructor
 public class CourierRequest {
 
+    private String keycloakId;
+
     @NotBlank(message = "Nome do entregador é obrigatório")
     private String name;
 
