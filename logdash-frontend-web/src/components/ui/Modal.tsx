@@ -39,13 +39,13 @@ export default function Modal({ isOpen, onClose, title, children }: ModalProps) 
         onClick={onClose}
         aria-hidden="true"
       />
-      <div className="relative z-10 mx-4 w-full max-w-lg rounded-lg bg-white shadow-xl">
+      <div className="relative z-10 mx-4 w-full max-w-lg rounded-xl border border-gray-200/70 bg-white shadow-[0_24px_60px_-30px_rgba(15,23,42,0.5)]">
         {title && (
-          <div className="flex items-center justify-between border-b px-6 py-4">
-            <h2 className="text-lg font-semibold text-gray-900">{title}</h2>
+          <div className="flex items-center justify-between border-b border-gray-100 bg-gray-50/60 px-6 py-4">
+            <h2 className="text-sm font-semibold uppercase tracking-wide text-gray-600">{title}</h2>
             <button
               onClick={onClose}
-              className="rounded-md p-1 text-gray-400 hover:text-gray-600 focus:outline-none focus:ring-2 focus:ring-primary-500"
+              className="rounded-md p-1 text-gray-400 hover:text-gray-600 focus:outline-none focus:ring-2 focus:ring-orange-300"
               aria-label="Fechar"
             >
               <svg className="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">

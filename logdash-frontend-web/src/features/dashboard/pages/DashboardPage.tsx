@@ -62,9 +62,9 @@ export default function DashboardPage() {
       </div>
 
       {/* Pedidos ativos */}
-      <div className="rounded-lg bg-white shadow-md">
-        <div className="border-b border-gray-100 px-6 py-4">
-          <h2 className="text-sm font-medium text-gray-700">Pedidos ativos</h2>
+      <div className="rounded-xl border border-gray-200/70 bg-white shadow-[0_12px_30px_-16px_rgba(15,23,42,0.35)]">
+        <div className="border-b border-gray-100 bg-gray-50/60 px-6 py-4">
+          <h2 className="text-xs font-semibold uppercase tracking-wide text-gray-600">Pedidos ativos</h2>
         </div>
         {loadingOrders ? (
           <div className="flex h-32 items-center justify-center">

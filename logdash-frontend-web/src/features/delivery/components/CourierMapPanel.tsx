@@ -27,7 +27,7 @@ export default function CourierMapPanel({ orderId }: CourierMapPanelProps) {
 
   if (!location) {
     return (
-      <div className="flex items-center justify-center h-48 bg-gray-50 rounded-lg border border-dashed border-gray-300">
+      <div className="flex h-48 items-center justify-center rounded-xl border border-dashed border-gray-200/70 bg-gray-50/60">
         <div className="text-center text-sm text-gray-500">
           <p className="text-2xl mb-1">&#128205;</p>
           <p>Aguardando localizacao do entregador...</p>
@@ -37,7 +37,10 @@ export default function CourierMapPanel({ orderId }: CourierMapPanelProps) {
   }
 
   return (
-    <div className="rounded-lg overflow-hidden border border-gray-200" style={{ height: 240 }}>
+    <div
+      className="overflow-hidden rounded-xl border border-gray-200/70 shadow-[0_12px_30px_-16px_rgba(15,23,42,0.35)]"
+      style={{ height: 240 }}
+    >
       <MapContainer
         center={[location.latitude, location.longitude]}
         zoom={15}

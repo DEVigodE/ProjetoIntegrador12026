@@ -22,7 +22,7 @@ export default function OrderCard({ order, onClick }: OrderCardProps) {
     <button
       type="button"
       onClick={() => onClick(order)}
-      className="w-full rounded-lg border border-gray-200 bg-white p-4 text-left shadow-sm transition-shadow hover:shadow-md"
+      className="w-full rounded-xl border border-gray-200/70 bg-white p-4 text-left shadow-md shadow-gray-200/60 transition-shadow hover:shadow-lg"
     >
       <div className="flex items-center justify-between mb-2">
         <span className="text-sm font-semibold text-gray-900">#{order.id}</span>

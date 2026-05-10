@@ -55,10 +55,10 @@ export default function DeliveryMiniMap({ orderId }: DeliveryMiniMapProps) {
     : DEFAULT_CENTER;
 
   return (
-    <div className="rounded-lg bg-white p-6 shadow-sm border border-gray-200">
-      <div className="flex items-center gap-2 mb-3">
+    <div className="rounded-xl border border-gray-200/70 bg-white p-6 shadow-[0_12px_30px_-16px_rgba(15,23,42,0.35)]">
+      <div className="mb-3 flex items-center gap-2">
         <span className="inline-block w-2.5 h-2.5 rounded-full bg-green-500 animate-pulse" />
-        <h2 className="text-lg font-semibold text-gray-900">
+        <h2 className="text-sm font-semibold uppercase tracking-wide text-gray-600">
           Localização do Entregador
         </h2>
         {!location && (
@@ -66,7 +66,7 @@ export default function DeliveryMiniMap({ orderId }: DeliveryMiniMapProps) {
         )}
       </div>
 
-      <div className="h-56 w-full rounded-md overflow-hidden border border-gray-100">
+      <div className="h-56 w-full overflow-hidden rounded-xl border border-gray-200/70">
         <MapContainer
           center={center}
           zoom={15}

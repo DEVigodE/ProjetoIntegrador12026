@@ -51,10 +51,10 @@ export default function AssignCourierModal({
                 key={courier.id}
                 type="button"
                 onClick={() => setSelectedId(courier.id)}
-                className={`w-full rounded-lg border p-3 text-left transition-colors ${
+                className={`w-full rounded-xl border p-3 text-left transition-colors ${
                   selectedId === courier.id
-                    ? 'border-primary-500 bg-primary-500/5'
-                    : 'border-gray-200 hover:border-gray-300'
+                    ? 'border-orange-300 bg-orange-50/60'
+                    : 'border-gray-200/70 hover:border-gray-300'
                 }`}
               >
                 <div className="flex items-center justify-between">

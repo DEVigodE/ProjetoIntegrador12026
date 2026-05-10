@@ -5,10 +5,13 @@ export default {
     extend: {
       colors: {
         primary: {
-          500: '#f97316',
+          500: '#FFFFFF',
           600: '#ea580c',
         },
-        sidebar: '#1e293b',
+        sidebar: '#F97316',
+      },
+      fontFamily: {
+        sans: ['Work Sans', 'sans-serif'],
       },
     },
   },

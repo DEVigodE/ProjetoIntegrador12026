@@ -12,7 +12,7 @@ export default function Header({ title }: HeaderProps) {
     'Usuario';
 
   return (
-    <header className="bg-white shadow-sm px-6 py-4 flex items-center justify-between">
+    <header className="flex items-center justify-between border-b border-gray-200/70 bg-white px-6 py-4 shadow-sm">
       <h2 className="text-xl font-semibold text-gray-800">{title}</h2>
 
       <div className="flex items-center gap-4">

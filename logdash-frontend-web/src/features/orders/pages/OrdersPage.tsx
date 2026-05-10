@@ -127,12 +127,12 @@ export default function OrdersPage() {
       <PageHeader title="Pedidos" />
 
       {/* Tabs */}
-      <div className="mb-6 flex gap-1 rounded-lg bg-gray-100 p-1 w-fit">
+      <div className="mb-6 inline-flex gap-1 rounded-xl border border-gray-200/70 bg-white p-1 shadow-sm shadow-gray-200/40">
         <button
           type="button"
-          className={`rounded-md px-4 py-2 text-sm font-medium transition-colors ${
+          className={`rounded-lg px-4 py-2 text-sm font-medium transition-colors ${
             view === 'kanban'
-              ? 'bg-white text-gray-900 shadow-sm'
+              ? 'bg-orange-50 text-orange-700 shadow-sm'
               : 'text-gray-600 hover:text-gray-900'
           }`}
           onClick={() => setView('kanban')}
@@ -141,9 +141,9 @@ export default function OrdersPage() {
         </button>
         <button
           type="button"
-          className={`rounded-md px-4 py-2 text-sm font-medium transition-colors ${
+          className={`rounded-lg px-4 py-2 text-sm font-medium transition-colors ${
             view === 'list'
-              ? 'bg-white text-gray-900 shadow-sm'
+              ? 'bg-orange-50 text-orange-700 shadow-sm'
               : 'text-gray-600 hover:text-gray-900'
           }`}
           onClick={() => setView('list')}

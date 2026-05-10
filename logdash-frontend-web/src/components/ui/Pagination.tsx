@@ -35,7 +35,7 @@ export default function Pagination({
   return (
     <nav className="flex items-center justify-center gap-1" aria-label="Paginacao">
       <button
-        className="rounded-md px-3 py-2 text-sm text-gray-700 hover:bg-gray-100 disabled:cursor-not-allowed disabled:opacity-50"
+        className="rounded-lg px-3 py-2 text-sm text-gray-700 hover:bg-gray-50/70 disabled:cursor-not-allowed disabled:opacity-50"
         onClick={() => onPageChange(currentPage - 1)}
         disabled={currentPage <= 1}
         aria-label="Pagina anterior"
@@ -51,10 +51,10 @@ export default function Pagination({
         ) : (
           <button
             key={page}
-            className={`rounded-md px-3 py-2 text-sm font-medium transition-colors ${
+            className={`rounded-lg px-3 py-2 text-sm font-medium transition-colors ${
               page === currentPage
-                ? 'bg-primary-500 text-white'
-                : 'text-gray-700 hover:bg-gray-100'
+                ? 'bg-orange-500 text-white'
+                : 'text-gray-700 hover:bg-gray-50/70'
             }`}
             onClick={() => onPageChange(page)}
             aria-current={page === currentPage ? 'page' : undefined}
@@ -65,7 +65,7 @@ export default function Pagination({
       )}
 
       <button
-        className="rounded-md px-3 py-2 text-sm text-gray-700 hover:bg-gray-100 disabled:cursor-not-allowed disabled:opacity-50"
+        className="rounded-lg px-3 py-2 text-sm text-gray-700 hover:bg-gray-50/70 disabled:cursor-not-allowed disabled:opacity-50"
         onClick={() => onPageChange(currentPage + 1)}
         disabled={currentPage >= totalPages}
         aria-label="Proxima pagina"

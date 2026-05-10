@@ -59,7 +59,10 @@ export default function ProductForm({ product, onSubmit, isSubmitting }: Product
   }, [product, reset]);
 
   return (
-    <form onSubmit={handleSubmit(onSubmit)} className="space-y-6 max-w-2xl">
+    <form
+      onSubmit={handleSubmit(onSubmit)}
+      className="max-w-2xl space-y-6 rounded-xl border border-gray-200/70 bg-white p-6 shadow-[0_12px_30px_-16px_rgba(15,23,42,0.35)]"
+    >
       <Input
         label="Nome"
         placeholder="Nome do produto"

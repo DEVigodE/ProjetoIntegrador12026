@@ -70,7 +70,7 @@ export default function MessageBubble({ message, currentUserId }: MessageBubbleP
 
   return (
     <div className={`flex ${align}`}>
-      <div className={`max-w-[75%] rounded-lg px-3 py-2 ${style.bubble}`}>
+      <div className={`max-w-[75%] rounded-xl px-3 py-2 ${style.bubble}`}>
         {!isSystem && (
           <p className={`text-xs font-semibold ${style.name}`}>
             {message.senderId} · {style.label}

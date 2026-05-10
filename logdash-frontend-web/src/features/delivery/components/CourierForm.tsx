@@ -70,7 +70,10 @@ export default function CourierForm({ courier, onSubmit, onCancel, onToggleActiv
   }, [courier, reset]);
 
   return (
-    <form onSubmit={handleSubmit(onSubmit)} className="space-y-4">
+    <form
+      onSubmit={handleSubmit(onSubmit)}
+      className="space-y-4 rounded-xl border border-gray-200/70 bg-white p-6 shadow-[0_12px_30px_-16px_rgba(15,23,42,0.35)]"
+    >
       <Input
         label="Nome"
         placeholder="Nome do entregador"

@@ -47,7 +47,7 @@ export default function OrderTimeline({ currentStatus }: OrderTimelineProps) {
                   state === 'completed'
                     ? 'bg-green-500 text-white'
                     : state === 'current'
-                      ? 'bg-primary-500 text-white ring-2 ring-primary-200'
+                      ? 'bg-orange-500 text-white ring-2 ring-orange-200'
                       : state === 'cancelled'
                         ? 'bg-red-500 text-white'
                         : 'bg-gray-200 text-gray-400'

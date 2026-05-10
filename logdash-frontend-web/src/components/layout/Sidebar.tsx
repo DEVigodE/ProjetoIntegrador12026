@@ -1,24 +1,79 @@
 import { useKeycloak } from '@react-keycloak/web';
+import {
+  BarChart3,
+  ChevronLeft,
+  ChevronRight,
+  ClipboardList,
+  Home,
+  Package,
+  Settings,
+  Truck,
+  Users,
+  type LucideIcon,
+} from 'lucide-react';
 import { NavLink } from 'react-router-dom';
 import { useOrderNotificationStore } from '../../store/orderNotificationStore';
+import logoFull from '../../assets/logdash_extenso.png';
+import logoIcon from '../../assets/logdash_icon.png';
 
 interface NavItem {
   path: string;
   label: string;
   roles: string[];
+  icon: LucideIcon;
 }
 
 const navItems: NavItem[] = [
-  { path: '/dashboard', label: 'Dashboard', roles: ['ADMIN', 'OPERATOR'] },
-  { path: '/orders', label: 'Pedidos', roles: ['ADMIN', 'OPERATOR'] },
-  { path: '/products', label: 'Produtos', roles: ['ADMIN', 'OPERATOR'] },
-  { path: '/couriers', label: 'Entregadores', roles: ['ADMIN', 'DISPATCHER'] },
-  { path: '/deliveries', label: 'Entregas', roles: ['ADMIN', 'DISPATCHER'] },
-  { path: '/reports', label: 'Relatorios', roles: ['ADMIN'] },
-  { path: '/settings', label: 'Configuracoes', roles: ['ADMIN'] },
+  {
+    path: '/dashboard',
+    label: 'Dashboard',
+    roles: ['ADMIN', 'OPERATOR'],
+    icon: Home,
+  },
+  {
+    path: '/orders',
+    label: 'Pedidos',
+    roles: ['ADMIN', 'OPERATOR'],
+    icon: ClipboardList,
+  },
+  {
+    path: '/products',
+    label: 'Produtos',
+    roles: ['ADMIN', 'OPERATOR'],
+    icon: Package,
+  },
+  {
+    path: '/couriers',
+    label: 'Entregadores',
+    roles: ['ADMIN', 'DISPATCHER'],
+    icon: Users,
+  },
+  {
+    path: '/deliveries',
+    label: 'Entregas',
+    roles: ['ADMIN', 'DISPATCHER'],
+    icon: Truck,
+  },
+  {
+    path: '/reports',
+    label: 'Relatorios',
+    roles: ['ADMIN'],
+    icon: BarChart3,
+  },
+  {
+    path: '/settings',
+    label: 'Configurações',
+    roles: ['ADMIN'],
+    icon: Settings,
+  },
 ];
 
-export default function Sidebar() {
+interface SidebarProps {
+  collapsed: boolean;
+  onToggle: () => void;
+}
+
+export default function Sidebar({ collapsed, onToggle }: SidebarProps) {
   const { keycloak } = useKeycloak();
   const userRoles: string[] = keycloak.tokenParsed?.realm_access?.roles ?? [];
   const pendingCount = useOrderNotificationStore((s) => s.pendingCount);
@@ -28,40 +83,87 @@ export default function Sidebar() {
   );
 
   return (
-    <aside className="w-60 bg-sidebar text-white flex flex-col min-h-screen">
-      <div className="p-4 border-b border-white/10">
-        <h1 className="text-lg font-bold text-primary-500">Delivery Backoffice</h1>
+    <aside
+      className={`bg-sidebar text-white flex flex-col min-h-screen transition-[width] duration-300 ${collapsed ? 'w-16' : 'w-60'
+        }`}
+    >
+
+      <div className={`flex justify-center ${collapsed ? 'pt-3' : 'pt-4'}`}>
+      </div>
+
+      <div
+        className={`border-b border-white/10 flex items-center justify-between ${collapsed ? 'p-3' : 'p-3'
+          }`}
+      >
+        <button
+          type="button"
+          onClick={onToggle}
+          className="flex items-center hover:opacity-90 transition-opacity"
+          aria-label={collapsed ? 'Expandir sidebar' : 'Recolher sidebar'}
+          title={collapsed ? 'Expandir' : 'Recolher'}
+        >
+          {collapsed ? (
+            <img
+              src={logoIcon}
+              alt="LogDash"
+              className="w-14 h-10 object-contain"
+            />
+          ) : (
+            <img
+              src={logoFull}
+              alt="LogDash"
+              className="h-14 object-contain"
+            />
+          )}
+        </button>
       </div>
 
       <nav className="flex-1 py-4">
-        {visibleItems.map((item) => (
-          <NavLink
-            key={item.path}
-            to={item.path}
-            className={({ isActive }) =>
-              `flex items-center justify-between px-4 py-3 text-sm transition-colors ${
-                isActive
-                  ? 'bg-white/10 text-primary-500 border-r-2 border-primary-500'
-                  : 'text-gray-300 hover:bg-white/5 hover:text-white'
-              }`
-            }
-          >
-            <span>{item.label}</span>
-            {item.path === '/orders' && pendingCount > 0 && (
-              <span className="bg-red-500 text-white text-xs font-bold rounded-full px-2 py-0.5 min-w-[20px] text-center">
-                {pendingCount}
-              </span>
-            )}
-          </NavLink>
-        ))}
+        {visibleItems.map((item) => {
+          const Icon = item.icon;
+          return (
+            <NavLink
+              key={item.path}
+              to={item.path}
+              className={({ isActive }) =>
+                `relative flex items-center text-sm transition-colors ${collapsed ? 'justify-center px-2' : 'gap-3 px-4'
+                } py-3 ${isActive
+                  ? `
+                bg-white/10
+                text-primary-8
+                before:content-['']
+                before:absolute
+                before:left-0
+                before:h-[80%]
+                before:w-1
+                before:bg-white
+                before:rounded-r-md
+                `
+                  : 'text-white hover:bg-white/5 hover:text-white'
+                }`
+              }
+              aria-label={item.label}
+              title={item.label}
+            >
+              <Icon className="h-5 w-5 shrink-0" aria-hidden="true" />
+              <span className={collapsed ? 'sr-only' : ''}>{item.label}</span>
+              {!collapsed && item.path === '/orders' && pendingCount > 0 && (
+                <span className="bg-red-500 text-white text-xs font-bold rounded-full px-2 py-0.5 min-w-[20px] text-center">
+                  {pendingCount}
+                </span>
+              )}
+            </NavLink>
+          );
+        })}
       </nav>
 
       <div className="p-4 border-t border-white/10">
         <button
           onClick={() => keycloak.logout()}
-          className="w-full text-left text-sm text-gray-400 hover:text-white transition-colors"
+          className={`w-full text-sm text-gray-400 hover:text-white transition-colors ${collapsed ? 'text-center' : 'text-left'
+            }`}
         >
-          Sair
+          {collapsed ? 'S' : 'Sair'}
         </button>
       </div>
     </aside>

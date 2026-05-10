@@ -29,10 +29,10 @@ export default function OrdersPanel({ orders, onOrderClick }: OrdersPanelProps) 
       {COLUMNS.map((col) => {
         const columnOrders = orders.filter((o) => col.status.includes(o.status));
         return (
-          <div key={col.label} className="rounded-lg bg-gray-50 p-3">
+          <div key={col.label} className="rounded-xl border border-gray-200/70 bg-white p-3 shadow-sm shadow-gray-200/40">
             <div className="mb-3 flex items-center justify-between">
-              <h3 className="text-sm font-semibold text-gray-700">{col.label}</h3>
-              <span className="rounded-full bg-gray-200 px-2 py-0.5 text-xs font-medium text-gray-800">
+              <h3 className="text-xs font-semibold uppercase tracking-wide text-gray-600">{col.label}</h3>
+              <span className="rounded-full border border-gray-200 bg-gray-50 px-2 py-0.5 text-[11px] font-semibold text-gray-600">
                 {columnOrders.length}
               </span>
             </div>

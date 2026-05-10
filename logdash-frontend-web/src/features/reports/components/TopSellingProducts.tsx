@@ -10,9 +10,9 @@ function formatCurrency(value: number): string {
 
 export default function TopSellingProducts({ products }: TopSellingProductsProps) {
   return (
-    <div className="rounded-lg bg-white shadow-sm border border-gray-200">
-      <div className="px-6 py-4 border-b border-gray-200">
-        <h3 className="text-lg font-semibold text-gray-900">Top Produtos Mais Vendidos</h3>
+    <div className="rounded-xl border border-gray-200/70 bg-white shadow-[0_12px_30px_-16px_rgba(15,23,42,0.35)]">
+      <div className="border-b border-gray-100 bg-gray-50/60 px-6 py-4">
+        <h3 className="text-sm font-semibold uppercase tracking-wide text-gray-600">Top Produtos Mais Vendidos</h3>
       </div>
       {products.length === 0 ? (
         <div className="px-6 py-8 text-center">
@@ -22,8 +22,8 @@ export default function TopSellingProducts({ products }: TopSellingProductsProps
         <div className="overflow-x-auto">
           <table className="w-full text-sm">
             <thead>
-              <tr className="border-b bg-gray-50 text-left text-xs uppercase text-gray-500">
-                <th className="px-6 py-3 w-12">#</th>
+              <tr className="border-b border-gray-100 bg-gray-50/70 text-left text-[11px] font-semibold uppercase tracking-wide text-gray-500">
+                <th className="w-12 px-6 py-3">#</th>
                 <th className="px-6 py-3">Produto</th>
                 <th className="px-6 py-3 text-right">Qtd Vendida</th>
                 <th className="px-6 py-3 text-right">Receita</th>
@@ -31,8 +31,8 @@ export default function TopSellingProducts({ products }: TopSellingProductsProps
             </thead>
             <tbody>
               {products.map((product, index) => (
-                <tr key={product.productId} className="border-b border-gray-100">
-                  <td className="px-6 py-3 font-medium text-gray-500">{index + 1}</td>
+                <tr key={product.productId} className="border-b border-gray-100 hover:bg-gray-50/60">
+                  <td className="px-6 py-3 font-semibold text-gray-500">{index + 1}</td>
                   <td className="px-6 py-3 text-gray-900">{product.productName}</td>
                   <td className="px-6 py-3 text-right text-gray-900">{product.totalQuantitySold}</td>
                   <td className="px-6 py-3 text-right text-gray-900">{formatCurrency(product.totalRevenue)}</td>

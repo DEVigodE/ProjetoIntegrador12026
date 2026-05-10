@@ -22,10 +22,10 @@ class ChatErrorBoundary extends Component<
   render() {
     if (this.state.hasError) {
       return (
-        <div className="flex h-80 flex-col items-center justify-center rounded-lg border border-gray-200 bg-white text-sm text-gray-500">
+        <div className="flex h-80 flex-col items-center justify-center rounded-xl border border-gray-200/70 bg-white shadow-md shadow-gray-200/60 text-sm text-gray-500">
           <p>Não foi possível carregar o chat.</p>
           <button
-            className="mt-2 text-xs text-primary-500 hover:underline"
+            className="mt-2 text-xs text-orange-600 hover:underline"
             onClick={() => this.setState({ hasError: false })}
           >
             Tentar novamente
@@ -70,9 +70,9 @@ export default function ChatPanel({ orderId }: ChatPanelProps) {
 
   return (
     <ChatErrorBoundary>
-      <div className="flex h-80 flex-col rounded-lg border border-gray-200 bg-white">
-        <div className="border-b px-3 py-2">
-          <h4 className="text-sm font-semibold text-gray-700">Chat</h4>
+      <div className="flex h-80 flex-col rounded-xl border border-gray-200/70 bg-white shadow-md shadow-gray-200/60">
+        <div className="border-b border-gray-100 bg-gray-50/60 px-3 py-2">
+          <h4 className="text-xs font-semibold uppercase tracking-wide text-gray-600">Chat</h4>
         </div>
 
         {isLoading ? (

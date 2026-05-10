@@ -54,8 +54,8 @@ export default function CategoryManager() {
   return (
     <div className="space-y-6">
       {/* Formulario de criacao */}
-      <div className="rounded-lg bg-white p-6 shadow-sm border border-gray-200">
-        <h3 className="text-lg font-semibold text-gray-900 mb-4">Nova Categoria</h3>
+      <div className="rounded-xl border border-gray-200/70 bg-white p-6 shadow-[0_12px_30px_-16px_rgba(15,23,42,0.35)]">
+        <h3 className="mb-4 text-sm font-semibold uppercase tracking-wide text-gray-600">Nova Categoria</h3>
         <form onSubmit={handleSubmit(onSubmit)} className="flex items-start gap-4">
           <div className="flex-1">
             <Input
@@ -81,8 +81,8 @@ export default function CategoryManager() {
       </div>
 
       {/* Lista de categorias */}
-      <div className="rounded-lg bg-white p-6 shadow-sm border border-gray-200">
-        <h3 className="text-lg font-semibold text-gray-900 mb-4">Categorias</h3>
+      <div className="rounded-xl border border-gray-200/70 bg-white p-6 shadow-[0_12px_30px_-16px_rgba(15,23,42,0.35)]">
+        <h3 className="mb-4 text-sm font-semibold uppercase tracking-wide text-gray-600">Categorias</h3>
         {!categories || categories.length === 0 ? (
           <EmptyState
             title="Nenhuma categoria cadastrada"
@@ -93,7 +93,7 @@ export default function CategoryManager() {
             {categories.map((cat) => (
               <div
                 key={cat.id}
-                className="flex items-center justify-between rounded-lg border border-gray-100 p-4"
+                className="flex items-center justify-between rounded-xl border border-gray-200/70 bg-gray-50/40 p-4"
               >
                 <div>
                   <p className="text-sm font-medium text-gray-900">{cat.name}</p>

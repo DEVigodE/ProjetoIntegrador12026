@@ -28,8 +28,8 @@ export default function OrderCard({ order, onClick }: OrderCardProps) {
 
   return (
     <div
-      className={`rounded-lg border bg-white p-4 shadow-sm transition-shadow ${
-        onClick ? 'cursor-pointer hover:shadow-md' : ''
+      className={`rounded-xl border border-gray-200/70 bg-white p-4 shadow-md shadow-gray-200/60 transition-shadow ${
+        onClick ? 'cursor-pointer hover:shadow-lg' : ''
       }`}
       onClick={onClick ? () => onClick(order) : undefined}
     >

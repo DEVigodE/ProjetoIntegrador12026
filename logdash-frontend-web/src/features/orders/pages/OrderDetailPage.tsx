@@ -98,10 +98,10 @@ export default function OrderDetailPage() {
         {/* Main content */}
         <div className="col-span-2 space-y-6">
           {/* Status + Acoes */}
-          <div className="rounded-lg bg-white p-6 shadow-sm border border-gray-200">
+          <div className="rounded-xl border border-gray-200/70 bg-white p-6 shadow-[0_12px_30px_-16px_rgba(15,23,42,0.35)]">
             <div className="flex items-center justify-between mb-4">
               <div className="flex items-center gap-3">
-                <h2 className="text-lg font-semibold text-gray-900">Status</h2>
+                <h2 className="text-sm font-semibold uppercase tracking-wide text-gray-600">Status</h2>
                 <Badge variant={getStatusColor(order.status)}>
                   {getStatusLabel(order.status)}
                 </Badge>
@@ -117,11 +117,11 @@ export default function OrderDetailPage() {
           </div>
 
           {/* Itens */}
-          <div className="rounded-lg bg-white p-6 shadow-sm border border-gray-200">
-            <h2 className="text-lg font-semibold text-gray-900 mb-4">Itens do Pedido</h2>
+          <div className="rounded-xl border border-gray-200/70 bg-white p-6 shadow-[0_12px_30px_-16px_rgba(15,23,42,0.35)]">
+            <h2 className="mb-4 text-sm font-semibold uppercase tracking-wide text-gray-600">Itens do Pedido</h2>
             <table className="w-full text-sm">
               <thead>
-                <tr className="border-b text-left text-xs text-gray-500 uppercase">
+                <tr className="border-b border-gray-100 text-left text-[11px] font-semibold uppercase tracking-wide text-gray-500">
                   <th className="pb-2">Produto</th>
                   <th className="pb-2 text-center">Qtd</th>
                   <th className="pb-2 text-right">Preco Unit.</th>
@@ -157,16 +157,16 @@ export default function OrderDetailPage() {
 
           {/* Observacoes */}
           {order.notes && (
-            <div className="rounded-lg bg-white p-6 shadow-sm border border-gray-200">
-              <h2 className="text-lg font-semibold text-gray-900 mb-2">Observacoes</h2>
+            <div className="rounded-xl border border-gray-200/70 bg-white p-6 shadow-[0_12px_30px_-16px_rgba(15,23,42,0.35)]">
+              <h2 className="mb-2 text-sm font-semibold uppercase tracking-wide text-gray-600">Observacoes</h2>
               <p className="text-sm text-gray-600">{order.notes}</p>
             </div>
           )}
 
           {/* Motivo da recusa */}
           {order.rejectedReason && (
-            <div className="rounded-lg bg-red-50 p-6 border border-red-200">
-              <h2 className="text-lg font-semibold text-red-700 mb-2">Motivo da Recusa</h2>
+            <div className="rounded-xl border border-red-200 bg-red-50/80 p-6 shadow-[0_12px_30px_-16px_rgba(185,28,28,0.35)]">
+              <h2 className="mb-2 text-sm font-semibold uppercase tracking-wide text-red-700">Motivo da Recusa</h2>
               <p className="text-sm text-red-600">{order.rejectedReason}</p>
             </div>
           )}
@@ -183,8 +183,8 @@ export default function OrderDetailPage() {
         {/* Sidebar */}
         <div className="space-y-6">
           {/* Cliente */}
-          <div className="rounded-lg bg-white p-6 shadow-sm border border-gray-200">
-            <h2 className="text-lg font-semibold text-gray-900 mb-3">Cliente</h2>
+          <div className="rounded-xl border border-gray-200/70 bg-white p-6 shadow-[0_12px_30px_-16px_rgba(15,23,42,0.35)]">
+            <h2 className="mb-3 text-sm font-semibold uppercase tracking-wide text-gray-600">Cliente</h2>
             <div className="space-y-2 text-sm">
               <p className="font-medium text-gray-900">{order.customerName}</p>
               <p className="text-gray-600">{order.customerPhone}</p>
@@ -195,8 +195,8 @@ export default function OrderDetailPage() {
           </div>
 
           {/* Endereco */}
-          <div className="rounded-lg bg-white p-6 shadow-sm border border-gray-200">
-            <h2 className="text-lg font-semibold text-gray-900 mb-3">Endereco de Entrega</h2>
+          <div className="rounded-xl border border-gray-200/70 bg-white p-6 shadow-[0_12px_30px_-16px_rgba(15,23,42,0.35)]">
+            <h2 className="mb-3 text-sm font-semibold uppercase tracking-wide text-gray-600">Endereco de Entrega</h2>
             <div className="space-y-1 text-sm">
               <p className="text-gray-900">
                 {order.deliveryStreet}, {order.deliveryNumber}
@@ -210,8 +210,8 @@ export default function OrderDetailPage() {
           </div>
 
           {/* Timeline */}
-          <div className="rounded-lg bg-white p-6 shadow-sm border border-gray-200">
-            <h2 className="text-lg font-semibold text-gray-900 mb-3">Timeline</h2>
+          <div className="rounded-xl border border-gray-200/70 bg-white p-6 shadow-[0_12px_30px_-16px_rgba(15,23,42,0.35)]">
+            <h2 className="mb-3 text-sm font-semibold uppercase tracking-wide text-gray-600">Timeline</h2>
             <OrderTimeline currentStatus={order.status} />
           </div>
         </div>
