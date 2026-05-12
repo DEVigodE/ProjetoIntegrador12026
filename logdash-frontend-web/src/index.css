@@ -9,3 +9,11 @@ body {
   -moz-osx-font-smoothing: grayscale;
   color: #111827; /* gray-900 default text */
 }
+
+:root {
+  --toastify-color-info: #f97316;
+}
+
+.Toastify__progress-bar--info {
+  background: #f97316;
+}

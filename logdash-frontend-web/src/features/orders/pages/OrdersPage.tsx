@@ -39,6 +39,9 @@ export default function OrdersPage() {
     size: 20,
     status: statusFilter || undefined,
   });
+  const filteredActiveOrders = statusFilter
+    ? activeOrders?.filter((order) => order.status === statusFilter)
+    : activeOrders;
 
   const acceptOrder = useAcceptOrder();
   const rejectOrder = useRejectOrder();
@@ -155,18 +158,25 @@ export default function OrdersPage() {
       {/* Kanban View */}
       {view === 'kanban' && (
         <>
+          <div className="mb-4">
+            <OrderFilters
+              status={statusFilter}
+              onStatusChange={(s) => setStatusFilter(s)}
+            />
+          </div>
           {loadingActive ? (
             <div className="flex justify-center py-12">
               <Spinner size="lg" />
             </div>
-          ) : !activeOrders || activeOrders.length === 0 ? (
+          ) : !filteredActiveOrders || filteredActiveOrders.length === 0 ? (
             <EmptyState
               title="Nenhum pedido ativo"
               description="Novos pedidos aparecerao aqui automaticamente."
             />
           ) : (
             <OrdersPanel
-              orders={activeOrders}
+              orders={filteredActiveOrders}
+              statusFilter={statusFilter}
               onOrderClick={(order) => setSelectedOrderId(order.id)}
             />
           )}

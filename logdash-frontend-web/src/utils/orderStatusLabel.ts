@@ -10,12 +10,12 @@ const statusLabels: Record<OrderStatus, string> = {
   CANCELLED: 'Cancelado',
 };
 
-const statusColors: Record<OrderStatus, 'green' | 'yellow' | 'blue' | 'red' | 'gray'> = {
+const statusColors: Record<OrderStatus, 'green' | 'yellow' | 'blue' | 'orange' | 'teal' | 'red' | 'gray'> = {
   PENDING: 'yellow',
   ACCEPTED: 'blue',
-  PREPARING: 'yellow',
+  PREPARING: 'orange',
   READY: 'green',
-  OUT_FOR_DELIVERY: 'blue',
+  OUT_FOR_DELIVERY: 'teal',
   DELIVERED: 'green',
   CANCELLED: 'red',
 };
@@ -24,6 +24,8 @@ export function getStatusLabel(status: OrderStatus): string {
   return statusLabels[status];
 }
 
-export function getStatusColor(status: OrderStatus): 'green' | 'yellow' | 'blue' | 'red' | 'gray' {
+export function getStatusColor(
+  status: OrderStatus
+): 'green' | 'yellow' | 'blue' | 'orange' | 'teal' | 'red' | 'gray' {
   return statusColors[status];
 }
