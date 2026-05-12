@@ -4,7 +4,7 @@ import CategoryManager from '../components/CategoryManager';
 export default function SettingsPage() {
   return (
     <>
-      <PageHeader title="Configuracoes" />
+      <PageHeader title="Categorias" />
       <CategoryManager />
     </>
   );

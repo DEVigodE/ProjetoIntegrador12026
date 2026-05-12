@@ -1,12 +1,11 @@
 import { useKeycloak } from '@react-keycloak/web';
 import {
   BarChart3,
-  ChevronLeft,
-  ChevronRight,
   ClipboardList,
   Home,
+  LogOut,
   Package,
-  Settings,
+  Tags,
   Truck,
   Users,
   type LucideIcon,
@@ -43,6 +42,12 @@ const navItems: NavItem[] = [
     icon: Package,
   },
   {
+    path: '/settings',
+    label: 'Categorias',
+    roles: ['ADMIN'],
+    icon: Tags,
+  },
+  {
     path: '/couriers',
     label: 'Entregadores',
     roles: ['ADMIN', 'DISPATCHER'],
@@ -56,16 +61,10 @@ const navItems: NavItem[] = [
   },
   {
     path: '/reports',
-    label: 'Relatorios',
+    label: 'Relatórios',
     roles: ['ADMIN'],
     icon: BarChart3,
-  },
-  {
-    path: '/settings',
-    label: 'Configurações',
-    roles: ['ADMIN'],
-    icon: Settings,
-  },
+  }
 ];
 
 interface SidebarProps {
@@ -84,17 +83,11 @@ export default function Sidebar({ collapsed, onToggle }: SidebarProps) {
 
   return (
     <aside
-      className={`bg-sidebar text-white flex flex-col min-h-screen transition-[width] duration-300 ${collapsed ? 'w-16' : 'w-60'
-        }`}
+      className={`bg-sidebar text-white flex flex-col min-h-screen transition-[width] duration-300 ${
+        collapsed ? 'w-16' : 'w-60'
+      }`}
     >
-
-      <div className={`flex justify-center ${collapsed ? 'pt-3' : 'pt-4'}`}>
-      </div>
-
-      <div
-        className={`border-b border-white/10 flex items-center justify-between ${collapsed ? 'p-3' : 'p-3'
-          }`}
-      >
+      <div className="border-b border-white/10 flex items-center justify-center p-3">
         <button
           type="button"
           onClick={onToggle}
@@ -121,34 +114,40 @@ export default function Sidebar({ collapsed, onToggle }: SidebarProps) {
       <nav className="flex-1 py-4">
         {visibleItems.map((item) => {
           const Icon = item.icon;
+
           return (
             <NavLink
               key={item.path}
               to={item.path}
               className={({ isActive }) =>
-                `relative flex items-center text-sm transition-colors ${collapsed ? 'justify-center px-2' : 'gap-3 px-4'
-                } py-3 ${isActive
-                  ? `
-                bg-white/10
-                text-primary-8
-                before:content-['']
-                before:absolute
-                before:left-0
-                before:h-[80%]
-                before:w-1
-                before:bg-white
-                before:rounded-r-md
-                `
-                  : 'text-white hover:bg-white/5 hover:text-white'
+                `relative flex items-center text-sm transition-colors py-3 ${
+                  collapsed ? 'justify-center px-2' : 'gap-3 px-4'
+                } ${
+                  isActive
+                    ? `
+                      bg-white/10
+                      text-white
+                      before:content-['']
+                      before:absolute
+                      before:left-0
+                      before:top-[10%]
+                      before:h-[80%]
+                      before:w-1
+                      before:bg-white
+                      before:rounded-r-md
+                    `
+                    : 'text-white hover:bg-white/5 hover:text-white'
                 }`
               }
               aria-label={item.label}
               title={item.label}
             >
               <Icon className="h-5 w-5 shrink-0" aria-hidden="true" />
+
               <span className={collapsed ? 'sr-only' : ''}>{item.label}</span>
+
               {!collapsed && item.path === '/orders' && pendingCount > 0 && (
-                <span className="bg-red-500 text-white text-xs font-bold rounded-full px-2 py-0.5 min-w-[20px] text-center">
+                <span className="ml-auto bg-red-500 text-white text-xs font-bold rounded-full px-2 py-0.5 min-w-[20px] text-center">
                   {pendingCount}
                 </span>
               )}
@@ -160,10 +159,15 @@ export default function Sidebar({ collapsed, onToggle }: SidebarProps) {
       <div className="p-4 border-t border-white/10">
         <button
           onClick={() => keycloak.logout()}
-          className={`w-full text-sm text-gray-400 hover:text-white transition-colors ${collapsed ? 'text-center' : 'text-left'
-            }`}
+          className={`w-full flex items-center text-sm text-white/80 hover:text-white transition-colors ${
+            collapsed ? 'justify-center' : 'justify-start gap-3'
+          }`}
+          aria-label="Sair"
+          title="Sair"
         >
-          {collapsed ? 'S' : 'Sair'}
+          <LogOut className="h-5 w-5 shrink-0" aria-hidden="true" />
+
+          {!collapsed && <span>Sair</span>}
         </button>
       </div>
     </aside>
