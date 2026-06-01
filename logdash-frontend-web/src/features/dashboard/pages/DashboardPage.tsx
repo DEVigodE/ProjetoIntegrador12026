@@ -3,6 +3,7 @@ import Spinner from '../../../components/ui/Spinner';
 import EmptyState from '../../../components/ui/EmptyState';
 import KpiCard from '../components/KpiCard';
 import TopProductsChart from '../components/TopProductsChart';
+import TopProductsRevenueChart from '../components/TopProductsRevenueChart';
 import ActiveOrdersList from '../components/ActiveOrdersList';
 import { useDashboard } from '../hooks/useDashboard';
 import { useActiveOrders } from '../../../features/orders/hooks/useActiveOrders';
@@ -57,8 +58,9 @@ export default function DashboardPage() {
       </div>
 
       {/* Gráficos */}
-      <div className="grid grid-cols-2 gap-4">
+      <div className="grid grid-cols-1 gap-4 xl:grid-cols-2">
         <TopProductsChart data={dashboard.topSellingProducts} />
+        <TopProductsRevenueChart data={dashboard.topSellingProducts} />
       </div>
 
       {/* Pedidos ativos */}

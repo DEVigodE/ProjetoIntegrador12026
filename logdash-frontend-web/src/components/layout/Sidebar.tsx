@@ -2,6 +2,8 @@ import { useKeycloak } from '@react-keycloak/web';
 import {
   BarChart3,
   ClipboardList,
+  ChevronLeft,
+  ChevronRight,
   Home,
   LogOut,
   Package,
@@ -88,12 +90,11 @@ export default function Sidebar({ collapsed, onToggle }: SidebarProps) {
       }`}
     >
       <div className="border-b border-white/10 flex items-center justify-center p-3">
-        <button
-          type="button"
-          onClick={onToggle}
+        <NavLink
+          to="/dashboard"
           className="flex items-center hover:opacity-90 transition-opacity"
-          aria-label={collapsed ? 'Expandir sidebar' : 'Recolher sidebar'}
-          title={collapsed ? 'Expandir' : 'Recolher'}
+          aria-label="Ir para o dashboard"
+          title="Ir para o dashboard"
         >
           {collapsed ? (
             <img
@@ -107,6 +108,22 @@ export default function Sidebar({ collapsed, onToggle }: SidebarProps) {
               alt="LogDash"
               className="h-14 object-contain"
             />
+          )}
+        </NavLink>
+      </div>
+
+      <div className="flex justify-center py-2">
+        <button
+          type="button"
+          onClick={onToggle}
+          className="flex h-6 w-6 items-center justify-center rounded-full text-white/80 transition-colors hover:bg-white/10 hover:text-white"
+          aria-label={collapsed ? 'Expandir sidebar' : 'Recolher sidebar'}
+          title={collapsed ? 'Expandir' : 'Recolher'}
+        >
+          {collapsed ? (
+            <ChevronRight className="h-3.5 w-3.5" aria-hidden="true" />
+          ) : (
+            <ChevronLeft className="h-3.5 w-3.5" aria-hidden="true" />
           )}
         </button>
       </div>

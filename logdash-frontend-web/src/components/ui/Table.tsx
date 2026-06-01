@@ -21,7 +21,7 @@ interface SortState {
   direction: SortDirection;
 }
 
-export default function Table<T extends Record<string, unknown>>({
+export default function Table<T extends object>({
   columns,
   data,
   onRowClick,
@@ -42,8 +42,10 @@ export default function Table<T extends Record<string, unknown>>({
 
   const sortedData = sort
     ? [...data].sort((a, b) => {
-        const aVal = a[sort.key];
-        const bVal = b[sort.key];
+        const rowA = a as Record<string, unknown>;
+        const rowB = b as Record<string, unknown>;
+        const aVal = rowA[sort.key];
+        const bVal = rowB[sort.key];
         if (aVal == null || bVal == null) return 0;
         const cmp = aVal < bVal ? -1 : aVal > bVal ? 1 : 0;
         return sort.direction === 'asc' ? cmp : -cmp;
@@ -82,7 +84,7 @@ export default function Table<T extends Record<string, unknown>>({
             >
               {columns.map((col) => (
                 <td key={col.key} className="whitespace-nowrap px-4 py-3 text-sm text-gray-700">
-                  {col.render ? col.render(item) : (item[col.key] as ReactNode)}
+                  {col.render ? col.render(item) : ((item as Record<string, unknown>)[col.key] as ReactNode)}
                 </td>
               ))}
             </tr>

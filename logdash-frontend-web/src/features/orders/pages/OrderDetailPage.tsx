@@ -1,5 +1,5 @@
 import { useState } from 'react';
-import { useParams, useNavigate } from 'react-router-dom';
+import { useParams } from 'react-router-dom';
 import { toast } from 'react-toastify';
 import PageHeader from '../../../components/layout/PageHeader';
 import Spinner from '../../../components/ui/Spinner';
@@ -19,7 +19,6 @@ import type { OrderStatus } from '../types/order.types';
 
 export default function OrderDetailPage() {
   const { id } = useParams();
-  const navigate = useNavigate();
   const orderId = id ? Number(id) : undefined;
   const [showRejectModal, setShowRejectModal] = useState(false);
 
@@ -78,8 +77,8 @@ export default function OrderDetailPage() {
   if (isError || !order) {
     return (
       <EmptyState
-        title="Pedido nao encontrado"
-        description="O pedido solicitado nao existe ou foi removido."
+        title="Pedido não encontrado"
+        description="O pedido solicitado não existe ou foi removido."
       />
     );
   }
@@ -124,7 +123,7 @@ export default function OrderDetailPage() {
                 <tr className="border-b border-gray-100 text-left text-[11px] font-semibold uppercase tracking-wide text-gray-500">
                   <th className="pb-2">Produto</th>
                   <th className="pb-2 text-center">Qtd</th>
-                  <th className="pb-2 text-right">Preco Unit.</th>
+                  <th className="pb-2 text-right">Preço Unit.</th>
                   <th className="pb-2 text-right">Subtotal</th>
                 </tr>
               </thead>
@@ -158,7 +157,7 @@ export default function OrderDetailPage() {
           {/* Observacoes */}
           {order.notes && (
             <div className="rounded-xl border border-gray-200/70 bg-white p-6 shadow-[0_12px_30px_-16px_rgba(15,23,42,0.35)]">
-              <h2 className="mb-2 text-sm font-semibold uppercase tracking-wide text-gray-600">Observacoes</h2>
+              <h2 className="mb-2 text-sm font-semibold uppercase tracking-wide text-gray-600">Observações</h2>
               <p className="text-sm text-gray-600">{order.notes}</p>
             </div>
           )}
@@ -196,7 +195,7 @@ export default function OrderDetailPage() {
 
           {/* Endereco */}
           <div className="rounded-xl border border-gray-200/70 bg-white p-6 shadow-[0_12px_30px_-16px_rgba(15,23,42,0.35)]">
-            <h2 className="mb-3 text-sm font-semibold uppercase tracking-wide text-gray-600">Endereco de Entrega</h2>
+            <h2 className="mb-3 text-sm font-semibold uppercase tracking-wide text-gray-600">Endereço de Entrega</h2>
             <div className="space-y-1 text-sm">
               <p className="text-gray-900">
                 {order.deliveryStreet}, {order.deliveryNumber}

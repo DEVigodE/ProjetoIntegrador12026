@@ -9,7 +9,10 @@ import {
 } from 'recharts';
 import { format, parseISO } from 'date-fns';
 import { ptBR } from 'date-fns/locale';
-import type { SalesByDay } from '../hooks/dashboard.types';
+type SalesByDay = {
+  date: string;
+  total: number;
+};
 
 interface SalesChartProps {
   data: SalesByDay[];
@@ -46,7 +49,7 @@ export default function SalesChart({ data }: SalesChartProps) {
             axisLine={false}
             tickLine={false}
           />
-          <Tooltip formatter={(value: number) => [formatCurrency(value), 'Total']} />
+          <Tooltip formatter={(value: any) => [formatCurrency(Number(value || 0)), 'Total']} />
           <Bar dataKey="total" fill="#fb923c" radius={[6, 6, 0, 0]} />
         </BarChart>
       </ResponsiveContainer>

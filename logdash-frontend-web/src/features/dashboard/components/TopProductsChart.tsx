@@ -1,9 +1,11 @@
 import {
-  PieChart,
-  Pie,
-  Cell,
+  BarChart,
+  Bar,
+  CartesianGrid,
+  XAxis,
+  YAxis,
+  LabelList,
   Tooltip,
-  Legend,
   ResponsiveContainer,
 } from 'recharts';
 import type { TopProduct } from '../hooks/dashboard.types';
@@ -12,10 +14,11 @@ interface TopProductsChartProps {
   data: TopProduct[];
 }
 
-const COLORS = ['#f97316', '#fb923c', '#fdba74', '#fed7aa', '#ffedd5'];
-
 export default function TopProductsChart({ data }: TopProductsChartProps) {
   const top5 = data.slice(0, 5);
+  const maxQuantity = Math.max(...top5.map((item) => item.totalQuantitySold), 0);
+  const axisMax = Math.max(4, Math.ceil(maxQuantity));
+  const axisTicks = Array.from({ length: axisMax + 1 }, (_, index) => index);
 
   return (
     <div className="rounded-xl border border-gray-200/70 bg-gradient-to-br from-white via-white to-orange-50/40 p-6 shadow-[0_12px_30px_-16px_rgba(15,23,42,0.35)]">
@@ -27,28 +30,33 @@ export default function TopProductsChart({ data }: TopProductsChartProps) {
           Quantidade
         </span>
       </div>
-      <ResponsiveContainer width="100%" height={220}>
-        <PieChart>
-          <Pie
-            data={top5}
-            dataKey="totalQuantitySold"
-            nameKey="productName"
-            cx="50%"
-            cy="50%"
-            outerRadius={80}
-            innerRadius={36}
-            label={({ productName, percent }) =>
-              `${productName} (${(percent * 100).toFixed(0)}%)`
-            }
-            labelLine={false}
-          >
-            {top5.map((_, index) => (
-              <Cell key={index} fill={COLORS[index % COLORS.length]} />
-            ))}
-          </Pie>
-          <Tooltip formatter={(value: number) => [value, 'Qtd']} />
-          <Legend />
-        </PieChart>
+      <ResponsiveContainer width="100%" height={240}>
+        <BarChart data={top5} layout="vertical" margin={{ top: 8, right: 28, left: 8, bottom: 8 }}>
+          <CartesianGrid strokeDasharray="3 3" vertical={false} stroke="#e5e7eb" />
+          <XAxis
+            type="number"
+            domain={[0, axisMax]}
+            ticks={axisTicks}
+            allowDecimals={false}
+            tick={false}
+            axisLine={false}
+            tickLine={false}
+            height={34}
+            interval={0}
+          />
+          <YAxis
+            type="category"
+            dataKey="productName"
+            width={132}
+            tick={{ fill: '#000000', fontSize: 12 }}
+            axisLine={false}
+            tickLine={false}
+          />
+          <Tooltip formatter={(value, _name, props) => [value, props.payload?.productName ?? 'Quantidade']} contentStyle={{ color: '#000000' }} labelStyle={{ color: '#000000' }} />
+          <Bar dataKey="totalQuantitySold" fill="#f97316" radius={[0, 8, 8, 0]} barSize={18} minPointSize={6}>
+            <LabelList dataKey="totalQuantitySold" position="right" fill="#000000" fontSize={12} />
+          </Bar>
+        </BarChart>
       </ResponsiveContainer>
     </div>
   );

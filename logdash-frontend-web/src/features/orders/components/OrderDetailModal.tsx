@@ -7,7 +7,7 @@ import ChatPanel from '../../chat/components/ChatPanel';
 import CourierMapPanel from '../../delivery/components/CourierMapPanel';
 import { getStatusLabel, getStatusColor } from '../../../utils/orderStatusLabel';
 import { useOrder } from '../hooks/useOrder';
-import type { Order, OrderStatus } from '../types/order.types';
+import type { OrderStatus } from '../types/order.types';
 
 interface OrderDetailModalProps {
   orderId: number | undefined;
@@ -61,7 +61,7 @@ export default function OrderDetailModal({
 
           {/* Endereco */}
           <div>
-            <h4 className="text-sm font-semibold text-gray-700 mb-1">Endereco de Entrega</h4>
+            <h4 className="text-sm font-semibold text-gray-700 mb-1">Endereço de Entrega</h4>
             <p className="text-sm text-gray-900">
               {order.deliveryStreet}, {order.deliveryNumber}
               {order.deliveryComplement && ` - ${order.deliveryComplement}`}
@@ -110,7 +110,7 @@ export default function OrderDetailModal({
           {/* Observacoes */}
           {order.notes && (
             <div>
-              <h4 className="text-sm font-semibold text-gray-700 mb-1">Observacoes</h4>
+              <h4 className="text-sm font-semibold text-gray-700 mb-1">Observações</h4>
               <p className="text-sm text-gray-600">{order.notes}</p>
             </div>
           )}
@@ -132,7 +132,7 @@ export default function OrderDetailModal({
           {/* Mapa do entregador */}
           {order.status === 'OUT_FOR_DELIVERY' && (
             <div>
-              <h4 className="text-sm font-semibold text-gray-700 mb-2">Localizacao do Entregador</h4>
+              <h4 className="text-sm font-semibold text-gray-700 mb-2">Localização do Entregador</h4>
               <CourierMapPanel orderId={order.id} />
             </div>
           )}

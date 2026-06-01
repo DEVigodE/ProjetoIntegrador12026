@@ -95,7 +95,7 @@ export default function OrdersPage() {
   const formatCurrency = (value: number) =>
     new Intl.NumberFormat('pt-BR', { style: 'currency', currency: 'BRL' }).format(value);
 
-  const listColumns: Column<Order>[] = [
+  const listColumns = [
     { key: 'id', header: '#', sortable: true, render: (o) => `#${o.id}` },
     { key: 'customerName', header: 'Cliente', sortable: true },
     {
@@ -123,7 +123,7 @@ export default function OrdersPage() {
           minute: '2-digit',
         }),
     },
-  ];
+  ] satisfies Column<Order>[];
 
   return (
     <>
@@ -171,7 +171,7 @@ export default function OrdersPage() {
           ) : !filteredActiveOrders || filteredActiveOrders.length === 0 ? (
             <EmptyState
               title="Nenhum pedido ativo"
-              description="Novos pedidos aparecerao aqui automaticamente."
+              description="Novos pedidos aparecerão aqui automaticamente."
             />
           ) : (
             <OrdersPanel
@@ -206,7 +206,7 @@ export default function OrdersPage() {
             />
           ) : (
             <>
-              <Table<Order>
+              <Table
                 columns={listColumns}
                 data={ordersPage.content}
                 keyExtractor={(o) => o.id}

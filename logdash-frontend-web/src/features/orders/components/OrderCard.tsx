@@ -1,4 +1,4 @@
-import { formatDistanceToNow } from 'date-fns';
+import { formatDistanceToNowStrict } from 'date-fns';
 import { ptBR } from 'date-fns/locale';
 import Badge from '../../../components/ui/Badge';
 import { getStatusLabel, getStatusColor } from '../../../utils/orderStatusLabel';
@@ -13,10 +13,9 @@ export default function OrderCard({ order, onClick }: OrderCardProps) {
   const formatCurrency = (value: number) =>
     new Intl.NumberFormat('pt-BR', { style: 'currency', currency: 'BRL' }).format(value);
 
-  const timeAgo = formatDistanceToNow(new Date(order.createdAt), {
-    addSuffix: true,
+  const timeAgo = `há ${formatDistanceToNowStrict(new Date(order.createdAt), {
     locale: ptBR,
-  });
+  })}`;
 
   return (
     <button
